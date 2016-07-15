@@ -1,5 +1,32 @@
 \chapter{Exploring Visual Features}
 \label{chapter:VisFeatChapter}
+
+Finding good feature vector representations for the images is
+a key factor for successful image captioning.
+%%
+Such a feature representation should be compact, but also able to
+encode all the relevant information for the task. 
+%%
+For image captioning task, the system should know all the
+objects in the image, their most essential properties such as color,
+their absolute position and relative location to each other, along
+with the type of the scene these objects are located in.
+
+In this section, we will describe the image features we have used in
+our experiments.
+%%
+These include, primarily, activation values extracted from
+the deep Convolutional Neural Network (CNN) layers.
+%%
+In addition to using these CNN features as such, we have trained
+special detectors, based on them, for providing targeted
+information about the scene type of the image and the presence of
+known object types in it.
+%%
+Finally, we describe the use of more focused object detectors, which
+use the Faster Region-based Convolutional Neural Network (R-CNN) model for
+localizing the relevant objects in the images.
+
 %%===========================================================================%%
 \section{Image Feature Extraction}
 \fixme{Upto 4 pages: Mostly from Paper and Report, except the visualizations}
@@ -12,26 +39,337 @@ SHOW VISUALIZATIONS IF POSSIBLE
 %%----------------------------------%%
 \subsection{Convolutional Neural Networks}
 %%----------------------------------%%
+Convolutional Neural Networks have in the recent years become the most
+widely used models for practically all tasks related to image
+classification and understanding.
+%%
+It was shown in~\cite{Donahue2014} and~\cite{Razavian2014CVPR} that
+activations of the fully connected layers of a CNN trained for image
+classification task act as a general feature representation of the
+image and can be successfully used to solve other tasks as well.
+%%
+In line with this, we extract image features from CNNs pre-trained on
+the ImageNet~\cite{ImagenetOrig} and MIT Places~\cite{Zhou2014NIPS}
+databases, originally aimed for object and scene classification,
+respectively.
+
+We use a total of four different CNN architectures namely 16-layer
+and 19-layer VGG~\cite{Simonyan14c} nets and
+GoogLeNet~\cite{DBLP:journals/corr/SzegedyLJSRAEVR14} trained with the
+ImageNet data and Places205--GoogLeNet~\cite{Zhou2014NIPS} trained with
+the MIT Places data.
+%%
+In the case of the VGG nets we extract the activations of the network on
+the second fully-connected 4096-dimensional \emph{fc7} layer for the
+given input images whose aspect ratio is distorted to a square.
+%%
+Ten regions, as suggested in~\cite{Krizhevsky2012}, are extracted
+from all images and average pooling of the region-wise features are
+used to generate the final features.
+
+For the GoogLeNet we have used similarly the \emph{5th Inception
+  module}, having the dimensionality of 1024.
+%%
+We augment these features with the reverse spatial
+pyramid pooling proposed in~\cite{Gong2014} with two scale levels.
+%%
+The second level consists of a $3\times3$ grid with overlaps and
+horizontal flipping, resulting in a total of 26 regions, on the scale
+of two.
+%%
+The activations of the regions are then pooled using different
+combinations of average and maximum poolings.
+%%
+Finally, the activations of the different scales are concatenated
+resulting to 2048-dimensional features.
+%%
+By using the different combinations of pooling techniques, we have
+obtained three somewhat different feature sets from the same network.
+
+The same procedure described above for the ImageNet data trained
+GoogLeNet has been followed also with the Places data trained
+GoogLeNet, with the exception that instead of the Inception module,
+the \emph{3rd classification branch} has been used as the activation
+layer where the feature vectors have been extracted.
+%%
+As the result of the different reverse spatial pyramid pooling, we
+have again obtained three different feature sets with the
+dimensionality of 2048.
+
+In our current experiments, only the ImageNet trained GoogLeNet-based
+features have been used as direct inputs to the language model.
+%%
+The use of these features is shortened as ``gCNN'' in
+Figure~\ref{fig:fullModel} and in the results of
+Table~\ref{tab:resultsVal}.
+%%
+The other features (``VGG'' and ``pCNN'' for Places205--GoogLeNet)
+have been used when creating detectors for the scene recognition and
+object detection based additional features.
+
 \subsection{Object Detectors}
 %%----------------------------------%%
+In our experiments we have also found out that it is helpful to
+augment the CNN features with object detector features where each
+dimension represents the presence or absence of one of the 80 object
+categories defined in the COCO data set~\cite{Lin2014}.
+%%
+For this purpose we extracted the previously described five CNN-based
+ImageNet trained VGG and GoogLeNet features from the images of the
+COCO 2014~\cite{Lin2014} training set and trained an SVM classifier
+for each of the 80 object categories.
+%%
+In particular, we here utilized linear SVMs with homogeneous kernel
+maps~\cite{Vedaldi2010} of order $d=2$ to approximate the intersection
+kernel.
+%%
+Furthermore, we used two rounds of hard negative mining~\cite{Li2013}
+and sampled $5\,000$ negative examples on each round.
+
+For each image we thus have 15 SVM outputs (five features times
+initial and two hard negative trainings) that we combine with simple
+arithmetic mean in the late fusion stage.
+%%
+The 80 fusion values, one for each object category, are then
+concatenated to form a class membership vector for each image.
+%%
+These vectors we optionally use as inputs to the LSTM network and the
+notation is shortened as ``SVM80'' in Figure~\ref{fig:fullModel} and
+in the results of Table~\ref{tab:resultsVal}.
+
+\subsection{Scene Detectors}
+%%----------------------------------%%
+In order to provide the language model with explicit information on the
+visual environment or the scene type of the images, we used the SUN
+Scene Categorization Benchmark database~\cite{Xiao2010}
+and~\cite{Xiao2014} to create a bank of visual detectors specialized
+for scene recognition.
+%%
+The version of the database we used contains 108,756 images associated
+with 397 scene categories.
+
+We extracted both ImageNet data trained and MIT Places data trained
+GoogLeNet CNN features, as described in the previous section, for the
+images in the SUN database.
+%%
+We then used features of all the images (not only the training split)
+for training Radial Basis Function (RBF) Support Vector Machines
+(SVMs) with the LIBSVM software~\cite{LIBSVM}.
+%%
+As we had three slightly different versions of each of the feature
+types, we obtained the total of six SVM detectors for each scene
+category.
+
+We applied each of the detectors to the images of the COCO database
+(see Section~\ref{sec:data}) and used the simple arithmetic mean for
+the late fusion of the detector outputs.
+%%
+The concatenation of the fused category-wise detector outputs resulted
+in 397-dimensional feature vectors for the respective images.
+%%
+These vectors shortened as ``SUN397'' in Figure~\ref{fig:fullModel}
+and in the results of Table~\ref{tab:resultsVal} we
+optionally use as inputs to the language model.
+
+%% --------------------------------------
 \subsection{Spatial Map Encodings}
 %%----------------------------------%%
+Another important source of information relevant to generating
+captions is the relative location of the objects in the image. 
+%%
+Knowing the locations of the objects helps to infer their roles in the
+scene and also to choose the right adjectives to describe their
+positions.
+
+For this purpose we use an object detector network, specifically the
+Faster Region-based Convolutional Neural Network (R-CNN) proposed in
+\cite{ren15fasterrcnn}, to detect the objects in image and to predict
+their bounding boxes.
+%%
+We then project these bounding boxes onto a regular grid (eg.\@
+$4\times4$) over the image. 
+%%
+Each of the 80 object categories maintains its own grid and each grid
+cell accumulates the intersection over union (IoU) value of any
+detected bounding box of that object overlapping with it.
+%%
+This IoU value is also scaled with detection confidence score generated
+by the Faster R-CNN for that bounding box, as shown in (\ref{eqn:Iou}).
+%%
+Thus, we get 80 spatial maps of size $m\times n$. 
+%%
+These representations are then concatenated to produce an $m\times
+n\times80$~-dimensional feature vector.
+%%
+The value of the feature vector component corresponding to the class
+$c$ and the grid cell position $(i,j)$ is thus computed as:
+%%
+\begin{equation}
+  \label{eqn:Iou}
+  F_c(i,j) = \sum_{b_k \in \text{\it BB}(c)}p(b_k)\frac{
+    A(b_k \cap G(i,j))}{A(b_k \cup G(i,j))} \;,
+\end{equation}
+%%
+where $A(\cdot)$ is the pixel area, $\text{\it BB}(c)$ are the bounding
+boxes detected for objects of class $c$, $p(b_k)$ is the confidence
+assigned by the detector to box $b_k$ and $G(i,j)$ is the grid cell
+at position $(i,j)$.
+%%
+We abbreviate these features as ``$m$$\times${}$n$IoU'' in the result
+tables.
+
+We also experiment with replacing the bounding box with a Gaussian
+whose mean is at the center of the bounding box and standard deviation
+is the length of the box diagonal.
+%%
+Then, instead of the IoUs, each grid cell accumulates the integrals of
+the Gaussians it overlaps with (over the overlapping region) as:
+%%
+\begin{equation}
+  \label{eqn:Gauss}
+  F_c(i,j) = \sum_{b_k \in \text{\it BB}(c)}\text{\hspace*{-7mm}}
+  \iint\displaylimits_%
+  {\text{\hspace{9mm}}b_k \cap G(i,j)}\text{\hspace*{-5mm}}
+  p(b_k)N(\text{center}(b_k),\text{diag}(b_k)) \; ,
+\end{equation}
+%%
+where $N(\mu,\sigma)$ are Gaussians of given mean and standard deviation.
+%%
+We abbreviate these features as ``$m$$\times${}$n$Gauss'' in the result
+tables.
+
+As an alternative to the $m\times n$ non-overlapping grid, we have
+used also ``$m+n$ partitioning'' of the images.
+%%
+By this we mean that the images are split in $m$ horizontal and $n$
+vertical regions of equal width or height, respectively.
+%%
+The localization information provided by this representation is not
+as accurate as that of the $m\times n$ grid model.
+%%
+Instead, it can be argued to be more robust against variations in the
+relative placements of the objects.
+%%
+The calculation of these features is analogous to that of the
+grid-based ones, only the definition of the grid cells $G(i,j)$ is
+different.
+%%
+We abbreviate these features as ``$m$+$n$Gauss''
+in the figure and in the result tables.
+
+Setting the grid size parameters $m=n=1$ we lose all localization
+information and get Faster R-CNN based feature vectors dimensionally
+equivalent to the full image, SVM-based object detection features
+described in the previous section.
+%%
+These vectors are shortened as ``FRC80'' in Figure~\ref{fig:fullModel}
+and in the results of
+Table~\ref{tab:resultsVal} when used as inputs
+to the language model.
+
 
 %%===========================================================================%%
 \section{Video Feature Extraction}
 \fixme{Upto 3 pages: mostly fresh writing}
 \label{sec:VideoFeat}
+We use two different paradigms for video feature extraction.
+%%
+The first one is to treat the video as just a sequence of 2-D static
+images and use CNNs trained on ImageNet~\cite{ImagenetOrig} to
+extract static image features from these frames.
+%%
+Then the video feature vector can be computed by pooling the features
+from these individual frames.
 
-SHOW VISUALIZATIONS of Trajectories
+The second approach is to treat the video as 3-dimensional data and
+use methods which also consider the variations along the time
+dimension for feature extraction.
+%%
+It is to be noted that even in this approach we could treat long
+videos as a series of smaller video segments and extract features for
+each of them seperately.
+%%
+Any pooling method could then be used to combine these into one
+video-level feature vector.
+
+
+red{SHOW VISUALIZATIONS of Trajectories}
 %%----------------------------------%%
 \subsection{Key-frame and multi-frame features}
 ALSO COVER POOLING HERE
 RANK POOLING???
+
+We use the GoogLeNet~\cite{DBLP:journals/corr/SzegedyLJSRAEVR14} model
+trained on ImageNet for extracting frame-level features.
+%%
+For efficiency, we only extract these features from one frame every
+second. 
+
+In the GoogLeNet we have used the \emph{5th Inception module}, having
+the dimensionality of 1024.
+%%
+We augment these features with the reverse spatial pyramid pooling
+proposed in~\cite{Gong2014} with two scale levels.
+%%
+The second level consists of a $3\times3$ grid with overlaps and
+horizontal flipping, resulting in a total of 26 regions, on the scale
+of two.
+%%
+The activations of the regions are then pooled using diverse
+combinations of average and maximum pooling.
+%%
+Finally, the activations of the different scales are concatenated
+resulting in 2048-dimensional features.
+%%
+By using the varying combinations of pooling techniques, we have
+obtained three somewhat different feature sets from the same network.
+
+We use the mean pooling method to fuse the multiple frame-level
+features extracted from one video into a single vector.
+%%
+This fused vector can then be given as an input to the language model.
+
+%% ---------------------------------------------------------------------------
 %%----------------------------------%%
 \subsection{Trajectory Features}
 %%----------------------------------%%
+
+For extracting segment-based features we have used two different
+algorithms, namely dense trajectories~\cite{DBLP:conf/cvpr/WangKSL11,
+Wang2013} and 3-D CNN network based C3D features~\cite{DBLP:C3D}.
+
+We have tried both the standard~\cite{DBLP:conf/cvpr/WangKSL11} and
+the improved versions~\cite{Wang2013} of the dense trajectory
+features.
+%%
+For both versions, the trajectories and their descriptors (HOG, HOF,
+MBHx and MBHy as described in~\cite{DBLP:conf/cvpr/WangKSL11}) are
+first extracted for the entire video.
+%%
+All of these five features are separately encoded into a fixed-size
+vector using bag-of-features encoding with a codebook of 1000 vectors.
+%%
+The codebook is obtained using k-means clustering on random 250k
+trajectory samples from the training set.
+%%
+Finally, concatenating the vector encodings of each of the descriptors
+we get a video feature vector of 5000 dimensions. 
+
 \subsection{3D Convolutional Network}
 %%----------------------------------%%
+As an alternative, we also extract video-segment features with the
+deep 3-D convolutional model, C3D~\cite{DBLP:C3D}, pre-trained on the
+Sports-1M dataset.
+%%
+The features are extracted for every 16 frames from the \emph{fc7}
+layer of the network and mean pooled to get a 4096-dimensional feature
+vector representation of the video.
+
+Additionally, we utilize the video category information available for
+all videos in all splits of the dataset.
+%%
+This information is input to the language model as a one-hot vector of
+20 dimensions.
 \subsection{Feature Encoding Network}
 
 % Comment: If your sentence ends in a capital letter, like here, you should
