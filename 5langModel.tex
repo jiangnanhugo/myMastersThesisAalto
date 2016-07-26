@@ -1,46 +1,98 @@
 \chapter{Exploring Language Model}
 \label{chapter:langModel}
 %%===========================================================================%%
-\section{Analysis of Vocubalry stats}
+\section{Analysis of Vocabulary stats}
 \fixme{Upto 1 page: mostly fresh writing}
 Visualizations of vocabulary and learned word-vectors
 
 \section{Additional Feature Inputs to Language Model}
-
-In the basic model, both visual features and the word embeddings are fed through
-the same input matrices, $W_{ix}$.
 %%
-The visual features are thus present in the network inputs only in the zeroth
+The language model we use should be capable of utilizing different kinds of
+visual features presented in chapter~\ref{chapter:VisFeatChapter}
+simultaneously.
+%%
+But the baseline language model, presented in chapter~\ref{chapter:baseline} has
+only one input channel, shared between word vectors and image features.
+%%
+The visual features are thus input to the network only in the zeroth
 round of iteration.
 %%
-This was proposed in~\cite{Vinyals_2015_CVPR} as a solution to prevent
-overfitting. 
+We refer to this input channel as the \emph{init} input to the LSTM network.
 %%
-But in our experiments with the COCO data set, we have found out that this is
-not necessary and better models can be trained by letting the LSTM have access
-to the visual features throughout the caption generation process.
+This technique was also proposed in~\cite{Vinyals_2015_CVPR} as a solution to
+prevent overfitting. 
+%%
+Therefore, the only way the baseline language model can utilize multiple visual
+features is if they are fused into a single vector before presenting to the
+language model.
+%%
+But in our experiments, we found that performing simple feature fusion, like
+concatenating the two feature vectors, and using it as as input in the baseline
+language model leads to inferior performance due to large dimensions of the
+resulting feature vector.
+%%
 
+Thus, to address this issue we introduce another data input channel to our
+language model and make the visual features available through the whole
+inference process.
+%%
 This requires adding to the LSTM cell a new input path which we refer to as the
 \emph{persist} features.
 %%
-This input plays the same role as $x(t)$ in
+This is illustrated in figure~/ref{fig:proplstmlang}.
+%%
+Note that the persist input plays the same role as $x(t)$ in
 equations~(\ref{eqn:lstmstrt})--(\ref{eqn:lstmend}), but it has its own set of
-embedding weights.
+input weights.
 %%
-This allows the model to treat the word embeddings and the image features
-differently and thus makes the model more powerful.
+For brevity, we won't repeat them here.
 %%
-Note that we can input different visual features in the \emph{init} and
+The proposed framework thus computes the distribution
+%%
+\begin{align}
+p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(y(t)) \;,
+\end{align}
+%%
+\noindent where $I$ and $P$ represent the \emph{init} and \emph{persist}
+features respectively.
+%%
+Training is again done by minimizing the cost function
+%%
+\begin{align}
+  %\label{eqCost}
+  \mathcal{L}(w_{1\cdots L} | I,P) = -\sum_{t=1}^n \log(p(w_t|w_{t-1},I,P)) \; .
+\end{align}
+
+
+%%
+Having separate input matrices for \emph{init} and \emph{persist} features
+allows the model to learn different functions from the word embeddings and the
+visual features and thus makes the model more powerful.
+%%
+We can also now input different visual features in the \emph{init} and
 \emph{persist} paths thereby allowing the model to learn simultaneously from two
 different sources.
+
+\begin{figure*}[t]
+\begin{center}
+  \includegraphics[width=0.7\linewidth]{images/MultilayerResidualLSTM.pdf}
+\end{center}
+\vspace*{-4mm}
+\caption{The proposed language model architecture. The dashed blue lines
+        highlight the changes we have proposed over the baseline. 
+        Specifically, a two-layer LSTM with residual connections is
+        shown.}
+\label{fig:proplstmlang}
+\end{figure*}
 
 %%===========================================================================%%
 \section{Deeper model, residual connections }
 \fixme{Upto 1 page: From ACMMM paper}
 %% ---------------------------------------------------------------------------
-We also train language models with multiple LSTM layers.
+Another extension we experiment with to improve the performance of our language
+model is to add depth to the LSTM network used in it.
 %%
-Only the first LSTM layer receives the feature inputs and the higher LSTM layers
+Here, only the first LSTM layer receives the feature inputs directly and the higher LSTM layers
 take their input $x(t)$ from the previous layer in the network.
 %%
 The recurrent connections from a network's outputs back to its inputs exist only
@@ -52,12 +104,12 @@ Softmax is applied at the output of the last LSTM layer only.
 Our last modification is adding multiple LSTM layers with residual connections
 after each layer as proposed in~\cite{He2015} for convolutional neural networks.
 %%
-These residual connections, shown in Figure~\ref{fig:lstmlang}, seem to improve
+These residual connections, shown in Figure~\ref{fig:proplstmlang}, improve
 the training convergence speed greatly.
 %%
 We have also found out that the use of residual connections produces
 significantly lower values for both the training cost function and the model
-perplexity, as will be detailed in Section~\ref{sec:experiments}.
+perplexity, as will be detailed in Section~\ref{chapter:results}.
 
 %%===========================================================================%%
 \section{Class based Factorization}
@@ -69,7 +121,7 @@ perplexity, as will be detailed in Section~\ref{sec:experiments}.
 \section{Ensembling Techniques}
 %%----------------------------------%%
 Using the many different image features and LSTM architectures available we can
-train a set of different language models. 
+train a set of different language models.
 %%
 When examining the pool of captions generated by such models for a set of
 images, we have found out that different models tend to generate the best
@@ -164,7 +216,7 @@ and the candidate sentence.
 
 \begin{figure*}[t] 
   \centering
-  \includegraphics[width=0.5\textwidth]{./images/CnnEval.pdf} 
+  \includegraphics[width=0.6\textwidth]{./images/CnnEval.pdf} 
   \caption{CNN based evaluator network to compute the similarity between 
     an image and a caption.}
   \label{fig:CNNEval} 
