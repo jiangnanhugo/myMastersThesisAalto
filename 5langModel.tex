@@ -49,9 +49,9 @@ For brevity, we won't repeat them here.
 %%
 The proposed framework thus computes the distribution
 %%
-\begin{align}
+\begin{equation}
 p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(y(t)) \;,
-\end{align}
+\end{equation}
 %%
 \noindent where $I$ and $P$ represent the \emph{init} and \emph{persist}
 features respectively.
@@ -92,8 +92,9 @@ different sources.
 Another extension we experiment with to improve the performance of our language
 model is to add depth to the LSTM network used in it.
 %%
-Here, only the first LSTM layer receives the feature inputs directly and the higher LSTM layers
-take their input $x(t)$ from the previous layer in the network.
+Here, only the first LSTM layer receives the feature inputs directly and the
+higher LSTM layers take their input $x(t)$ from the previous layer in the
+network.
 %%
 The recurrent connections from a network's outputs back to its inputs exist only
 within an LSTM layer and not across the layers.
@@ -104,8 +105,8 @@ Softmax is applied at the output of the last LSTM layer only.
 Our last modification is adding multiple LSTM layers with residual connections
 after each layer as proposed in~\cite{He2015} for convolutional neural networks.
 %%
-These residual connections, shown in Figure~\ref{fig:proplstmlang}, improve
-the training convergence speed greatly.
+These residual connections, shown in Figure~\ref{fig:proplstmlang}, improve the
+training convergence speed greatly.
 %%
 We have also found out that the use of residual connections produces
 significantly lower values for both the training cost function and the model
@@ -114,6 +115,78 @@ perplexity, as will be detailed in Section~\ref{chapter:results}.
 %%===========================================================================%%
 \section{Class based Factorization}
 \fixme{Upto 1 pages: fresh writing }
+Analyzing generator outputs for errors, one category of mistakes we often see
+are where the generator misses the fine grain classification between two related
+objects.
+%%
+For example we have noticed it uses a persons gender interchangeably.
+%%
+Similar uncertainty is seen in telling apart various fruits and vegetables etc.
+%%
+This happens because these objects often occur in the same contexts, hence
+context cannot help differentiate them, and the generator needs to learn really
+fine grained classification.
+%%
+
+One idea to overcome this issue is to use two level prediction.
+%%
+First we group these similar words together into classes.
+%%
+For each word to be generated, LSTM first predicts the correct class and then we
+use another set of weights to predict the correct word within this class.
+%%
+Thus the probability of a word at time-step $t$ can now be factorized as,
+
+\begin{equation}
+  \label{eq:class} 
+  P(w_t | I,P, w^{t-1}) = P(c_t| I,P, w^{t-1})*P(w_t | c_t, I,P,w^{t-1})
+\end{equation}
+\noindent where $c_t$ is the class of word $w_t$ and $w^{t-1}$ is sequence of words
+seen upto time $t-1$, $w_0\cdots w_{t-1}$.
+
+%%
+The above factorization holds true because each word only belongs to a single class.
+%%
+This hierarchy allows LSTM to learn separate decoders for each class allowing it to
+possibly learn fine grained classification.
+%%
+The hierarchical structure is also more amenable to adding new words to the vocabulary.
+%%
+Adding a new word to a specific class already transfers the knowledge the model
+has about the class to the word, and the model only needs to learn the
+distribution of the word within the class.
+
+\subsection{Clustering words into classes}
+The first step in implementing the hierarchical structure in the decoder is to
+cluster words into different classes.
+%%
+There are many approaches to do this clustering in the literature.
+%%
+First category of methods use knowledge bases like Wordnet to find similar words
+and group them together.
+%%
+Second category of methods are completely data driven and use just the training
+data statistics to build these clusters.
+%%
+Here we will look at two different methods relying solely on the coco training
+data to cluster words into classes.
+
+\subsubsection{Brown Clustering}
+A popular data driven clustering algorithm is \emph{Brown clustering} proposed
+by in~\cite{BrownClust}
+%%
+This is a hierarchical clustering algorithm which produces a hierarchical binary
+tree like clusters of all the words in the vocabulary.
+%%
+We start out with all words as individual leaves and then at each step combine
+two words whose grouping would reduce the cost function the most.
+%%
+The cost function is simply the perplexity of a bi-gram class based model.
+
+\subsubsection{K-means Clustering}
+
+\subsection{Factorizing LSTM decoder output}
+
 %%===========================================================================%%
 \section{Bi-Directional LSTMs ????}
 \fixme{Not sure yet: fresh writing }
