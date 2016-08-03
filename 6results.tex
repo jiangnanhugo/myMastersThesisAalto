@@ -1,6 +1,30 @@
 \chapter{Experiments and Results}
 \label{chapter:results}
 
+Now that we have discussed several feature extraction methods and alternate
+language model architectures, it is time to put to test these proposals and
+evaluate how well they perform on the captioning task.
+%%
+In this chapter we will present the results from the experiments on three
+separate datasets, one for image captioning (MS-COCO) and two for video
+captioning~(LSMDC and MSR-VTT).
+%%
+We will mainly rely on the four evaluation metrics described in
+section~\ref{sec:EvaluationMetrics}, namely BLEU, METEOR, ROUGE-L and CIDEr, to
+evaluate the performance of our models on the captioning task.
+%%
+But as already discussed, these evaluation metrics only approximately track the
+human judgements of how good the generated captions are.
+%%
+However, it is a costly exercise to collect human evaluations for every model we
+wish to compare.
+%%
+Luckily enough, human judgements were collected and used to evaluate such
+systems in three captioning challenges held over the course of last year.
+%%
+We will present results from our participation in these challenges, and present
+human evaluations for few of our best models, obtained from these competitions.
+
 \section{Image Captioning}
 \fixme{3 pages: tables from ACMMM paper, text should be re-written with more
 qualitative analysis}
