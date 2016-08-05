@@ -299,7 +299,25 @@ according to the log-probability assigned by the model.
 %%
 
 \subsection{Implementation Platform Details ?}
+\label{subsec:implDetails}
 %%----------------------------------%%
+We implemented the LSTM language model using the Theano library~%
+%%
+The language model is trained using the stochastic gradient descent with the
+RMSProp~\cite{rmspropTielman} algorithm, and we have implemented regularization
+using dropout as described in \cite{ZarembaSV14}.
+%%
+The error is back-propagated to all the language model parameters and word
+embedding matrices, but the image feature extraction models are kept constant.
+
+In all our experiments we use beam-search to generate sentences from a trained
+model.
+%%
+After experimenting with different beam sizes, we found that beam size of $b=5$
+works adequately across all our models.
+
+\cite{Bastien-Theano-2012}.
+%%
 %%===========================================================================%%
 \section{Datasets}
 \fixme{Upto 4 pages, mostly fresh writing, but parts can be taken from previous

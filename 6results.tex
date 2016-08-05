@@ -25,81 +25,51 @@ systems in three captioning challenges held over the course of last year.
 We will present results from our participation in these challenges, and present
 human evaluations for few of our best models, obtained from these competitions.
 
+Since the COCO dataset is the largest of the three datasets we have used, we
+conduct all the language model experiments on this dataset.
+%%
+This means, the performance analysis of our proposed extensions namely, addition
+of persist features, increasing depth with residual connections and class based
+factorization of output is conducted on this dataset.
+%%
+Also, since the language model we use in video captioning has the same
+architecture as the one used in image captioning, we can assume the same results
+hold there too.
+%%
+Thus we limit our experiments in video captioning task to testing different
+video features.
+
+
 \section{Image Captioning}
 \fixme{3 pages: tables from ACMMM paper, text should be re-written with more
 qualitative analysis}
-Also highlight the drawbacks here using examples from of the COCO dataset
+\red{Also highlight the drawbacks here using examples from of the COCO dataset}
 
-\begin{table*}[htp]
-  \caption{Performance of various features and 
-    network depths on the validation set of COCO 2014}
-  \newcommand{\modpar}[4]{%
-    \multirow{2}{*}{\emph{#1}} & \multirow{2}{*}{#2} & \multirow{2}{*}{#3}
-    & \multirow{2}{*}{#4}}
-  \centering
-  \newcommand{\bs}{\small\bf}
-  \begin{tabular}{||c|c|c|c|c|c|c|c|c|c|}
-    \hline\hline
-    \bf\# &\bf init &\bf persist &\bf depth &\bf perplex &\bf vocab &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
-    1 & gCNN                 &  --- & 1  & 10.82 & 513  & 0.259 & 0.222 & 0.490 & 0.750 \\
-    2 & SVM80                & gCNN & 1  & 10.30 & 923  & 0.302 & 0.244 & 0.523 & 0.909 \\
-    3 & FRC80                & gCNN & 1  & 10.15 & 887  & 0.316 & 0.249 & 0.534 & 0.952 \\
-    4 & SUN397+FRC80         & gCNN & 1  & 10.05 & 962  & 0.315 & 0.250 & 0.532 & 0.954 \\\hline
-    5 & 4$\times$4IoU        & gCNN & 1  & 10.21 & 930  & 0.302 & 0.244 & 0.522 & 0.913 \\
-    6 & 4$\times$4Gauss      & gCNN & 1  & 10.15 & 931  & 0.308 & 0.246 & 0.527 & 0.921 \\
-    7 & 3+3Gauss             & gCNN & 1  & 10.08 & 944  & 0.308 & 0.247 & 0.527 & 0.928 \\\hline
-    8 & SUN397+FRC80         & gCNN & 2  & 10.14 & 1002 & 0.318 & 0.252 & 0.535 & 0.967 \\
-    9 & SUN397+FRC80         & gCNN & 3  & 10.34 & 1093 & 0.316 & 0.253 & 0.533 & 0.964 \\
-    10& SUN397+FRC80         & gCNN &2-res& 9.92 & 983  &\bf0.320& 0.253 &\bf0.536& 0.966 \\
-    11& SUN397+FRC80         & gCNN &3-res& 9.69 & 1197 & 0.316 &\bf0.254& 0.532& 0.962 \\\hline
-    12&3+3Gauss+SUN397+FRC80 & gCNN &3-res& 9.72 & 1112 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
-    13& \multicolumn{4}{c|}{\em CNN evaluator based ensemble of best six models}    
-                                                 & 1303 &\bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\\hline
-    \hline
-  \end{tabular}
-  \label{tab:resultsVal}
-\end{table*}
+In this section we report results of our experiments on image captioning
+conducted on the MS-COCO dataset.
+%%
+In the first subsection we will discuss the experimental setup, i.e. how the
+models were trained and the hyper-parameters used, and the evaluation setup.
+%%
+Next we report the results of our internal evaluation on the validation set
+comparing various models and features.
+%%
+This is followed by results from the test set obtained from the Microsoft
+codalab portal.
 
-\begin{table*}[htp]
-  \newcommand{\mct}[1]{%
-    \multicolumn{2}{c|}{\bf#1}}
-  \centering
-  \caption{COCO 2014 test set results from CodaLab}
-  \begin{tabular}{||l|c|c|c|c|c|c|c|c|c||}
-    \hline\hline
-    \multirow{2}{*}{\bf CodaLab name}&\multirow{2}{*}{\bf\#}
-                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{3-10}
-                &     & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
-    frcnnBigger (ours)& 12    & 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
-    --- (ours)        & 13    & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
-    ATT\_VC~\cite{you2016image}& ---   &\bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
-    --- (ours)        & 11    & 0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
-    OriolVinyals~\cite{Vinyals_2015_CVPR}      & ---   & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
-    MSR\_Captivator~\cite{Fang2015} & ---   & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
-    human~\cite{Chen2015}& ---   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\\hline
-    \hline
-  \end{tabular}
-  \label{tab:resultsTest}
-\end{table*}
-
-We implemented the LSTM language model using the Theano library~%
-\cite{Bastien-Theano-2012}.
+\subsection{Experimental setup}
+The implementation details of the language models we train on COCO dataset
+remains the same as described in section~\ref{subsec:implDetails}.
 %%
 The CNN feature extraction and the Faster R-CNN models are based on the Caffe
 library~\cite{jia2014caffe}.
-
-The language model is trained using the stochastic gradient descent with the
-RMSProp~\cite{rmspropTielman} algorithm, and we have implemented regularization
-using dropout as described in \cite{ZarembaSV14}.
 %%
-The error is back-propagated to all the language model parameters and word
-embedding matrices, but the image feature extraction models are kept constant.
-
-In all our experiments we use beam-search to generate sentences from a trained
-model.
+Using the code released for the Faster R-CNN
+network\footnote{https://github.com/rbgirshick/py-faster-rcnn}, we train it on
+the MS-COCO dataset to detect the 80 object categories annotated in COCO.
 %%
-After experimenting with different beam sizes, we found that beam size of $b=5$
-works adequately across all our models.
+Then this detector is run on the entire COCO dataset and the spatial map feature
+vectors are created using the bounding boxes output by the detectors.
 
 %%
 The CNN evaluator we use is created with bi-, tri-, 4-, and 5-gram filters and
@@ -115,9 +85,10 @@ architectures, we use the COCO 2014 validation set and the five reference
 sentences available for all images in it.
 %%
 The performance of a model is measured using the perplexity assigned by the
-model to the ground truth sentences in the validation set, as well as with the
-four standard evaluation metrics (BLEU-4, METEOR, ROUGE-L and CIDEr) to compare
-the generated captions against the references.
+model to the ground truth sentences in the validation set (referred to as
+``Pplx'' in tables), as well as with the four standard evaluation metrics
+(BLEU-4, METEOR, ROUGE-L and CIDEr) to compare the generated captions against
+the references.
 
 Microsoft COCO team has also made an evaluation server available on
 CodaLab\footnote{\url{https://competitions.codalab.org/competitions/3221}} where
@@ -133,6 +104,253 @@ state-of-the-art entries in the CodaLab leaderboard.
 %% ---------------------------------------------------------------------------
 
 \subsection{Results on Validation Set}
+In Chapters~\ref{chapter:langModel} \& ~\ref{chapter:langModel} we proposed
+several image features and language model extensions respectively to improve the
+captioning system over the baseline model.
+%%
+In order to obtain the best posssible captioning system for the COCO dataset, we
+need to measure the performance of these different features and language model
+combinations.
+%%
+Since training a model for every combination of feature and choice of language
+model parameters is prohibitively expensive, we run seperate experiments to
+determine the best features and the best language model choices, while keeping
+the other fixed.
+%%
+\red{We show that these two aspects are fairly independent and chosing the best
+feature and best language model from the above mentioned experiments gives us
+our best captioning model.}
+%%
+
+%--------------------------------------------------------------------------------------
+\subsubsection{Evaluating the Init and Persist paths}
+\label{subsubsec:InitVpersist}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c||c|c||c|c|c|c|c|}
+    \hline
+    \bf Model & \multicolumn{2}{c||}{\bf Features 
+    } & \multicolumn{5}{c|}{\bf Performance metrics}\\
+     \cline{2-8}
+    \bf \# & init & persist &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
+    C1 & gCNN  & ---  & 0.259 & 0.222 & 0.490 & 0.750 & 10.82  \\
+    C2 & gCNN  & SVM80& 0.259 & 0.226 & 0.492 & 0.782& \red{xxx}  \\
+    C3 & gCNN  & gCNN &\bf 0.302 & 0.243 &\bf 0.523 & 0.897 & 10.25  \\
+    C4 & SVM80 & gCNN &\bf 0.302 &\bf0.244 &\bf 0.523 &\bf0.909 & 10.30  \\
+    C5 & SVM80 & SVM80& xxxxx & xxxxx & xxxxx & xxxxx & xxxxx  \\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{ Evaluating the utility of the init and persist input channels to the
+          LSTM language model}
+  \label{tab:resCocInitVPers}
+\end{table*}
+
+In Chapter~\ref{chapter:langModel} we introduced a new input to the LSTM language
+model, the \emph{persist} path, positing that it is beneficial for the language
+model to have access to the visual features throughout the caption generation
+process.
+%%
+This new input also enables us to provide two different features as input to the
+language model.
+%%
+Table~\ref{tab:resCocInitVPers} presents the results from experiments trying to
+determine the best use for the two input channels, \emph{init} and
+\emph{persist}.
+%%
+In these experiments, our language model has only a singel layer of LSTM cells
+with both the word-embeddings and LSTM layer being of 512 dimensions.
+
+Model C1 only uses the \emph{gCNN} (from GoogleLeNet) image features as the
+\emph{init} input and is our baseline model.
+%%
+Compared to this, additionally providing the 80 dimensional detector features,
+\emph{SVM80},
+using the \emph{persist} channel improves the performance slightly, in model C2.
+%%
+Instead, if we provide the gCNN features to both the inputs, as in model C3,
+there is dramatic improvement in the performance in all the four metrics, as
+well as in validation perplexity.
+%%
+This tells us that it is beneficial for the language model to have access to the
+CNN features throughout the caption generation process.
+%%
+
+Instead of redundantly using the same \emph{gCNN} features in both \emph{init} and
+\emph{persist}, we can now replace the \emph{init} feature with the \emph{SVM80}
+feature to get a marginal performance improvement as seen in model C4.
+%%
+Model C5 tells us that using only \emph{SVM80} features is not good and CNN
+features need to be presented in the \emph{persist} to get the best performance. 
+%%
+
+%--------------------------------------------------------------------------------------
+\subsubsection{Finding the best Image features}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \bf Model & \bf \multirow{2}{*}{Init feature} & \multicolumn{5}{c|}{\bf Performance metrics}\\
+    \cline{3-7}
+    \bf \# &\bf &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
+    C4 & SVM80               & 0.302 & 0.244 & 0.523 & 0.909 & 10.30  \\
+    C6 & FRC80               & 0.316 & 0.249 &\bf0.534 & 0.952 & 10.15  \\
+    C7 & SUN397              & 0.301 & 0.241 & 0.521 & 0.894 & 10.40  \\
+    C8 & SUN397$\oplus$FRC80 & 0.315 &\bf0.250 & 0.532 &0.954 &10.05  \\\hline
+    C9 & 4$\times$4IoU       & 0.302 & 0.244 & 0.522 & 0.913 & 10.21  \\
+    C10 & 4$\times$4Gauss    & 0.308 & 0.246 & 0.527 & 0.921 & 10.15  \\
+    C11 & 3+3Gauss           & 0.308 & 0.247 & 0.527 & 0.928 & 10.08  \\\hline
+    C12 &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+                             &\bf0.318&\bf0.250&0.533 &\bf0.957&\bf9.93\\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{ Evaluating the efficacy various image feautures using fixed language model
+          configuration}
+  \label{tab:resCocFeatExpt}
+\end{table*}
+
+Next we report from our experiments to determine the best image features to pair
+with the CNN features.
+%%
+Using the results from previous subsection as guideline, we keep the gCNN
+features as \emph{persist} input in all the experiments, and only change the
+feature input in the \emph{init} channel.
+%%
+The language model parameters also remain the same as
+subsection~\ref{subsubsec:InitVpersist}.
+%%
+Table~\ref{tab:resCocFeatExpt} presents the results from these experiments.
+%%
+Note that, here we use the ``$\oplus$'' symbol to denote the vector
+concatenation operation.
+
+Comparing the results of models C4 and C6, we see that the FRC80 features
+outperforms the SVM80 features with a specially significant gain in the CIDEr
+metric.
+%%
+The Faster R-CNN based object features thus seem to overcome the simpler SVM
+detector output based features.
+%%
+This also supports our hypothesis that good explicit object detectors can
+effectively compliment the CNN image features. 
+%%
+The object detectors are trained to detect multiple objects explicitly, and
+although they don't encode any information about the object shape or other
+attributes, just the information about probability of occurence of different
+objects seems very beneficial to the captioning task.
+
+Using the Scene detection features, \emph{SUN397}, alone as \emph{init} input in
+model C7 worsens the performance.
+%%
+But augmenting the \emph{FRC80} object features with scene information by
+concatenating \emph{SUN397} features as shown in model C8 improves the
+performance over C6 in 3 metrics.
+
+Next we compare the spatial grid features in models C9 through C11.
+%%
+We find that using the integral of Gaussian performs better than using the
+intersection-over-union (IoU) measure when constructing these features as seen
+by comparing C9 and C10. 
+%%
+In general, however, the spatial grid features do not match the performance of
+the FRC80 features, even though FRC80 only encodes a subset of the information
+represented in the spatial grid features.
+%%
+This could be due to the fact that the spatial grid features are of much higher
+dimension than the \emph{FRC80} feature vectors.
+%%
+This hypothesis is also strengthened by observing that model C11, which uses
+smaller \emph{3+3Gauss} features, performs the best among the models using the spatial
+grid features.
+
+%%
+Next we train model C12 with concatenating the \emph{FRC80} , \emph{SUN397}  and
+\emph{3+3Gauss}. 
+This model now has access to object detection , scene type and object location
+information apart from the CNN features and is our best performing model with
+this language model configuration.
+
+\subsubsection{How deep should we go?}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \bf Model & \bf \multirow{2}{*}{Depth} & \multicolumn{5}{c|}{\bf Performance metrics}\\
+    \cline{3-7}
+    \bf \# &\bf &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
+    C8  & 1   & 0.315 & 0.250 & 0.532 & 0.954 &10.05  \\\hline
+    C13 & 2   & 0.318 & 0.252 & 0.535 &\bf0.967 & 10.14  \\
+    C14 & 3   & 0.316 & 0.253 & 0.533 & 0.964   & 10.34  \\
+    C15 & 4   & xxxxx & xxxxx & xxxxx & xxxxx   & xxxxx  \\\hline
+    C16 &2-res&\bf0.320& 0.253 &\bf0.536&0.966  & 9.92   \\
+    C17 &3-res& 0.316 &\bf0.254&0.532 & 0.962   &\bf9.69 \\
+    C18 &4-res& xxxxx &xxxxx&xxxxx & xxxxx   &xxxxx\\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Results from experiments with language model depth, with fixed input features}
+  \label{tab:resultsVal}
+\end{table*}
+
+We now present experiments with depth of the LSTM language model.
+%%
+For these experiments, LSTM layer size and word encoding size is still held at
+512 dimensions, but only the number of LSTM layers is changed.
+%%
+The \emph{SUN397$\oplus$FRC80} features are used a \emph{init} input and
+\emph{gCNN} features are used as \emph{persist} input.
+
+
+
+\subsubsection{Ensembling and Class based factorization}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \bf Model & \bf \multirow{2}{*}{Init Feature} & \multicolumn{5}{c|}{\bf Performance metrics}\\
+    \cline{3-7}
+    \bf \# &\bf &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
+    C19-cls &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+                             & 0.287 & 0.245 & 0.523 & 0.911 & 10.10 \\\hline
+    C17 & SUN397$\oplus$FRC80& 0.316 &\bf0.254&0.532 & 0.962   &\bf9.69 \\
+    C20 &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+                             & 0.319 & 0.252 & 0.535 & 0.970 & 9.72 \\\hline
+    C21& CMME                & xxxxx & xxxxx & xxxxx & xxxxx & -- \\
+    C22& CNN Evaluator       &\bf0.320&\bf0.254 &\bf0.536 &\bf0.978 & -- \\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Comparison of the best depth 3 models and ensembling techniques}
+  \label{tab:resultsVal}
+\end{table*}
+
+\subsubsection{Qualitative and language diversity analysis of the captions}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    \bf Model\# &\bf vocab size & Unique Sent & New Sent \\\hline\hline
+    C1      & 513  & xxxx & xxxx  \\
+    C8      & 962  & xxxx & xxxx  \\
+    C16     & 983  & xxxx & xxxx  \\
+    C17     & 1112 & xxxx & xxxx  \\
+    C19-cls & xxxx & xxxx & xxxx  \\
+    C20     & 1112 & xxxx & xxxx  \\
+    C21     & xxxx & xxxx & xxxx  \\
+    C22     & 1303 & xxxx & xxxx  \\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Language diversity statistics of our best models }
+  \label{tab:resultsVal}
+\end{table*}
+
 
 Table \ref{tab:resultsVal} shows the perplexity and evaluation metrics on the
 validation set for the different feature combinations and language models we
@@ -157,39 +375,6 @@ features for the \emph{init} input.
 %%
 Comparing these two, we can clearly see that adding the \emph{persist} feature
 greatly improves the performance in all metrics.
-
-Comparing the results of models \#2 and \#3, we see that the FRC80 features
-outperforms the SVM80 features with a specially significant gain in the CIDEr
-metric.  
-%%
-The Faster R-CNN based object features thus seem to overcome the simpler SVM
-detector output based features.
-
-%%
-We then try augmenting these FRC80 object features with scene information by
-concatenating SUN397 features.
-%%
-Model \#4 is trained with this and it achieves the best performance among our
-single layer models.
-%%
-Therefore, in the following experiments with increasing the number of LSTM
-layers we only use this feature combination.
-
-Next we compare the spatial grid features in models \#4, \#5 and \#6. 
-%%
-We find that using the integral of Gaussian performs better than using the
-intersection-over-union (IoU) measure when constructing these features. 
-%%
-In general, however, the spatial grid features do not match the performance of
-the FRC80 features, even though FRC80 only encodes a subset of the information
-represented in the spatial grid features.
-%%
-This could be due to the fact that the spatial grid features are of much higher
-dimension than the FRC80 feature vectors.
-%%
-This hypothesis is also strengthened by observing that model \#6, which uses
-smaller 3+3Gauss features, performs the best among the models using the spatial
-grid features.
 
 Then we compare the effect of increasing the number of LSTM layers in models \#8
 to \#11. 
@@ -228,7 +413,37 @@ because it picks the captions from a diverse pool of candidates.
 
 %% ---------------------------------------------------------------------------
 
+
+Table 1. Comparing init and persist pipes
+Table 2. Comparing features with the swapped pipeline 
+Table 3. Testing depth and class factorization 
+Table 4. Ensembling 
+
 \subsection{Results on Test Set}
+
+\begin{table*}[htp]
+  \newcommand{\mct}[1]{%
+    \multicolumn{2}{c|}{\bf#1}}
+  \centering
+  \caption{COCO 2014 test set results from CodaLab}
+  \begin{adjustbox}{center}
+  \begin{tabular}{||l|c|c|c|c|c|c|c|c|c||}
+    \hline\hline
+    \multirow{2}{*}{\bf CodaLab name}&\multirow{2}{*}{\bf\#}
+                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{3-10}
+                &     & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
+    frcnnBigger (ours)& 12    & 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
+    --- (ours)        & 13    & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
+    ATT\_VC~\cite{you2016image}& ---   &\bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
+    --- (ours)        & 11    & 0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
+    OriolVinyals~\cite{Vinyals_2015_CVPR}      & ---   & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
+    MSR\_Captivator~\cite{Fang2015} & ---   & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
+    human~\cite{Chen2015}& ---   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\\hline
+    \hline
+  \end{tabular}
+  \end{adjustbox}
+  \label{tab:resultsTest}
+\end{table*}
 
 We uploaded the captions generated with models \#11, \#12 and \#13 for the test
 images to the CodaLab portal to evaluate the performance on the COCO 2014 test
