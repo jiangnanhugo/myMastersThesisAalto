@@ -89,6 +89,7 @@ ILSVRC 2014 object classification challenge, with them coming first and second
 respectively in the competition.
 
 \subsubsection{GoogleLeNet} 
+\label{subsec:gCNN}
 The main idea behind the GoogleLeNet architecture was to use small dense
 structures like 1x1, 3x3 convolutions to mimic a large sparse layer.
 %%
@@ -172,6 +173,7 @@ final features.
 %%
 
 \subsection{Object Detectors}
+\label{subsec:svm80}
 %%----------------------------------%%
 
 As mentioned before,  we augment the CNN features with explicit object detector
@@ -334,68 +336,89 @@ The first one is to treat the video as just a sequence of 2-D static images and
 use CNNs trained on ImageNet~\cite{ImagenetOrig} to extract static image
 features from these frames.
 %%
-This is similar to features we extract for image captioning, except that now we
-have multiple feature vectors per input video.
+The second approach is to treat the video as 3-D data, consisting of a
+sequence of video segments, and use methods which also consider the variations
+along the time dimension for feature extraction.
+%%
+
+In both the above methods, pooling methods are used to combine multiple
+frame/segment level features into one video-level feature vector.
 %%
 Number of feature vectors can also vary depending on the length of the video.
 %%
 But, since our language model takes only single feature of vector of fixed size
-as input, we need to further compress these multiple frame-level feature vectors
-into a single video feature vector. 
+as input, we need to further compress these multiple feature vectors into a
+single video feature vector. 
 %%
 We will explore two different methods to accomplish this, one relying on simple
-pooling techniques and the other based on training a feature encoding recurrent
-network.
+pooling techniques like mean/max pooling and the other based on training a
+feature encoding recurrent network.
 %%
 
-The second approach is to treat the video as 3-dimensional data and use methods
-which also consider the variations along the time dimension for feature
-extraction.
-%%
-It is to be noted that even in this approach we could treat long videos as a
-series of smaller video segments and extract features for each of them
-separately.
-%%
-Any pooling method from above could then be used to combine these into one
-video-level feature vector.
-
-
-\red{SHOW VISUALIZATIONS of Trajectories}
 %%----------------------------------%%
 \subsection{Key-frame and multi-frame features}
 ALSO COVER POOLING HERE
 RANK POOLING???
 
-Since in this case, we are extracting features from static images, which are
-extracted from the input videos, we can again use similar feature extraction
-methods as the ones used in image captioning.
+In this approach, we will treat the video as a bag of static images, and use the
+same feature extraction techniques we used for image captioning to extract
+features from these video frames.
 %%
-But since the computation cost per video can increase enormously with its
-length, it would be too expensive to run this all the feature extraction methods
-discussed before for images.
+The idea here is to capture details of the scenes shown in the video, objects
+present in it and their attributes.
 %%
-Instead, we only extract the CNN features and the explicit object recognition
+If the clip is very short and only consists of a single shot, then it might be
+sufficient to extract these features from a single key-frame extracted from the
+center of the video. 
+%%
+But the if the video clip is long, we will need to extract the frame-level
+features from multiple frames, to sufficiently summarize the content in the
+video.
+
+%%
+In order to keep the computational time to be reasonable, we refrain from
+running all the feature extraction methods discussed before for images.
+%%
+Instead, we only extract the gCNN features and the explicit object recognition
 features~(\emph{SVM80}) from the video frames.
 %%
-We also improve efficiency by extracting these features only from one frame
-every second.
-
-We use the same GoogLeNet and VGG models used on the images for extracting
-CNN features on video frames.
+We also improve efficiency, by sampling only the key-frame in case of LSMDC
+dataset and one frame every second in MSR-VTT dataset for feature extraction.
 %%
-The feature extraction procedure also remains the same.
-
-Additionally,\emph{SVM80} features are also extracted on the same frames to give
-us two different feature vectors for each frame in the video.
+The feature extraction procedure for both gCNN and SVM80 features remain the
+same as described before for images in sections~\ref{subsec:gCNN} and
+\ref{subsec:svm80}. 
 
 %% ---------------------------------------------------------------------------
+\subsection{Segment-level Features}
 %%----------------------------------%%
-\subsection{Trajectory Features}
-%%----------------------------------%%
+Although, the frame level features do well in capturing the overall scene
+context of the videos, they fail to recognize actions and other motion related
+events.
+%%
+This is because lot of action in vidoes involve very local motion patterns,
+which is hard to capture when looking at frames individually.
+%%
+Such actions can occur even without any whole objects moving, and thus causing
+the CNN feature extractors to not notice any change.
+%%
 
-For extracting segment-based features we have used two different algorithms,
-namely dense trajectories~\cite{DBLP:conf/cvpr/WangKSL11, Wang2013} and 3-D CNN
-network based C3D features~\cite{DBLP:C3D}.
+But this information is vital for video description task, as describing the
+salient actions occuring in the video correctly is an important part of it.
+%%
+Thus we need video feature extraction methods, which can effectively encode
+information about local motion patterns existing in the video into a fixed size
+feature vector.
+%%
+For this purpose we use two feature extraction methods which treat videos as a
+series of video segments and operate on these video segments to extract motion
+information.
+These are dense trajectories~\cite{DBLP:conf/cvpr/WangKSL11, Wang2013} and 3-D CNN
+network based C3D features~\cite{DBLP:C3D} and we will discuss them in detail in
+following sub sections.
+
+%%----------------------------------%%
+\subsubsection{Trajectory Features}
 
 Dense trajectories video features have been, despite being hand-engineered
 features without any learning from the data, one of the best performing features
@@ -448,8 +471,9 @@ histogram for each video, with the histogram having 1000 bins. representation of
 %%
 Finally, concatenating the vector encodings of each of the descriptors we get a
 video feature vector of 5000 dimensions. 
+\red{SHOW VISUALIZATIONS of Trajectories}
 
-\subsection{3D Convolutional Network}
+\subsubsection{3D Convolutional Network}
 %%----------------------------------%%
 As an alternative to the hand crafted dense trajectory features, we also extract
 video-segment features using a deep neural network based on 3-D
@@ -480,11 +504,11 @@ To extract features using C3D, input videos are first cut into non-overlapping
 video segments of 16 frames long.
 %%
 Then each segment is input into the C3D network and the activations from the
-\emph{fc7} layer of the network is extracted as the segment .
+\emph{fc6} and \emph{fc7} layer of the network is extracted as the segment level
+features.
 %%
 This gives us a set of 4096-dimensional feature vectors which represent the
 input video.
-
 
 \red{Visualizations of video feature vectors T-sne with 20 categories ??}
 

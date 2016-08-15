@@ -1,0 +1,11 @@
+1.  Check for all FIXME
+2.  Check for all XXX
+3.  CHECK for all TODO
+4.  Check all figures - quality, arrowheads, and notation consistency
+5.  Check all figure captions.
+6.  Check all \ref, if referring to the correct things
+7.  Thorough readthrough 
+8.  Check all eqn. notation consistency
+9.  Check for image amd video feature references for consistency
+10. Check for passive vs active consistency 
+11. Check if all lines have a period

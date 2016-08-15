@@ -139,7 +139,7 @@ our best captioning model.}
     C2 & gCNN  & SVM80& 0.259 & 0.226 & 0.492 & 0.782& \red{xxx}  \\
     C3 & gCNN  & gCNN &\bf 0.302 & 0.243 &\bf 0.523 & 0.897 & 10.25  \\
     C4 & SVM80 & gCNN &\bf 0.302 &\bf0.244 &\bf 0.523 &\bf0.909 & 10.30  \\
-    C5 & SVM80 & SVM80& xxxxx & xxxxx & xxxxx & xxxxx & xxxxx  \\\hline
+    C5 & SVM80 & SVM80& 0.261 & 0.225 & 0.492 & 0.785 & 10.78 \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{ Evaluating the utility of the init and persist input channels to the
@@ -158,6 +158,10 @@ language model.
 Table~\ref{tab:resCocInitVPers} presents the results from experiments trying to
 determine the best use for the two input channels, \emph{init} and
 \emph{persist}.
+%%
+The columns \emph{init} and \emph{persist} indicate what visual features were
+used as the initializing and persistent inputs to the language model,
+respectively.
 %%
 In these experiments, our language model has only a singel layer of LSTM cells
 with both the word-embeddings and LSTM layer being of 512 dimensions.
@@ -227,7 +231,7 @@ Table~\ref{tab:resCocFeatExpt} presents the results from these experiments.
 Note that, here we use the ``$\oplus$'' symbol to denote the vector
 concatenation operation.
 
-Comparing the results of models C4 and C6, we see that the FRC80 features
+Comparing the results of models C4 and C6, we see that the \emph{FRC80} features
 outperforms the SVM80 features with a specially significant gain in the CIDEr
 metric.
 %%
@@ -256,15 +260,15 @@ intersection-over-union (IoU) measure when constructing these features as seen
 by comparing C9 and C10. 
 %%
 In general, however, the spatial grid features do not match the performance of
-the FRC80 features, even though FRC80 only encodes a subset of the information
-represented in the spatial grid features.
+the \emph{FRC80} features, even though \emph{FRC80} only encodes a subset of the
+information represented in the spatial grid features.
 %%
 This could be due to the fact that the spatial grid features are of much higher
 dimension than the \emph{FRC80} feature vectors.
 %%
 This hypothesis is also strengthened by observing that model C11, which uses
-smaller \emph{3+3Gauss} features, performs the best among the models using the spatial
-grid features.
+smaller \emph{3+3Gauss} features, performs the best among the models using the
+spatial grid features.
 
 %%
 Next we train model C12 with concatenating the \emph{FRC80} , \emph{SUN397}  and
@@ -286,14 +290,14 @@ this language model configuration.
     C8  & 1   & 0.315 & 0.250 & 0.532 & 0.954 &10.05  \\\hline
     C13 & 2   & 0.318 & 0.252 & 0.535 &\bf0.967 & 10.14  \\
     C14 & 3   & 0.316 & 0.253 & 0.533 & 0.964   & 10.34  \\
-    C15 & 4   & xxxxx & xxxxx & xxxxx & xxxxx   & xxxxx  \\\hline
+    C15 & 4   & 0.316 & 0.250 & 0.533 & 0.956 & 10.69  \\\hline
     C16 &2-res&\bf0.320& 0.253 &\bf0.536&0.966  & 9.92   \\
     C17 &3-res& 0.316 &\bf0.254&0.532 & 0.962   &\bf9.69 \\
-    C18 &4-res& xxxxx &xxxxx&xxxxx & xxxxx   &xxxxx\\\hline
+    C18 &4-res& 0.316 & 0.253 & 0.535 & 0.964   & 9.75 \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{Results from experiments with language model depth, with fixed input features}
-  \label{tab:resultsVal}
+  \label{tab:resCocDepthExpt}
 \end{table*}
 
 We now present experiments with depth of the LSTM language model.
@@ -304,7 +308,35 @@ For these experiments, LSTM layer size and word encoding size is still held at
 The \emph{SUN397$\oplus$FRC80} features are used a \emph{init} input and
 \emph{gCNN} features are used as \emph{persist} input.
 
+Table~\ref{tab:resCocDepthExpt} presents the results from this experiment.
+%%
+Column \emph{depth} specifies the number $N$ of LSTM layers in the model,
+with $N$-res being an LSTM network with $N$ layers and residual connections.
 
+When we increase the number of layers without adding residual connections, we
+see that that perplexity metric seems to worsen, although there is moderate
+improvement in other metrics upto a depth of 3 layers.
+%%
+This is seen comparing model C8 with models C13-C15.
+%%
+But, when we increase the depth to 4 layers, we see it performs similar to
+single layer model in automatic evaluation metrics with perplexity being
+significantly worse.
+%%
+
+Adding the residual connections significantly improves the perplexity of
+validation set while the performance on the metrics improves slightly, with the
+biggest gain seen in CIDEr metric.
+%%
+We see that performance gain seem to saturate by 4 layers even with residual
+connections.
+%%
+So the choice for the best architecture is between 2 or 3 layered model with
+residual connections, considering all the 5 metrics.
+%%
+But since 3 layered model, C17, produces more diverse captions, as seen in
+subsection~\ref{subsubsec:QualAnalCoc} we choose this configuration for further
+experiments.
 
 \subsubsection{Ensembling and Class based factorization}
 \begin{table*}[htp]
@@ -316,79 +348,26 @@ The \emph{SUN397$\oplus$FRC80} features are used a \emph{init} input and
     \bf Model & \bf \multirow{2}{*}{Init Feature} & \multicolumn{5}{c|}{\bf Performance metrics}\\
     \cline{3-7}
     \bf \# &\bf &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
-    C19-cls &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
-                             & 0.287 & 0.245 & 0.523 & 0.911 & 10.10 \\\hline
     C17 & SUN397$\oplus$FRC80& 0.316 &\bf0.254&0.532 & 0.962   &\bf9.69 \\
-    C20 &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+    C19 &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
                              & 0.319 & 0.252 & 0.535 & 0.970 & 9.72 \\\hline
+    C20-cls &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+                             & 0.286 & 0.245 & 0.523 & 0.906 & 10.10 \\\hline
     C21& CMME                & xxxxx & xxxxx & xxxxx & xxxxx & -- \\
     C22& CNN Evaluator       &\bf0.320&\bf0.254 &\bf0.536 &\bf0.978 & -- \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{Comparison of the best depth 3 models and ensembling techniques}
-  \label{tab:resultsVal}
+  \label{tab:resfinalCocValset}
 \end{table*}
 
-\subsubsection{Qualitative and language diversity analysis of the captions}
-\begin{table*}[htp]
-  \centering
-  \newcommand{\bs}{\small}
-  \begin{adjustbox}{center}
-  \begin{tabular}{|c|c|c|c|}
-    \hline
-    \bf Model\# &\bf vocab size & Unique Sent & New Sent \\\hline\hline
-    C1      & 513  & xxxx & xxxx  \\
-    C8      & 962  & xxxx & xxxx  \\
-    C16     & 983  & xxxx & xxxx  \\
-    C17     & 1112 & xxxx & xxxx  \\
-    C19-cls & xxxx & xxxx & xxxx  \\
-    C20     & 1112 & xxxx & xxxx  \\
-    C21     & xxxx & xxxx & xxxx  \\
-    C22     & 1303 & xxxx & xxxx  \\\hline
-  \end{tabular}
-  \end{adjustbox}
-  \caption{Language diversity statistics of our best models }
-  \label{tab:resultsVal}
-\end{table*}
-
-
-Table \ref{tab:resultsVal} shows the perplexity and evaluation metrics on the
-validation set for the different feature combinations and language models we
-have studied.
-
-The columns \emph{init} and \emph{persist} indicate what visual features were
-used as the initializing and persistent inputs to the language model,
-respectively.
+Now that we have determined the 3 layered model with residual connections seems to
+be the best language model configuration, we further upgrade the init feature
+used to train model C19.
 %%
-Entries containing multiple features separated with a `+' sign imply that these
-features have been concatenated together to form a higher-dimensional feature
-vector.
+From table~\ref{tab:resfinalCocValset} we see that it outperforms C17 and is our
+best performing single model on the COCO validation set.
 %%
-The column \emph{depth} specifies the number $N$ of LSTM layers in the model,
-with $N$-res being an LSTM network with $N$ layers and residual connections.
-
-Model \#1 uses the gCNN feature vector as the \emph{init} feature without any
-\emph{persist} feature and it serves as our baseline model.
-%%
-Model \#2 moves the gCNN feature to the \emph{persist} input and uses the SVM80
-features for the \emph{init} input. 
-%%
-Comparing these two, we can clearly see that adding the \emph{persist} feature
-greatly improves the performance in all metrics.
-
-Then we compare the effect of increasing the number of LSTM layers in models \#8
-to \#11. 
-%%
-Without residual connections, both the 2- and 3-layer models perform similarly
-in terms of the evaluation metrics, but the 3-layer model has worse perplexity.
-%%
-Adding the residual connections significantly improves the perplexity while the
-performance on the metrics remain approximately the same.
-
-For model \#12, we train a 3-layer LSTM with residual connections and a feature
-vector containing FRC80, SUN397 and the 3+3Gauss features as the \emph{init}
-input. This model achieves the best CIDEr among all of our single models.
-
 Model \#13 is our best performing model on the validation set. 
 %%
 We use the CNN evaluator based ensemble to choose the best candidate caption for
@@ -397,6 +376,41 @@ each image from a candidate pool generated by six of our best models.
 The six models used here include \#3, \#9, \#11, \#12, and two models trained
 using concatenating the SUN397 with two spatial grid features 3+3Gauss and
 4$\times$4Gauss, respectively.
+
+
+\subsubsection{Qualitative and language diversity analysis of the captions}
+\label{subsubsec:QualAnalCoc}
+\begin{table*}[htp]
+  \centering
+  \newcommand{\mlhead}[2]{%
+    \parbox[c][][c]{#1}{\smallskip\centering #2 \smallskip}
+    }
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \bf Model\# 
+    &\mlhead{1.5cm}{\bf Mean \\Length}
+    &\mlhead{1.8cm}{\bf Vocabula--ry size} 
+    &\mlhead{2.1cm}{\bf\% Unique captions} 
+    &\mlhead{2cm}{\bf\% New captions} 
+    &\mlhead{2cm}{\bf Comments} \\\hline\hline
+    C1      & xxxx &      & xxxxx & xxxxx& xxxxx   \\
+    C4      & xxxx &      & xxxxx & xxxxx& xxxxx   \\\hline
+    C8      & 9.02 &  962 & 23.23 & 18.25& \\
+    C16     & 9.11 &  983 & 26.39 & 20.80& Varying  \\
+    C17     & 9.18 & 1197 & 31.14 & 24.03& Depth      \\
+    C18     & 9.23 & 1164 & 31.10 & 24.28&    \\\hline
+    C12     & 8.93 & 1003 & 23.49 & 18.24& xxxxx   \\
+    C19     & 9.01 & 1112 & 28.43 & 22.04& xxxxx   \\
+    C20-cls & 9.52 & 1163 & 49.29 & 44.60& xxxxx   \\
+    C21     & xxxx & xxxx & xxxxx & xxxxx& xxxxx   \\
+    C22     & xxxx & 1303 & xxxxx & xxxxx& xxxxx   \\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Language diversity statistics of our best models }
+  \label{tab:resultsVal}
+\end{table*}
+
 
 Table \ref{tab:resultsVal} also shows in the \emph{vocab} column the size of the
 vocabulary used by the models when generating captions on the validation set.
@@ -410,7 +424,6 @@ layers increase the vocabulary size.
 Also the ensemble model has a significantly larger vocabulary, most likely
 because it picks the captions from a diverse pool of candidates.
 
-
 %% ---------------------------------------------------------------------------
 
 
@@ -419,47 +432,75 @@ Table 2. Comparing features with the swapped pipeline
 Table 3. Testing depth and class factorization 
 Table 4. Ensembling 
 
-\subsection{Results on Test Set}
-
+\subsection{Comparison with State-of-the-art}
 \begin{table*}[htp]
   \newcommand{\mct}[1]{%
     \multicolumn{2}{c|}{\bf#1}}
   \centering
-  \caption{COCO 2014 test set results from CodaLab}
   \begin{adjustbox}{center}
-  \begin{tabular}{||l|c|c|c|c|c|c|c|c|c||}
+  \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
     \hline\hline
-    \multirow{2}{*}{\bf CodaLab name}&\multirow{2}{*}{\bf\#}
-                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{3-10}
-                &     & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
-    frcnnBigger (ours)& 12    & 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
-    --- (ours)        & 13    & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
-    ATT\_VC~\cite{you2016image}& ---   &\bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
-    --- (ours)        & 11    & 0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
-    OriolVinyals~\cite{Vinyals_2015_CVPR}      & ---   & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
-    MSR\_Captivator~\cite{Fang2015} & ---   & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
-    human~\cite{Chen2015}& ---   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\\hline
-    \hline
+    \multirow{2}{*}{\bf Leaderboard Name}
+                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{2-9}
+                    & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
+    AugmentCNNwithDet~(C20)& 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
+    ------ (CNN C22) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
+    ATT\_VC~\cite{you2016image}& \bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
+    ------ (C17)  &  0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
+    OriolVinyals~\cite{Vinyals_2015_CVPR}      & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
+    MSR\_Captivator~\cite{Fang2015}  & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
+    Berkeley LRCN~\cite{donahue2015long}   & 0.306 &\bf0.585& 0.247 &0.335& 0.528 & 0.678& 0.921& 0.934\\
+    human~\cite{Chen2015}   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\
+    Montreal/Toronto~\cite{Xu2015show} & 0.277 & 0.537 & 0.241 &0.322& 0.516 & 0.654 & 0.865 & 0.893\\
+    \hline \hline
   \end{tabular}
   \end{adjustbox}
-  \label{tab:resultsTest}
+  \caption{COCO 2014 test results. The scores are based on Microsoft
+  COCO leaderboard. c\# indicates the number
+  of reference captions used in evaluation. The models are sorted
+  based on CIDEr score as in the leaderboard.}
+  \label{tab:resCocLeaderTest}
 \end{table*}
 
-We uploaded the captions generated with models \#11, \#12 and \#13 for the test
-images to the CodaLab portal to evaluate the performance on the COCO 2014 test
-set and to be able to compare against the best performing and state-of-the-art
-results by other research groups.
+\begin{table*}[htp]
+  \centering
+  \begin{adjustbox}{center}
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline\hline
+    \bf Model  &BLEU-4 &METEOR &ROUGE-L&CIDEr\\\hline
+    C22 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
+    C20 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
+    ATT\_VC~\cite{you2016image} & 0.304& 0.243& -- & -- \\
+    Berkeley LRCN~\cite{donahue2015long} & 0.300& 0.242& 0.524 & 0.896 \\
+    OriolVinyals~\cite{Vinyals_2015_CVPR} & 0.277& 0.233& -- & 0.855 \\
+    MSR\_Captivator~\cite{Fang2015} & 0.257& 0.236& -- & -- \\
+    Montreal/Toronto~\cite{Xu2015show} & 0.250& 0.230& -- & -- \\
+    \hline \hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Comparison of our models to the best published results on COCO 2014 validation set.}
+  \label{tab:resCocPubVal}
+\end{table*}
 
-Table~\ref{tab:resultsTest} shows the evaluation metrics obtained by these
-models along with a few other top entries in the CodaLab portal. 
+We compare the performance of our models with with several state-of-the-art
+models reported on the COCO 2014 captioning leaderboard and published results on
+the validation set.
 %%
-We can see that the performances of our models drop slightly on the test set
-compared to that on the validation set. 
+For this purpose, we submitted C17, M20 and the CNN ensemble model M22 captions
+to the CodaLab portal.
 %%
-Also, our best model on the validation set, \#13 is outperformed by model \#12
-on the test set.
+We compare our results with ATT\_VC~\cite{you2016image},
+MSR\_Captivator~\cite{Fang2015}, Berkeley LRCN~\cite{donahue2015long},
+Montreal/Toronto~\cite{Xu2015show}, OriolVinyals~\cite{Vinyals_2015_CVPR}, and
+human~\cite{Chen2015} reported in CodaLab. It is worth noting that the
+OriolVinyals model shares the same architecture with our adopted baseline model.
+%%
 
-Note that each metric in Table~\ref{tab:resultsTest} has two columns, \emph{c5}
+Table~\ref{tab:resCocLeaderTest} reports the results of the benchmark%
+\footnote{The leaderboard with more models and
+scores is at \url{http://mscoco.org/dataset/\#captions-leaderboard}}.
+%%
+Note that each metric in Table~\ref{tab:resCocLeaderTest} has two columns, \emph{c5}
 and \emph{c40}. 
 %%
 This is because COCO data set contains 40 reference captions for a small subset
@@ -472,88 +513,136 @@ the \emph{c40} are more reliable.
 The \emph{c5} metrics are obtained from the regular test set with only five
 reference captions. 
 
-Our best model on the test set, model \#12, is visible in the CodaLab
-leaderboard as ``frcnnBigger''.  
+We can see that the performances of our models drop slightly on the test set
+compared to that on the validation set. 
 %%
-We observe that this model tops the leaderboard in three out of the eight
-metrics shown in Table~\ref{tab:resultsTest}, more than any other model.
+Also, while the ensemble model was the best model on the validation set, we
+observe that the C20 is a better model on the test set.
 %%
-Had we ignored the somewhat questionable BLEU-4 measure, our result would be the
-top one in three measures out of six.
+This could be because some models in the ensemble do not generalize well to the
+test set.
 %%
-In either case, we can conclude that our method achieves the state-of-the-art
-results in this benchmark.
+Considering the overall performance of our model C20, we are outperforming
+several state-of-the art published results.
+%%
+\red{RE WRITE THIS PARGRAPH WITH MORE HONEST COMPARISON AND ALSO UPDATE TABLE} 
+%%
+More recently, there are three new entries on the leaderboard which are doing
+better than our C20 model, but since they are not associated with any published
+work, we refrain from discussing them here.
 
+We should note here that the scores in CodaLab leaderboard do not necessarily
+reflecting the original published work results due to changes and updates.
+%%
+Thus, we also present a comparison with the published scores on the validation
+set in Table~\ref{tab:resCocPubVal}.
+%%
+We see that our models outperform all published results on the validation set,
+with the largest improvement seen in the CIDEr score.
+%%
+We could attribute most of this improvement to the rich set of image features we
+use compared to other methods, most of which rely solely on CNN image features.
 
 %=================================================================================
 %=================================================================================
 \section{Video Captioning}
 \fixme{2 pages: from ICCV paper, and fresh}
 %=================================================================================
-\subsection{On LSMDC}
+Next we will shift our attention to evaluating our video captioning models.
+%%
+As discussed before, our video captioning datasets are much smaller in terms of
+training video-caption pairs compared to the coco dataset.
+%%
+Thus we will focus our efforts here on identifying the best video features
+suitable for the video captioning task, with majority of our experiments
+conducted on the richer MSR-VTT dataset.
+%%
+While choosing the language model configuration for these experiments, we will
+rely heavily on the insights obtained from the experiments on COCO dataset.
 
+\subsection{Experimental Setup}
+We extract the \emph{gCNN} and \emph{SVM80} features only on key-frames in LSMDC
+dataset and on one frame every second in MSR-VTT dataset.
+%%
+The features extracted only from key-frames will be indicated with a prefix
+\emph{kf-} and features extracted from frames every second will be denoted by
+the prefix \emph{ps-}.
+%%
+On LSMDC dataset, we only use the dense trajectory features~(\emph{DT}) as
+segment-level features.
+%%
+On MSR-VTT dataset, apart from \emph{DT} features we also experiment with
+improved dense trajectory features~(\emph{IDT}), and the features extracted from
+the C3D network.
+
+The evaluation of the video captioning models also rely on the same four
+evaluation metrics and model perplexity measure on validation set. 
+%%
+But on the test set, both the LSMDC and the MSR-VTT challenge organizers provide
+evaluation using the metrics and the human judgements, which we will present
+here.
+
+\subsection{On LSMDC}
+The keyframe used to extract \emph{kf-gCNN} and \emph{kf-SVM80} features is
+sampled from the center of the video after padding video clips to be of at least
+2 seconds long.
+%%
+In case of LSMDC dataset, it is reasonable to assume that the single keyframe is
+quite representative of the video clips, as the clips are very short.
+%%
+
+\subsubsection{Results on Public Test Set}
 \begin{table*}[t]
   \newcommand{\modpar}[4]{%
     \multirow{2}{*}{\emph{#1}} & \multirow{2}{*}{#2} & \multirow{2}{*}{#3}
     & \multirow{2}{*}{#4}}
-\centering
-    \begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+  \newcommand{\bs}{\bf \small}
+  \centering
+  \begin{adjustbox}{center}
+    \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
         \hline\hline
-        \bf model    &\bf init &\bf persist &\bf perplex &\bf beam size &\bf avg.len &\bf Bleu\_4 &\bf CIDEr &\bf METEOR &\bf ROUGE\_L    & \\\hline\hline
-        \modpar{1 coco-kf}{kf}{--}{ - }      & 1 & 9.62  &   0.003 &   0.049 &   0.053 &   0.116 &     \\\cline{5-11}
-                                       & & & & 5 & 8.74  &   0.003 &   0.045 &   0.044 &   0.105 & (p) \\\hline
-        \modpar{2 coco-kf+cls}{kf}{cls}{ - } & 1 & 10.17 &   0.003 &   0.045 &   0.053 &   0.113 &     \\\cline{5-11}
-                                       & & & & 5 & 9.04  &   0.003 &   0.045 &   0.044 &   0.103 &     \\\hline
-        \modpar{3 coco-cls+kf}{cls}{kf}{ - } & 1 & 9.62  &   0.003 &   0.052 &   0.053 &   0.114 &     \\\cline{5-11}
-                                       & & & & 5 & 8.66  &   0.003 &   0.049 &   0.045 &   0.104 &     \\\hline\hline
-        \modpar{4 kf}{kf}{--}{56.08}         & 1 & 5.24  &   0.004 &   0.071 &\bf0.058 &   0.140 &     \\\cline{5-11}
-                                       & & & & 5 & 3.39  &   0.002 &   0.063 &   0.043 &   0.114 &     \\\hline
-        \modpar{5 kf+cls}{kf}{cls}{60.78}    & 1 & 5.36  &   0.004 &   0.073 &\bf0.060 &   0.142 &     \\\cline{5-11}
-                                       & & & & 5 & 3.46  &   0.001 &   0.054 &   0.043 &   0.111 &     \\\hline
-        \modpar{6 cls+kf}{cls}{kf}{59.07}    & 1 & 5.12  &\bf0.005 &   0.087 &\bf0.059 &\bf0.144 &     \\\cline{5-11}
-                                       & & & & 5 & 3.50  &   0.003 &   0.071 &   0.047 &   0.122 &     \\\hline\hline
-        \modpar{7 traj}{traj}{--}{54.89}     & 1 & 5.28  &\bf0.005 &   0.087 &   0.057 &\bf0.145 &     \\\cline{5-11}
-                                       & & & & 5 & 3.75  &   0.003 &   0.074 &   0.047 &   0.123 &     \\\hline
-        \modpar{8 traj+cls}{traj}{cls}{59.75}& 1 & 5.28  &\bf0.005 &   0.081 &   0.057 &   0.141 &     \\\cline{5-11}
-                                       & & & & 5 & 3.48  &   0.003 &   0.074 &   0.047 &   0.123 &     \\\hline
-        \modpar{9 cls+traj}{cls}{traj}{55.14}& 1 & 5.33  &\bf0.006 &\bf0.092 &\bf0.058 &\bf0.146 & (b) \\\cline{5-11}
-                                       & & & & 5 & 3.80  &   0.004 &   0.082 &   0.049 &   0.128 &     \\\hline\hline
+        \bs \#   &\bs init &\bs persist &\bs perplex&\bs avg.len &\bs Bleu\_4&\bs METEOR &\bs ROUGE\_L &\bs CIDEr  \\\hline\hline
+        C4   & SVM80 & gCNN  &  --   & 9.62  & 0.003   &   0.053 &   0.114&   0.052 \\\hline
+        L2   & gCNN  & --    & 56.08 & 5.24  & 0.004   &   0.058 &   0.140&   0.071 \\
+        L3   & gCNN  & SVM80 & 60.78 & 5.36  & 0.004   &\bf0.060 &   0.142&   0.073 \\
+        L4   & SVM80 & gCNN  & 59.07 & 5.12  & 0.005   &   0.059 &   0.144&   0.087 \\\hline
+        L5   & DT    & --    & 54.89 & 5.28  & 0.005   &   0.057 &   0.145&   0.087 \\
+        L6   & DT    & SVM80 & 59.75 & 5.28  & 0.005   &   0.057 &   0.141&   0.081 \\
+        L7*  & SVM80 & DT    & 55.14 & 5.33  &\bf0.006 &   0.058 &\bf0.146&\bf0.092 \\\hline
     \end{tabular}
-    \medskip
+  \end{adjustbox}
     \caption{Results obtained on the public test set of LSMDC2015. 
       %%
-      ``kf'' stands for using keyframe-based features, ``traj'' for
+      ``gCNN'' stands for using keyframe-based features, ``dt'' for
       dense trajectory-based video features and ``cls'' for visual 
       content classification results as inputs to the \emph{init}
       and \emph{persistent} input lines of the LSTM network.
       %%
-      Submissions (p) and (b) were the ones visible in the
-      CodaLab leaderboard for the public and blind test sets, 
-      respectively, by the closing time of the LSMDC 2015 Challenge.}
-    \label{tab:results}
+      }
+    \label{tab:resLsmdcVal}
 \end{table*}
 
-To evaluate various forms of our model we used the the LSMDC 2015 public test
-set as the benchmark. The evaluation is performed using four standard metrics
-used in the LSMDC evaluation server namely:
-METEOR~\cite{denkowski-lavie:2014:W14-33},
-BLEU~\cite{Papineni:2002:BMA:1073083.1073135}, ROUGE-L~\cite{lin2004rouge} and
-CIDEr~\cite{Vedantam_2015_CVPR}.
+To evaluate various forms of our model we used the LSMDC 2015 public test
+set as the benchmark. 
 %%
-Table~\ref{tab:results} shows these four metrics computed for different models.
+Table~\ref{tab:resLsmdcVal} shows the four evaluation metrics computed for different
+models.
 %%
 In addition to the metrics, we also show the perplexity of the model on the
 public test set and the average lengths of the generated sentences.
 %%
-Results are provided always for beam sizes 1 and 5 used in the caption
-generation stage.
 
-\newcommand{\model}[1]{\emph{#1}}
-
-In order to get a quick baseline, we used models trained earlier on the COCO
-dataset to generate captions on the LSMDC test set with a simple rule-based
-translation applied to their output.  This translation is done in order to
-better match the LSMDC vocabulary and is implemented using the simple
+In order to get a quick baseline, we used the C4 model trained on the COCO
+dataset to to generate captions on the LSMDC test set.
+%%
+This model was chosen as it is the best model using the \emph{gCNN} and
+\emph{SVM80} features, which are compatible with \emph{kf-gCNN} and
+\emph{kf-SVM80} features.
+%%
+The captions generated with this model are translated with with a simple
+rule-based translation to better match the LSMDC vocabulary.
+%%
+It is implemented using the simple%
 $w_{\text{in}} \longrightarrow w_{\text{out}}$ rule:
 %%
 \begin{align} \label{eqTrans} w_{\text{out}} = \begin{cases} \text{SOMEONE},&
@@ -561,98 +650,181 @@ $w_{\text{in}} \longrightarrow w_{\text{out}}$ rule:
 \text{\mbox{\qquad\qquad person}}, \text{boy}, \text{girl} \}\\ w_{\text{in}},&
 \text{otherwise.} \end{cases} \end{align}
 
-Models 1--3 in Table~\ref{tab:results} are such translated models trained on the
-COCO dataset.
+As we can see in Table~\ref{tab:resLsmdcVal}, the performance of this COCO model
+on LSMDC dataset is quite bad.
 %%
-Model \model{1~coco-kf} was trained on the COCO dataset using concatenated
-GoogLeNet-based features with a total dimensionality of 4096 as the \emph{init}
-features. 
+This is caused by two factors, first the vocabulary used in LSMDC captions is
+quite different to that of COCO and hence automatic evaluation will rate the
+COCO captions quite badly.
 %%
-This approach matches the use of the NeuralTalk model described
-in~\cite{Vinyals_2015_CVPR} and~\cite{Karpathy_2015_CVPR}. 
-%%
-Model \model{2~coco-kf+cls} was trained using GoogLeNet as the \emph{init}
-features and the outputs of the 80 SVM classifiers as the \emph{persistent}
-feature, while model \model{3~coco-cls+kf} was trained with the role of these
-two feature types reversed.
-%%
-The results of these models have in our earlier experiments shown increasingly
-better performance on the COCO dataset itself, but we can hardly observe such
-progression in the translated results on the LSMDC dataset.
+Other factor, is that motion related information is completely ignored in this
+case.
 
-Next, we trained three models similar to the above COCO models, but now with
-captions available and features and content classification results calculated
-from the keyframes of the videos in the LSMDC 2015 dataset.
+Next, we train models using the reference captions in the LSMDC dataset and
+key-frame features.
 %%
-The results are presented as models 4--6 in Table~\ref{tab:results}. 
+Comparing models L2, L3 and L4 in table~\ref{tab:resLsmdcVal}, we see that
+the configuration with \emph{SVM80} features as \emph{init} input and
+\emph{gCNN} features as \emph{persist} input perfroms the best.
 %%
-Here we can see the benefit of using \emph{persistent} features as the model
-\model{6~cls+kf} performs better than the models trained solely on keyframe
-features.
+This also matches with the our similar observation on COCO dataset.
+%%
+We can also see that these models clearly out-perform the COCO baseline, mainly
+due to the vocabulary update.
 
-Finally, we trained three models using the dense trajectory video features and
-the keyframe-based SVM output features, presented in Table~\ref{tab:results} as
-models 7--9.
+Finally, we trained three models using the dense trajectory features and the
+keyframe-based \emph{SVM80} features, presented in Table~\ref{tab:resLsmdcVal}
+as models L5--L7. 
 %%
-Again we see that using the higher-dimensional feature, here the dense
-trajectory feature, as the \emph{persistent} input to the LSTM network gives the
-best performance among the group of models.
+Again we see that using the higher-dimensional feature, here the \emph{DT}
+feature, as the \emph{persistent} input to the LSTM network gives the best
+performance among this group of models.
 %%
-The result of model \model{9~cls+traj} can also be regarded as the best one
-obtained in our experiments and therefore we have used it in our final blind
-test data submission to the LSMDC 2015 Challenge.
+Comparing model L7 with L4 shows that using video features as opposed to just
+keyframe features gives a better performance.
+%%
+We can see that model L7 benefits from combining both keyframe and trajectory
+features as opposed to just using the trajectory features as in model L5.
+%%
+The result of model L7 can be regarded as the best one obtained in our
+experiments, it has the best scores in 3 out of 4 metrics, and therefore we have
+used it in our final blind test data submission to the LSMDC 2015 Challenge.
 
-As we can see from Table 1, the \emph{persistent} dense trajectory video
-features combined with the \emph{init} SVM classifier features from keyframes
-outperform all the other models in three out of the four metrics used.
-%%
-Comparing this with model \model{6~cls+kf} shows that using video features as
-opposed to just keyframe features gives a better performance.
-%%
-It also indicates that combining the keyframe and video features is better than
-using just the video features.
-
-A rather surprising finding is that using larger beam sizes in inference lead to
-poorer performance.
+A rather surprising finding from the experiments on LSMDC dataset is that, here
+using larger beam sizes in inference lead to poorer performance.
 %%
 This is slightly counterintuitive, but can be understood when we look at the
 lengths of the sentences produced by these two beam sizes. 
 %%
-For example, model \model{9~cls+traj} produces sentences with the average length
+For example, model L7 produces sentences with the average length
 of 5.33 words with beam size 1, while with beam size 5 the average length drops
 to just 3.79 words. This is because with higher beam sizes the model always
 picks the most likely sentence and penalizes heavily any word it is unsure of.
 This results in the model picking very generic sentences like \emph{``SOMEONE
 looks at SOMEONE''} over more descriptive ones.
+%%
+Thus all the results presented in this section use the beam size of 1.
 
-The results~(p) and~(b) in Table~\ref{tab:results} match our public and blind
-test data submissions, respectively, visible in the CodaLab leaderboard%
-\footnote{\scriptsize\url{https://www.codalab.org/competitions/6121\#results}}.
+\subsubsection{Results from the Challenge}
+\label{subsec:LSMDCChall}
+The submissions made to the LSMDC challenge were evaluated using both the
+automatic metrics and human judgements.
+%%
+However, only human evaluation was used as criteria to finally rank the teams.
+%%
+Human evaluations were collected by showing some human judges a video and 5
+associated captions and asking them to rank the five captions, based on 4
+criteria:
+\begin{itemize}
+  \item \emph{Correctness} : Content in the caption is more correct with the video 
+  \item \emph{Grammar} : Ranking the fluency and readability of the caption. 
+  \item \emph{Relevance} : Which caption contains the references to more salient items in the video
+  \item \emph{Helpfulness for the blind} : How helpful is the caption to help a
+          blind person understand the scene.
+\end{itemize}
+The five captions consisted of one caption from each of the four submissions and
+the reference caption for that video.
+%%
+
+Table~\ref{tab:resLsmdcTestMet} presents the automatic evaluation metrics on the
+blind test set for the four LSMDC submissions.
+%%
+Our model L7 was ranked 3rd among the four teams as per the metrics.
+%%
+Table~\ref{tab:resLsmdcTestHum} presents the average ranking of LSMDC
+submissions on the four criteria.
+%%
+Our submission won the LSMDC challenge by obtaining the best average ranking in
+3 of the 4 criteria, and came second in the 4th one.
+%%
+We can also see that there is a strong mismatch between the rankings as per
+human judgements and the automatic metrics.
+%%
+This is due to having only a single reference caption for evaluation and also
+relatively poor match between the reference captions and the video content as
+discussed in section~\ref{subsec:LsmdcData}.
+%%
+Surprisingly, we see that 3 out of the 4 models outperform the reference
+captions on the \emph{Grammar} metric.
+%%
+But there is still a big gap between the reference caption and the automatic
+captioning models in the three semantic metrics.
+%%
+A more detailed discussion on the LSMDC results is presented
+in~\cite{DBLP:journals/corr/RohrbachTRTPLCS16}
+
+\begin{table}[th]
+  \centering
+  \newcommand{\bs}{\small\bf}
+  \begin{adjustbox}{center}
+  \begin{tabular}{||c|c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
+    Visual labels~\cite{rohrbach2015long} &\bf0.009&\bf0.071&\bf0.164&\bf0.112\\
+    S2VT~\cite{venugopalan2015sequence} & 0.007 & 0.070 & 0.161 & 0.091\\
+    \bf L7               & 0.006 & 0.061 & 0.156 & 0.090\\
+    Temporal attention~\cite{yao2015describing} & 0.003 & 0.052 & 0.134 & 0.062\\\hline
+    \hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{LSMDC submission ranked using automatic evaluation metrics}
+  \label{tab:resLsmdcTestMet}
+\end{table}
+
+\begin{table}[th]
+  \centering
+  \newcommand{\bs}{\small\bf}
+  \begin{adjustbox}{center}
+  \begin{tabular}{||c|c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs Correctness &\bs Grammar &\bs Relavance & \bf Helpful for blind\\\hline\hline
+    Reference Caption    & 1.88  & 3.13  & 1.56  & 1.57\\\hline
+    \bf L7               &\bf3.10&\bf2.70&\bf3.29&3.29\\
+    Temporal attention~\cite{yao2015describing} & 3.14  & 2.71  & 3.31  & 3.36\\
+    Visual labels~\cite{rohrbach2015long}& 3.32  & 3.37  & 3.32  &\bf3.26\\
+    S2VT~\cite{venugopalan2015sequence}& 3.55  & 3.09  & 3.53  & 3.42\\
+    \hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Human judgement scores for the LSMDC challenge submissions}
+  \label{tab:resLsmdcTestHum}
+\end{table}
 
 %=================================================================================
 \subsection{On MSR-VTT}
+Similar to LSMDC dataset, we utilize both frame based and segment based video
+features in our captioning models for MSR-VTT dataset.
+%%
+But since the videos in the MSR-VTT dataset are much longer than the videos in
+LSMDC dataset, just using features from single key-frame is not sufficient.
+%%
+Thus we extract \emph{gCNN} features on one frame every second.
+%%
+These features are then pooled using mean pooling.
+%%
+
+Also, apart from the dense trajectory video features, we also experiment with
+the improved dense trajectory (IDT) and C3D video features. 
+%%
 Additionally, we utilize the video category information available for all videos
 in all splits of the dataset.
 %%
 This information is input to the language model as a one-hot vector of 20
-dimensions.
+dimensions and is referred to as \emph{20Categ}.
 
+And as in case of LSMDC, we will present both our local evaluation and results
+from the video captioning competition conducted based on this dataset, the
+Microsoft Video to Text Challenge.
+
+\subsubsection{Results on Validation Set}
 In order to measure the performance differences due to the different feature
 combinations and architectural changes, we use the validation set of the MSR-VTT
 dataset which contains 497 videos.
 %%
-Performance is measured quantitatively using the standard automatic evaluation
-metrics, namely METEOR, CIDEr, ROUGE-L and BLEU. 
-
 Table~\ref{tab:resultsVal} shows the results on the validation set.
 %%
-The columns \emph{init} and \emph{persist} indicate the features used for those
-input channels, respectively, in the language model.
-%%
-The column \emph{depth} is the number of layers used in the language model and
-\emph{perplex} is the perplexity measure on the validation set.
 
-Models \#1, \#2 and \#3 all use the dense trajectory (dt) features as
+Models M1, M2 and M3 all use the dense trajectory (dt) features as
 \emph{init} input and the mean pooled frame-level GoogLeNet features
 concatenated with the video category vector (gCNN+20Categ) as the \emph{persist}
 input.
@@ -662,37 +834,37 @@ They vary in the number of layers in the language model.
 Comparing their performance we see that the 2-layer model outperforms the single
 layered model by a small margin, while the 3-layer one is the inferior one.
 
-Model \#4 is similar to \#2, but uses the improved dense trajectories (idt) as
+Model M4 is similar to M2, but uses the improved dense trajectories (idt) as
 the \emph{init} input instead.
 %%
-Model \#5 differs from \#2 by the fact that it uses mean pooled 3-D
+Model M5 differs from M2 by the fact that it uses mean pooled 3-D
 convolutional features as the \emph{persist} input.
 %%
-We see that both \#4 and \#5 are competitive, but slightly worse than our best
-single model, \#2.
+We see that both M4 and M5 are competitive, but slightly worse than our best
+single model, M2.
 %%
 Upon qualitatively analyzing the model outputs, we see that each of them
 performs well on different kinds of videos.
 %%
-For example, model \#5, which only uses input features trained for action
+For example, model M5, which only uses input features trained for action
 recognition, does well in videos involving a lot of motion, but suffers in
 recognizing the overall scenery of the video.
 %%
-Conversely, model \#2 trained on frame-level features does better in recognizing
+Conversely, model M2 trained on frame-level features does better in recognizing
 objects and scenes, but makes mistakes with the sequence of their appearance,
 possibly due to the pooling operation.
 %%
 This phenomenon can also be observed in the second row of images in
-Figure~\ref{fig:capSamps}. Model \#5 produces a better caption on the video in
-the first column, while \#2 does better on the video in the second column.
+Figure~\ref{fig:capSamps}. Model M5 produces a better caption on the video in
+the first column, while M2 does better on the video in the second column.
 
 To get maximum utility out of these diverse models, we use the CNN evaluator
 network to pick the best candidate from the pool of captions generated by our
-top four models, \#1, \#2, \#4 and \#5.
+top four models, M1, M2, M4 and M5.
 %%
 The evaluator is trained using the gCNN+20Categ as the video feature.
 %%
-This result is shown as model \#6 in Table~\ref{tab:resultsVal}.
+This result is shown as model M6 in Table~\ref{tab:resultsVal}.
 %%
 We can see that the CNN evaluator significantly outperforms, in all the four
 metrics, every single model it picks its candidates from.
@@ -701,50 +873,60 @@ The first row of Figure~\ref{fig:capSamps} shows some examples where the CNN
 evaluator picks a better caption than the one generated by our best single
 model.
 
-\label{sec:discussion}
 \begin{figure*}[thp]
   \begin{center}
-    \includegraphics[width=0.30\linewidth]{images/9565.jpg}
-    \includegraphics[width=0.30\linewidth]{images/9430.jpg}
-    \includegraphics[width=0.30\linewidth]{images/7997.jpg}\\
-    \includegraphics[width=0.30\linewidth]{images/9150.jpg}
-    \includegraphics[width=0.30\linewidth]{images/9799.jpg}
-    \includegraphics[width=0.30\linewidth]{images/7632.jpg}
+  \newcommand{\mcCell}[1]{%
+  \multicolumn{1}{c}{#1}}
+  \centering
+  \begin{adjustbox}{center}
+  \tabcolsep=0.10cm
+  \begin{tabular}{lll}
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/9150.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/9799.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/7997.png}} \\
+    \textbf{\scriptsize\em M6:} \scriptsize a man is running in a gym &
+    \textbf{\scriptsize\em M6:} \scriptsize a person is playing with a rubix cube &
+    \textbf{\scriptsize\em M6:} \scriptsize cartoon characters are interacting\\
+    \textbf{\scriptsize\em M2:} \scriptsize a man is running&
+    \textbf{\scriptsize\em M2:} \scriptsize a man is holding a phone&
+    \textbf{\scriptsize\em M2:} \scriptsize a person is playing a video game\\
+    \textbf{\scriptsize\em M5:} \scriptsize a man is playing basketball&
+    \textbf{\scriptsize\em M5:} \scriptsize a person is playing with a rubix cube &
+    \textbf{\scriptsize\em M5:} \scriptsize a group of people are talking\\
+  \end{tabular}
+  \end{adjustbox}
   \end{center}
-  \vspace*{-5mm}
-  \caption{Sample captions generated for some test set videos. The
-    first row shows samples where the evaluator model \#6 outperforms
-    models \#2 and \#5, and the second row cases where the evaluator
-    performs worse.}
+  \vspace{-5mm}
+  \caption{Sample captions generated for some test set videos by our
+          models.}
   \label{fig:capSamps}
 \end{figure*}
 
 \begin{table*}[thp]
-  \caption{Performance of various features and 
-    network depths on the validation set of MSR-VTT}
-  \newcommand{\modpar}[4]{%
-    \multirow{2}{*}{\emph{#1}} & \multirow{2}{*}{#2} & \multirow{2}{*}{#3}
-    & \multirow{2}{*}{#4}}
   \centering
+  \begin{adjustbox}{center}
   \newcommand{\bs}{\small\bf}
   \begin{tabular}{||c|c|c|c|c|c|c|c|c|}
     \hline\hline
     \bf\# &\bf init &\bf persist &\bf depth &\bf perplex &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
-    1 & dt  & gCNN+20Categ & 1  & 27.31 & 0.396 & 0.268 & 0.438 & 0.588 \\
-    2 & dt  & gCNN+20Categ & 2  & 27.73 & 0.409 & 0.268 & 0.433 & 0.598 \\
-    3 & dt  & gCNN+20Categ & 3  & 28.44 & 0.370 & 0.262 & 0.397 & 0.575 \\\hline
-    4 & idt & gCNN+20Categ & 2  & 28.13 & 0.398 & 0.268 & 0.432 & 0.587 \\
-    5 & dt  & c3dfc7       & 2  & 29.58 & 0.369 & 0.268 & 0.413 & 0.577 \\\hline
-    6 & \multicolumn{4}{c|}{\em CNN evaluator based ensemble of best 4 models}
+    M1 & dt  & gCNN+20Categ & 1  & 27.31 & 0.396 & 0.268 & 0.438 & 0.588 \\
+    M2 & dt  & gCNN+20Categ & 2  & 27.73 & 0.409 & 0.268 & 0.433 & 0.598 \\
+    M3 & dt  & gCNN+20Categ & 3  & 28.44 & 0.370 & 0.262 & 0.397 & 0.575 \\\hline
+    M4 & idt & gCNN+20Categ & 2  & 28.13 & 0.398 & 0.268 & 0.432 & 0.587 \\
+    M5 & dt  & c3dfc7       & 2  & 29.58 & 0.369 & 0.268 & 0.413 & 0.577 \\\hline
+    M6 & \multicolumn{4}{c|}{\em CNN ensemble of best 4 models}
                                   & \bf0.411 & \bf0.277 & \bf0.464 & \bf0.596 \\\hline
     \hline
   \end{tabular}
-  \label{tab:resultsVal}
+  \end{adjustbox}
+  \label{tab:resVttFeat}
+  \caption{Performance of various features and 
+    network depths on the validation set of MSR-VTT}
 \end{table*}
 
 %% ---------------------------------------------------------------------------
 
-\subsection{Challenge Results}
+\subsubsection{Challenge Results}
 
 Since the CNN evaluator model performed the best on the validation set, we
 submitted that result in the MSR-VTT Challenge.
@@ -786,7 +968,6 @@ This can most likely be attributed to having a large number of 20 reference
 captions per video for the evaluation.
 
 \begin{table}[th]
-  \caption{Top 5 teams as per metrics on the test set}
   \centering
   \newcommand{\bs}{\small\bf}
   \scalebox{0.9}{
@@ -801,10 +982,10 @@ captions per video for the evaluation.
     \hline
   \end{tabular}}
   \label{tab:resultsTestMet}
+  \caption{Top 5 teams as per automatic evaluation metrics on the test set}
 \end{table}
 
 \begin{table}[th]
-        \caption{Top 5 teams as per human evaluation}
   \centering
   \newcommand{\bs}{\small\bf}
   \begin{tabular}{||c|c|c|c|}
@@ -818,6 +999,7 @@ captions per video for the evaluation.
     \hline
   \end{tabular}
   \label{tab:resultsTestHum}
+  \caption{Top 5 teams as per human evaluation}
 \end{table}
 
 %% ===========================================================================
