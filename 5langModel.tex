@@ -87,7 +87,6 @@ different sources.
 
 %%===========================================================================%%
 \section{Deeper model, residual connections }
-\fixme{Upto 1 page: From ACMMM paper}
 %% ---------------------------------------------------------------------------
 Another extension we experiment with to improve the performance of our language
 model is to add depth to the LSTM network used in it.
@@ -113,8 +112,8 @@ significantly lower values for both the training cost function and the model
 perplexity, as will be detailed in Section~\ref{chapter:results}.
 
 %%===========================================================================%%
-\section{Class based Factorization}
-\fixme{Upto 1 pages: fresh writing }
+\section{Hierarchical Decoder}
+\label{sec:ClassFact}
 Analyzing the baseline language model outputs for errors, one category of
 mistakes we often see are where the model misses the fine grain
 classification between two closely related objects.
@@ -184,7 +183,7 @@ data statistics to build these clusters.
 Here we will look at two different methods relying solely on the coco training
 data to cluster words into classes.
 
-\subsubsection{Brown Clustering}
+\subsubsection*{Brown Clustering}
 A popular data driven clustering algorithm is \emph{Brown clustering} proposed
 in~\cite{BrownClust}
 %%
@@ -214,7 +213,7 @@ desired number of clusters.
 Although this process leads to hierarchical clusters, we ignore the hierarchy
 and take all the classes in the final clustering output as independent classes
 in our language model 
-\subsubsection{K-means Clustering}
+\subsubsection*{K-means Clustering}
 
 K-means is a simple yet very effective clustering algorithm which can be used to
 cluster numerical data.

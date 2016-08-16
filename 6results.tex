@@ -58,8 +58,6 @@ This is followed by results from the test set obtained from the Microsoft
 codalab portal.
 
 \subsection{Experimental setup}
-The implementation details of the language models we train on COCO dataset
-remains the same as described in section~\ref{subsec:implDetails}.
 %%
 The CNN feature extraction and the Faster R-CNN models are based on the Caffe
 library~\cite{jia2014caffe}.
@@ -68,8 +66,35 @@ Using the code released for the Faster R-CNN
 network\footnote{https://github.com/rbgirshick/py-faster-rcnn}, we train it on
 the MS-COCO dataset to detect the 80 object categories annotated in COCO.
 %%
-Then this detector is run on the entire COCO dataset and the spatial map feature
+Then, this detector is run on the entire COCO dataset and the spatial map feature
 vectors are created using the bounding boxes output by the detectors.
+
+We train the language model by minimizing the log-likelihood assigned by the
+model to training samples.
+%%
+As noted before, evaluation of the trained model is done using the automatic
+evaluation metrics.
+%%
+This descripency is forced as the automatic metrics themselves are not
+differentiable and it would be hard to train a model directly to optimize these
+metrics.
+%%
+But, we can justify using the perplexity measure as the training cost function,
+by observing that perplexity measure roughly tracks the automatic metrics.
+%%
+That is optimizing the model parameters to minimize perplexity also improves the
+model performance as per automatic metrics.
+%%
+To verify this, we did a quick experiment where we compute the perplexity
+measure on validation and training set after every epoch of training.
+%%
+We also generate captions on the validation set using the intermediate models
+after every epoch and compute the automatic metrics.
+%%
+Results from this is plotted in figure~\ref{fig:MetVsPerplex}.
+%%
+We see that perplexity indeed tracks the performance on evaluation metrics very
+well.
 
 %%
 The CNN evaluator we use is created with bi-, tri-, 4-, and 5-gram filters and
@@ -77,18 +102,26 @@ $N_{\text{filt}}=100$ filters of each type.
 %%
 The word vectors are chosen to have $N_{\text{word vec dim}}=100$ dimensions.
 %%
-For each image we sample $k=50$ negative captions.
+In order to train the CNN evaluator, each ground truth caption-image pair needs
+$k$ negative captions aswell.
 %%
+In order to optimize the training process, we sample $k+1$ random image caption
+pairs and treat the other $k$ captions as negative samples for each caption.
+%%
+This is much faster than sampling separate negative captions for each
+image-caption pair, and improved the overall training speed.
+%%
+In our experiments, we found setting $k=49$ achieved good results.
 
 To evaluate the utility of the proposed set of image features and LSTM network
 architectures, we use the COCO 2014 validation set and the five reference
 sentences available for all images in it.
 %%
-The performance of a model is measured using the perplexity assigned by the
-model to the ground truth sentences in the validation set (referred to as
-``Pplx'' in tables), as well as with the four standard evaluation metrics
-(BLEU-4, METEOR, ROUGE-L and CIDEr) to compare the generated captions against
-the references.
+%The performance of a model is measured using the perplexity assigned by the
+%model to the ground truth sentences in the validation set (referred to as
+%``Pplx'' in tables), as well as with the four standard evaluation metrics
+%(BLEU-4, METEOR, ROUGE-L and CIDEr) to compare the generated captions against
+%the references.
 
 Microsoft COCO team has also made an evaluation server available on
 CodaLab\footnote{\url{https://competitions.codalab.org/competitions/3221}} where
@@ -100,7 +133,16 @@ We use this portal to evaluate our models on the COCO Image Captioning Challenge
 %%
 Here, we also compare our performance against other well-performing or
 state-of-the-art entries in the CodaLab leaderboard.
-
+%------------------------------------
+\begin{figure*}[ht]
+\begin{center}
+  \includegraphics[width=0.7\linewidth]{images/MetVsPerplex.pdf}
+\end{center}
+\vspace*{-10mm}
+\caption{Evolution of training and validation perplexity and automatic metrics
+        computed on validation set, during training.}
+\label{fig:MetVsPerplex}
+\end{figure*}
 %% ---------------------------------------------------------------------------
 
 \subsection{Results on Validation Set}
@@ -121,7 +163,6 @@ the other fixed.
 feature and best language model from the above mentioned experiments gives us
 our best captioning model.}
 %%
-
 %--------------------------------------------------------------------------------------
 \subsubsection{Evaluating the Init and Persist paths}
 \label{subsubsec:InitVpersist}
@@ -135,8 +176,8 @@ our best captioning model.}
     } & \multicolumn{5}{c|}{\bf Performance metrics}\\
      \cline{2-8}
     \bf \# & init & persist &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
-    C1 & gCNN  & ---  & 0.259 & 0.222 & 0.490 & 0.750 & 10.82  \\
-    C2 & gCNN  & SVM80& 0.259 & 0.226 & 0.492 & 0.782& \red{xxx}  \\
+    C1 & gCNN  & ---  & 0.289 & 0.238 & 0.514 & 0.860 & 10.43  \\
+    C2 & gCNN  & SVM80& 0.292 & 0.239 & 0.516 & 0.871 & 10.34  \\
     C3 & gCNN  & gCNN &\bf 0.302 & 0.243 &\bf 0.523 & 0.897 & 10.25  \\
     C4 & SVM80 & gCNN &\bf 0.302 &\bf0.244 &\bf 0.523 &\bf0.909 & 10.30  \\
     C5 & SVM80 & SVM80& 0.261 & 0.225 & 0.492 & 0.785 & 10.78 \\\hline
@@ -328,6 +369,12 @@ Adding the residual connections significantly improves the perplexity of
 validation set while the performance on the metrics improves slightly, with the
 biggest gain seen in CIDEr metric.
 %%
+We also found that residual connections improve the training convergence speed.
+%%
+This is illustrated in figure~\ref{fig:MetVsPerplex}, where we show the
+progression of perpelxity measure during training of the 4-layered models
+with~(C18) and without~(C15) residual connections.
+%%
 We see that performance gain seem to saturate by 4 layers even with residual
 connections.
 %%
@@ -337,6 +384,17 @@ residual connections, considering all the 5 metrics.
 But since 3 layered model, C17, produces more diverse captions, as seen in
 subsection~\ref{subsubsec:QualAnalCoc} we choose this configuration for further
 experiments.
+%------------------------------------
+\begin{figure*}[t]
+\begin{center}
+  \includegraphics[width=0.7\linewidth]{images/ResidualVsRegPerplex.pdf}
+\end{center}
+\vspace*{-10mm}
+\caption{Comparing the evolution of perplexity during training of a 4-layered
+        model with and without residual connections.}
+\label{fig:MetVsPerplex}
+\end{figure*}
+%------------------------------------
 
 \subsubsection{Ensembling and Class based factorization}
 \begin{table*}[htp]
@@ -365,21 +423,42 @@ Now that we have determined the 3 layered model with residual connections seems 
 be the best language model configuration, we further upgrade the init feature
 used to train model C19.
 %%
-From table~\ref{tab:resfinalCocValset} we see that it outperforms C17 and is our
-best performing single model on the COCO validation set.
+From table~\ref{tab:resfinalCocValset} we see that, with the richer feature
+input, model C19 improves over model C17 in three metrics. 
 %%
+
+Keeping the feature input and other language model parameters same as model C19,
+we train model C20-cls by changing the decoder in the language model to the
+hierarchical two-level decoder presented in section~\ref{sec:ClassFact}.
+%%
+To cluster the words into classes, we run k-means on word vectors learned by
+model C19, with k=200 to obtain 200 classes. 
+%%
+Looking at the performance of this model as per the evaluation metrics, C20-cls,
+presented in table~\ref{tab:resfinalCocValset}, we see that it is much worse
+than the corresponding simple decoder model, C19.
+%%
+But, as seen in section~\ref{subsubsec:QualAnalCoc}, this model generates 
+significantly more diverse captions.
+%%
+Thus, it seems that hierarchical decoder indeed makes the captions richer, but
+it also adversely affects the correctness of the captions generated.
+
 Model \#13 is our best performing model on the validation set. 
 %%
 We use the CNN evaluator based ensemble to choose the best candidate caption for
 each image from a candidate pool generated by six of our best models.
 %%
-The six models used here include \#3, \#9, \#11, \#12, and two models trained
+The six models used here include C6, C14, C17, C19, and two models trained
 using concatenating the SUN397 with two spatial grid features 3+3Gauss and
 4$\times$4Gauss, respectively.
+%%
+The models in the ensemble were chosen to include the best performing models
+while also maintaining diversity of architectures in the ensemble
 
-
-\subsubsection{Qualitative and language diversity analysis of the captions}
+\subsection{Language Diversity Analysis of the Captions}
 \label{subsubsec:QualAnalCoc}
+
 \begin{table*}[htp]
   \centering
   \newcommand{\mlhead}[2]{%
@@ -390,48 +469,61 @@ using concatenating the SUN397 with two spatial grid features 3+3Gauss and
     \hline
     \bf Model\# 
     &\mlhead{1.5cm}{\bf Mean \\Length}
-    &\mlhead{1.8cm}{\bf Vocabula--ry size} 
+    &\mlhead{2.1cm}{\bf Vocabulary size} 
     &\mlhead{2.1cm}{\bf\% Unique captions} 
     &\mlhead{2cm}{\bf\% New captions} 
     &\mlhead{2cm}{\bf Comments} \\\hline\hline
-    C1      & xxxx &      & xxxxx & xxxxx& xxxxx   \\
-    C4      & xxxx &      & xxxxx & xxxxx& xxxxx   \\\hline
+    C1      & 9.27 &  814 & 16.10 & 11.76 & Init vs\\
+    C4      & 9.08 &  923 & 22.42 & 17.23 & Persist\\\hline
     C8      & 9.02 &  962 & 23.23 & 18.25& \\
     C16     & 9.11 &  983 & 26.39 & 20.80& Varying  \\
     C17     & 9.18 & 1197 & 31.14 & 24.03& Depth      \\
     C18     & 9.23 & 1164 & 31.10 & 24.28&    \\\hline
-    C12     & 8.93 & 1003 & 23.49 & 18.24& xxxxx   \\
-    C19     & 9.01 & 1112 & 28.43 & 22.04& xxxxx   \\
-    C20-cls & 9.52 & 1163 & 49.29 & 44.60& xxxxx   \\
-    C21     & xxxx & xxxx & xxxxx & xxxxx& xxxxx   \\
-    C22     & xxxx & 1303 & xxxxx & xxxxx& xxxxx   \\\hline
+    C19     & 9.01 & 1112 & 28.43 & 22.04& Regular\\
+    C20-cls & 9.52 & 1163 & 49.29 & 44.60& vs Cls   \\\hline
+    C21     & xxxx & xxxx & xxxxx & xxxxx& Ensemble   \\
+    C22     & 9.13 & 1303 & 40.35 & 32.33& models   \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{Language diversity statistics of our best models }
-  \label{tab:resultsVal}
+  \label{tab:resCocQual}
 \end{table*}
 
+The evaluation based on automatic metrics presented in the previous sub-section
+despite being the accepted standard in literature, it is not very intuitive and
+doesn't give an idea of how rich the captions generated by the models' are.
+%%
+To address this, in this sub-section we will look at few simple metrics which
+measure the diversity of the captions generated by the models'.
+%%
+Specifically, we will generate captions to the 40504 images in the validation
+set using different models, and then look at mean length of the generated
+captions, the size of the vocabulary used by the models, what percentage of
+generated captions are unique and what percentage of generated captions are not
+seen in the training set.
+%%
 
-Table \ref{tab:resultsVal} also shows in the \emph{vocab} column the size of the
-vocabulary used by the models when generating captions on the validation set.
+Table \ref{tab:resCocQual} shows these statistics computed for various
+models. 
 %%
-This is a good metric to capture how diverse the captions generated by each
-model are. 
+Comparing the statistics for C1 and C4 we see that adding the persist path
+moderately improves vocabulary size and diversity of the captions generated,
+but with average length of the captions dropping slightly
 %%
-We see that adding the \emph{persist} feature and increasing the number of
-layers increase the vocabulary size.
+Next, comparing models C8, C16, C17 and C18, which vary only in th depth of the
+language model, we see that increasing depth improves all the four statistics,
+with the 3-layered model generating \url{~}$24\%$ new captions.
+
+Biggest gain in sentence diversity is seen when we use the hierarchical decoder
+based model, C20-cls. 
 %%
-Also the ensemble model has a significantly larger vocabulary, most likely
-because it picks the captions from a diverse pool of candidates.
+Comparing it to equivalent model C19, we see that C20-cls generates almost twice
+as many new captions, using a vocabulary of almost the similar size
+
+Finally the CNN based ensemble model, C22, has a significantly larger vocabulary
+as expected, since it picks the captions from a diverse pool of candidates.
 
 %% ---------------------------------------------------------------------------
-
-
-Table 1. Comparing init and persist pipes
-Table 2. Comparing features with the swapped pipeline 
-Table 3. Testing depth and class factorization 
-Table 4. Ensembling 
-
 \subsection{Comparison with State-of-the-art}
 \begin{table*}[htp]
   \newcommand{\mct}[1]{%
@@ -1004,8 +1096,77 @@ captions per video for the evaluation.
 
 %% ===========================================================================
 
-\section{Conclusions}
+\section{Qualitative Discussion}
+\begin{figure*}[bth]
+  \begin{center}
+  \newcommand{\mcCell}[1]{%
+  \multicolumn{1}{c}{#1}}
+  \centering
+  \begin{adjustbox}{center}
+  \tabcolsep=0.05cm
+  \begin{tabular}{lll}
+    \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg}} &
+    \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg}} &
+    \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg}} \\
+    \textbf{\em\scriptsize C21:} \scriptsize a man and a dog herding sheep in a field &
+    \textbf{\em\scriptsize C21:} \scriptsize a bathroom with a sink toilet and bathtub &
+    \textbf{\em\scriptsize C21:} \scriptsize a bottle of wine and a glass of wine\\
+    \textbf{\em\scriptsize C19:} \scriptsize a man standing next to a herd of sheep&
+    \textbf{\em\scriptsize C19:} \scriptsize a bathroom with a toilet and a sink&
+    \textbf{\em\scriptsize C19:} \scriptsize two bottles of wine sitting on a table\\
+    \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg}} &
+    \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg}} &
+    \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg}} \\
+    \textbf{\em\scriptsize M21:} \scriptsize a view of a bridge in the snow &
+    \textbf{\em\scriptsize M21:} \scriptsize a table with plates of food on it&
+    \textbf{\em\scriptsize M21:} \scriptsize a person riding a bike down a city street\\
+    \textbf{\em\scriptsize M19:} \scriptsize a train crossing a bridge over a river &
+    \textbf{\em\scriptsize M19:} \scriptsize a table topped with plates of food and drinks&
+    \textbf{\em\scriptsize M19:} \scriptsize a city street filled with lots of traffic\\
+  \end{tabular}
+  \end{adjustbox}
+  \end{center}
+  \vspace*{-5mm}
+  \caption{Captions generated for some validation images by two of our
+    models. The first row contains samples where the ensemble model,
+    C21, performs better, and the second row cases where M19 is
+    better.}
+  \label{fig:cococapSamps}
+\end{figure*}
 
+In the previous section we evaluated our models using the automatic
+metrics, but the metrics are only approximative in judging the
+correctness of the captions.
+%%
+Figure~\ref{fig:cococapSamps} shows some sample captions generated by the
+ensemble model \#13 and the best single model \#12 on images from
+the validation set.
+%%
+We can see that the generated captions are often fairly accurate,
+but still contain some quite rudimentary errors.
+
+%% 
+One of the errors which still persists is that our models are not able
+to precisely learn the relationships between the objects in an image.
+%%
+For example, our models find it hard to differentiate between a person
+riding a bicycle versus just standing next to it.
+%%
+A similar pattern of error is seen in relationships between various
+object types.
+
+Another commonly occurring error happens in counting, wherein the
+captions tend to get the number of objects wrong.
+%%
+We also see that some generated captions repeat the words referring to
+objects instead of using numerals.
+%%
+Still one drawback is in the vocabulary size of the generated
+sentences.
+%%
+As already seen in Table~\ref{tab:resCocQual}, even the ensemble
+model uses only 1,303 words which is about $1/8^{th}$ of the words
+presented to the models during the training.
 
 \section{Summary of Results}
 \fixme{About 2 pages, Fresh writing }
