@@ -195,17 +195,57 @@ joint embedding for them.
 \subsection{Recent Literature on Caption Generation}
 %%----------------------------------%%
 \red{NEEDS REVIEW and Extension}
-Image caption generation (or, more generally, image description generation)
+Visual caption generation (or, more generally, visual description generation)
 techniques include a wide range of methods and models.
 %%
-They are categorized into three groups~\cite{Bernardi2016}, including,
-retrieval-based ~\cite{Farhadi2010,Ordonez2011,Hodosh2013,Karpathy2014},
-sentence generation~\cite{Li2011,Elliott2013}, and the mixture models which
-combine the two paradigms~\cite{Vinyals_2015_CVPR,Fang2015,Elliott2015}.
+They can be broadly categorized into two groups: ones generating captions by
+retrieving from a database~\cite{Farhadi2010, Hodosh2013,Karpathy2014},
+and ones using natural language generation techniques to produce
+captions~\cite{Li2011,kulkarni2013babytalk,Vinyals_2015_CVPR,Fang2015}.
 %%
 
-A simple recurrent neural network~(RNN) based language model and a CNN based
-image features are used in~\cite{Karpathy_2015_CVPR}. 
+Early work on captioning images presented in~\cite{Farhadi2010} was retrieval
+based, wherein a similarity score between sentences and images is computed and
+is used to retireve the best matching caption to an input image. 
+%%
+This method relied on few hand engineered image features and dependcy parsing
+based features for sentences.
+%%
+In ~\cite{Hodosh2013}, authors pose the image description as a ranking problem
+involving correctly ranking a set of captions by their relevance to the input
+image.
+%%
+They argue that, ability to rank the captions correctly is a good measure of
+semantic image understanding, with the added benifit that it is much easier to
+automatically evaluate such ranked lists than evaluating generated novel
+captions.
+%%
+Such retrieval based system is further enhanced by use of deep image feature and
+word embeddings in~\cite{Karpathy2014}.
+
+One of the early models to successfully generate novel image captions was
+described~\cite{kulkarni2013babytalk}, albeit relying on pre-defined sentence
+templates to generate captions.
+%%
+In ~\cite{Li2011}, this template based language model is replaced with a n-gram
+based one learnt from large scale natural language data from the web.
+
+Following the successful use of recurrent network based language models on
+tasks like automatic speech recognition~\cite{mikolov2010recurrent} and machine
+translation~\cite{bahdanau2014neural}, it was quickly adapted to the image
+captioning literature as well~\cite{Karpathy_2015_CVPR, Vinyals_2015_CVPR,
+donahue2015long}.
+%%
+All these methods consists of two-stage encoder--decoder models, with 
+encoder being the image feature extraction module and decoder being the
+recurrent language model.
+%%
+One major advantage of this approach is it allows end to end training of the
+entire system.
+%%
+In case of ~\cite{Karpathy_2015_CVPR}, CNN based image features and a simple
+recurrent neural network~(RNN) based language model are used as encoder and
+decoder respectively.
 %%
 The authors also propose techniques to align different parts of a caption to
 different regions in the image. 
@@ -213,19 +253,8 @@ different regions in the image.
 Similarly in~\cite{Vinyals_2015_CVPR}, authors also use CNN image features, but
 an LSTM based network is used for the language model.
 %%
-In~\cite{kiros2014unifying}  a feed-forward network is used to predict the next
-word given the previous words, instead of a recurrent network, while still using
-CNN image features as input to the language model.
-
-In contrast, \cite{kiros2014multimodal} takes a two-stage encoder--decoder
-approach. 
+\red{donahue2015long}
 %%
-First, both the image feature vector and the word sequence is embedded into a
-common multimodal space so that the correct image--caption pairs have similar
-representations in this space. 
-%%
-Then, a decoder network generates the candidate caption taking this encoded
-vector as input. 
 
 As opposed to such end-to-end learning systems, \cite{Fang2015} takes a modular
 approach. 
