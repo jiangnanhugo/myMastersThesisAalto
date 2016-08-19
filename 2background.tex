@@ -192,7 +192,7 @@ language model using the same input matrix, forcing the model to learn a common
 joint embedding for them.
 
 %%----------------------------------%%
-\subsection{Recent Literature on Caption Generation}
+\subsection{Recent Literature on Captioning}
 %%----------------------------------%%
 \red{NEEDS REVIEW and Extension}
 Visual caption generation (or, more generally, visual description generation)
@@ -203,6 +203,14 @@ retrieving from a database~\cite{Farhadi2010, Hodosh2013,Karpathy2014},
 and ones using natural language generation techniques to produce
 captions~\cite{Li2011,kulkarni2013babytalk,Vinyals_2015_CVPR,Fang2015}.
 %%
+While the retrieval based methods tend to be semantically more accurate as they
+do not need to learn grammatical rules to generate a caption, the captions they
+produce are strictly restricted to the caption database, and thus won't work
+well on unseen data.
+%%
+In contrast, generative models can learn to create novel captions and even
+perform reasonably well on unseen data, they tend to have poorer semantic
+accuracy and details.
 
 Early work on captioning images presented in~\cite{Farhadi2010} was retrieval
 based, wherein a similarity score between sentences and images is computed and
@@ -253,8 +261,15 @@ different regions in the image.
 Similarly in~\cite{Vinyals_2015_CVPR}, authors also use CNN image features, but
 an LSTM based network is used for the language model.
 %%
-\red{donahue2015long}
+In their method, the image features are fed to the LSTM only at the beginning of
+the recursion, in order to prevent the network from over-fitting.
 %%
+Starting from a similar CNN+LSTM based pipeline,\cite{donahue2015long} propose a
+more general framework which can generate captions for videos.
+%%
+In case of videos, they replace the single image CNN feature with a sequence of
+conditional random field (CRF) video features and keep the language model
+configuration same.
 
 As opposed to such end-to-end learning systems, \cite{Fang2015} takes a modular
 approach. 
