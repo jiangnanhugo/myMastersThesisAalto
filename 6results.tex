@@ -146,7 +146,7 @@ state-of-the-art entries in the CodaLab leaderboard.
 %% ---------------------------------------------------------------------------
 
 \subsection{Results on Validation Set}
-In Chapters~\ref{chapter:langModel} \& ~\ref{chapter:langModel} we proposed
+In Chapters~\ref{chapter:VisFeatChapter} \& ~\ref{chapter:langModel} we proposed
 several image features and language model extensions respectively to improve the
 captioning system over the baseline model.
 %%
@@ -403,19 +403,41 @@ experiments.
   \begin{adjustbox}{center}
   \begin{tabular}{|c|c|c|c|c|c|c|}
     \hline
-    \bf Model & \bf \multirow{2}{*}{Init Feature} & \multicolumn{5}{c|}{\bf Performance metrics}\\
+    \bf Model & \bf \multirow{2}{*}{Class clustering} & \multicolumn{5}{c|}{\bf Performance metrics}\\
     \cline{3-7}
     \bf \# &\bf &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr&\bs Pplx \\\hline
-    C17 & SUN397$\oplus$FRC80& 0.316 &\bf0.254&0.532 & 0.962   &\bf9.69 \\
-    C19 &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
-                             & 0.319 & 0.252 & 0.535 & 0.970 & 9.72 \\\hline
-    C20-cls &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+    C19 & --    & 0.319 & 0.252 & 0.535 & 0.970 & 9.72 \\\hline
+    C20-cls &\parbox[c][][c]{4cm}{\smallskip\centering K-Means, 200 Class \smallskip} 
                              & 0.286 & 0.245 & 0.523 & 0.906 & 10.10 \\\hline
-    C21& CMME                & xxxxx & xxxxx & xxxxx & xxxxx & -- \\
-    C22& CNN Evaluator       &\bf0.320&\bf0.254 &\bf0.536 &\bf0.978 & -- \\\hline
+    C21-cls &\parbox[c][][c]{4cm}{\smallskip\centering Brown, 200 Class\smallskip} 
+                             & 0.286 & 0.245 & 0.523 & 0.906 & 10.10 \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{Comparison of the best depth 3 models and ensembling techniques}
+  \label{tab:resfinalCocValset}
+\end{table*}
+
+\begin{table*}[htp]
+  \centering
+  \newcommand{\bs}{\small}
+  \begin{adjustbox}{center}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    \bf Model & \bf \multirow{2}{*}{Method} & \bf \multirow{2}{*}{Evaluators}&
+    \bf \multirow{2}{*}{Eval type}  & \multicolumn{4}{c|}{\bf Performance metrics}\\
+    \cline{5-8}
+    \bf \# & & & &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr\\\hline
+    C19 & --    & -- & -- & 0.319 & 0.252 & 0.535 & 0.970\\\hline
+    C22 & Self-Eval & self      & max      & 0.319 & 0.253 & 0.533 & 0.966\\\hline
+    C23 & CMME      &  All six  & max-mean & 0.303 & 0.249 & 0.526 & 0.925\\
+    C24 & CMME      &  3-top    & max-mean & 0.304 & 0.250 & 0.527 &
+    0.932\\\cline{3-8}
+    C25 & CMME      &  All six  & max-max  & 0.305 & 0.251 & 0.528 & 0.935\\
+    C26 & CMME      &  3-top    & max-max  & 0.305 & 0.251 & 0.528 & 0.939\\\hline
+    C27 & Evaluator N/W & CNN  & max&\bf0.320&\bf0.254 &\bf0.536 &\bf0.978\\\hline
+  \end{tabular}
+  \end{adjustbox}
+  \caption{Comparison of different ensembling techniques and ensembling sets}
   \label{tab:resfinalCocValset}
 \end{table*}
 
@@ -480,9 +502,10 @@ while also maintaining diversity of architectures in the ensemble
     C17     & 9.18 & 1197 & 31.14 & 24.03& Depth      \\
     C18     & 9.23 & 1164 & 31.10 & 24.28&    \\\hline
     C19     & 9.01 & 1112 & 28.43 & 22.04& Regular\\
-    C20-cls & 9.52 & 1163 & 49.29 & 44.60& vs Cls   \\\hline
-    C21     & xxxx & xxxx & xxxxx & xxxxx& Ensemble   \\
-    C22     & 9.13 & 1303 & 40.35 & 32.33& models   \\\hline
+    C21-cls &\bf9.58& 1191 &\bf49.16 &\bf44.39& vs Cls   \\\hline
+    C22     & 9.06 &  993 & 21.34 & 15.36& Ensemble   \\
+    C26     & 9.38 &\bf 1380 & 41.65 & 33.64& models   \\
+    C27     & 9.13 & 1303 & 40.35 & 32.33& \\\hline
   \end{tabular}
   \end{adjustbox}
   \caption{Language diversity statistics of our best models }
@@ -515,12 +538,12 @@ language model, we see that increasing depth improves all the four statistics,
 with the 3-layered model generating \url{~}$24\%$ new captions.
 
 Biggest gain in sentence diversity is seen when we use the hierarchical decoder
-based model, C20-cls. 
+based model, C21-cls. 
 %%
-Comparing it to equivalent model C19, we see that C20-cls generates almost twice
+Comparing it to equivalent model C19, we see that C21-cls generates almost twice
 as many new captions, using a vocabulary of almost the similar size
 
-Finally the CNN based ensemble model, C22, has a significantly larger vocabulary
+Finally the CNN based ensemble model, C27, has a significantly larger vocabulary
 as expected, since it picks the captions from a diverse pool of candidates.
 
 %% ---------------------------------------------------------------------------
@@ -536,7 +559,7 @@ as expected, since it picks the captions from a diverse pool of candidates.
                        &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{2-9}
                     & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
     AugmentCNNwithDet~(C20)& 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
-    ------ (CNN C22) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
+    ------ (CNN C27) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
     ATT\_VC~\cite{you2016image}& \bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
     ------ (C17)  &  0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
     OriolVinyals~\cite{Vinyals_2015_CVPR}      & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
@@ -560,7 +583,7 @@ as expected, since it picks the captions from a diverse pool of candidates.
   \begin{tabular}{|l|c|c|c|c|c|}
     \hline\hline
     \bf Model  &BLEU-4 &METEOR &ROUGE-L&CIDEr\\\hline
-    C22 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
+    C27 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
     C20 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
     ATT\_VC~\cite{you2016image} & 0.304& 0.243& -- & -- \\
     Berkeley LRCN~\cite{donahue2015long} & 0.300& 0.242& 0.524 & 0.896 \\
@@ -1097,6 +1120,21 @@ captions per video for the evaluation.
 %% ===========================================================================
 
 \section{Qualitative Discussion}
+%------------------------------------
+\begin{figure}[ht]
+\begin{center}
+  \begin{adjustbox}{center}
+  \includegraphics[width=0.55\linewidth]{images/VTTCiderCateg.pdf}%
+  \includegraphics[width=0.55\linewidth]{images/VTTCiderLengths.pdf}
+  \end{adjustbox}
+\end{center}
+\vspace*{-10mm}
+\caption{Performance of video captioning system on various sub categories of the
+        MSR-VTT validation set.}
+\label{fig:MetVsPerplex}
+\end{figure}
+%% ---------------------------------------------------------------------------
+
 \begin{figure*}[bth]
   \begin{center}
   \newcommand{\mcCell}[1]{%
@@ -1108,28 +1146,28 @@ captions per video for the evaluation.
     \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg}} &
     \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg}} &
     \mcCell{\includegraphics[width=0.24\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg}} \\
-    \textbf{\em\scriptsize C21:} \scriptsize a man and a dog herding sheep in a field &
-    \textbf{\em\scriptsize C21:} \scriptsize a bathroom with a sink toilet and bathtub &
-    \textbf{\em\scriptsize C21:} \scriptsize a bottle of wine and a glass of wine\\
+    \textbf{\em\scriptsize C27:} \scriptsize a man and a dog herding sheep in a field &
+    \textbf{\em\scriptsize C27:} \scriptsize a bathroom with a sink toilet and bathtub &
+    \textbf{\em\scriptsize C27:} \scriptsize a bottle of wine and a glass of wine\\
     \textbf{\em\scriptsize C19:} \scriptsize a man standing next to a herd of sheep&
     \textbf{\em\scriptsize C19:} \scriptsize a bathroom with a toilet and a sink&
     \textbf{\em\scriptsize C19:} \scriptsize two bottles of wine sitting on a table\\
     \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg}} &
     \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg}} &
     \mcCell{\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg}} \\
-    \textbf{\em\scriptsize M21:} \scriptsize a view of a bridge in the snow &
-    \textbf{\em\scriptsize M21:} \scriptsize a table with plates of food on it&
-    \textbf{\em\scriptsize M21:} \scriptsize a person riding a bike down a city street\\
-    \textbf{\em\scriptsize M19:} \scriptsize a train crossing a bridge over a river &
-    \textbf{\em\scriptsize M19:} \scriptsize a table topped with plates of food and drinks&
-    \textbf{\em\scriptsize M19:} \scriptsize a city street filled with lots of traffic\\
+    \textbf{\em\scriptsize C27:} \scriptsize a view of a bridge in the snow &
+    \textbf{\em\scriptsize C27:} \scriptsize a table with plates of food on it&
+    \textbf{\em\scriptsize C27:} \scriptsize a person riding a bike down a city street\\
+    \textbf{\em\scriptsize C19:} \scriptsize a train crossing a bridge over a river &
+    \textbf{\em\scriptsize C19:} \scriptsize a table topped with plates of food and drinks&
+    \textbf{\em\scriptsize C19:} \scriptsize a city street filled with lots of traffic\\
   \end{tabular}
   \end{adjustbox}
   \end{center}
   \vspace*{-5mm}
   \caption{Captions generated for some validation images by two of our
     models. The first row contains samples where the ensemble model,
-    C21, performs better, and the second row cases where M19 is
+    C27, performs better, and the second row cases where M19 is
     better.}
   \label{fig:cococapSamps}
 \end{figure*}
