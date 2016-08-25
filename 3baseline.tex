@@ -1,4 +1,5 @@
-\chapter{Automatic Captioning Pipeline: Model, Data and Evaluation}
+\chapter{Caption Generation Pipeline: \\Model and Evaluation}
+\chaptermark{Baseline Model \& Evaluation Metrics}
 \label{chapter:baseline}
 %%===========================================================================%%
 In this chapter, we will examine in detail all the constituent parts
@@ -168,9 +169,8 @@ training phase.
 Our baseline LSTM language model is based on the network proposed
 in~\cite{Vinyals_2015_CVPR}.
 %%
-The block diagram of this language model is shown in Figure
-\ref{fig:lstmlang} (including also the extensions proposed in
-the subsequent sections).
+The block diagram of this language model is shown in
+Figure~\ref{fig:baselinelstmlang}
 %%
 The model consists of an LSTM network with a softmax layer at its
 output. 
@@ -298,117 +298,6 @@ At the end of this process we have k generated candidate sentences ranked
 according to the log-probability assigned by the model.
 %%
 
-\subsection{Implementation Platform Details ?}
-\label{subsec:implDetails}
-%%----------------------------------%%
-We implemented the LSTM language model using the Theano library~%
-%%
-The language model is trained using the stochastic gradient descent with the
-RMSProp~\cite{rmspropTielman} algorithm, and we have implemented regularization
-using dropout as described in \cite{ZarembaSV14}.
-%%
-The error is back-propagated to all the language model parameters and word
-embedding matrices, but the image feature extraction models are kept constant.
-
-In all our experiments we use beam-search to generate sentences from a trained
-model.
-%%
-After experimenting with different beam sizes, we found that beam size of $b=5$
-works adequately across all our models.
-
-\cite{Bastien-Theano-2012}.
-%%
-%%===========================================================================%%
-\section{Datasets}
-\fixme{Upto 4 pages, mostly fresh writing, but parts can be taken from previous
-papers}
-\subsection{MS-COCO}
-\red{READ AND EDIT CAREFULLY}
-In all our experiments we use the Microsoft COCO 2014
-data set~\cite{Lin2014} for training and evaluation.
-%%
-This data set consists of 164,062 images split into training set of
-82,783 images, validation set of 40,504 images and test set of 40,775
-images. 
-%%
-The training and validation sets have five reference captions for each
-image annotated by humans. 
-%%
-They also have object segmentations available for each image for
-objects belonging to 80 specified categories.
-%%
-The categories consist of common object types such as \emph{person},
-\emph{car}, \emph{bus}, \emph{skateboard}, etc.
-
-We make use of the object segmentations when training the Faster
-Region-based Convolutional Neural Networks for extracting the object
-location features, as described in Section~\ref{sec:frcnnfeat}.
-%%
-The segmentation information is, however, not utilized when training
-the LSTM language model nor when using it with the validation and test
-images.
-
-The availability of multiple reference captions helps to capture the
-fact that there are many suitable captions for any input image.
-%%
-Different annotators might focus on different salient parts in the
-image and using numerous annotators will thus produce a rich set of
-captions.
-%%
-This also helps in the automatic evaluation of the generated captions
-where the standard metrics used have better correlation with the human
-judgment when using multiple references~\cite{Vedantam_2015_CVPR}.
-
-Before using the reference captions in the COCO data set for training,
-
-\subsection{LSMDC}
-\label{subsec:LsmdcData}
-\subsection{MSR-VTT}
-\red{READ AND EDIT CAREFULLY}
-The MSR-VTT dataset consists of 10000 video clips with 20
-human-annotated captions for each of them.
-%%
-Each video belongs to one of 20 categories including \emph{music},
-\emph{gaming}, \emph{sports}, \emph{news}, etc.
-%%
-The dataset is split into training~(6513 clips), validation~(497
-clips) and test~(2990 clips) sets. 
-%%
-The training set videos are between 10 to 30 seconds long, with most
-of them less than 20 seconds long.
-
-The reference captions come from a vocabulary of $\sim$30k words,
-which we have filtered down to $\sim$8k after removing words occurring
-fewer than 5 times.
-%%
-Although the number of videos clips in the dataset is relatively small
-compared to M-VAD~\cite{rohrbach15cvpr} and
-MPII-MD~\cite{AtorabiM-VAD2015}, the dataset is attractive due to the
-diversity of its videos and due to the larger number of reference
-captions per video.
-
-Visually examining the training set, we have found many different
-video styles, including slideshows with static images, recordings of
-computer monitor showing users playing video games, movie trailers
-with lots of fast cuts, smooth single shot videos involving
-activities like cooking, news, interviews, etc.
-%%
-This means that the video captioning algorithm applied to this dataset
-needs to handle all these diverse video styles.
-%%
-If we rely only on action recognition based features, the approach
-will suffer with videos with lots of cuts and scene changes.
-%%
-On the other hand, if we rely only on frame-based features, the system
-will fail to identify fine-grained differences in diverse
-action-oriented categories like sports or cooking.
-%%
-Thus our approach is to use multiple captioning models, each trained
-on different types of features, and an evaluator network to pick the
-final candidate caption.
-%%
-\subsection{Other Datasets}
-%%===========================================================================%%
 \section{Evaluation Metrics}
 \label{sec:EvaluationMetrics}
 The evaluation of a captioning system is not trivial, due to the

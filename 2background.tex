@@ -1,13 +1,10 @@
 \chapter{Vision and Language: Background} \label{chapter:background} 
 %%===========================================================================%%
-\section{Role in human and machine learning}
 Long held interest in AI of integrating vision and language (FIND REFERENCES). BUT WHY?? 
+Some simple motivation and a set up for the rest of the chapter
 \fixme{Fresh writing: 1 page}
 %%===========================================================================%%
-\section{Related work and literature}
-\fixme{Upto 2-3 pages, from ACMMM paper and Project Report}
-%%----------------------------------%%
-\subsection{Visual features}
+\section{Visual features}
 %%----------------------------------%%
 Visual media, be it image or video, are inherently very high-dimensional data.
 %%
@@ -28,7 +25,7 @@ performing image and video feature extraction techniques, which will be used in
 designing our captioning system later on.
 
 %=================================================================================
-\subsubsection{Image Features}
+\subsection{Image Features}
 Traditionally, tasks like object recognition have relied on using
 hand-engineered features to represent images. 
 %%
@@ -72,7 +69,7 @@ ILSVRC 2014 competition, have been popular source of such feature extraction in
 the community with the ready availability of the code and pre-trained models.
 
 %=================================================================================
-\subsubsection{Video Features}
+\subsection{Video Features}
 Unlike in the case of images, where the convolutional neural network (CNN) image
 features have become the \emph{de facto} standard features for many image
 understanding related tasks, no single video feature extraction method has
@@ -113,7 +110,8 @@ CNNs pre-trained on the ImageNet dataset.
 In this work we explore both these paradigms of video feature extraction and
 both hand-engineered trajectory features and deep video features for the task of
 automatic captioning.
-\subsection{Natural language modelling and generation}
+
+\section{Natural language modelling and generation}
 %%----------------------------------%%
 Generative language models are widely used, in speech recognition and synthesis,
 to document analysis and automatic dialog systems.
@@ -156,7 +154,7 @@ ME-LM, and can learn the necessary word representations from the data.
 Indeed, such recurrent network based language models are quite popular in
 machine translation task~\cite{bahdanau2014neural}
 
-\subsection{Intermediate Problem: Multi-Modal embeddings}
+\section{Intermediate Problem: Multi-Modal embeddings}
 %%----------------------------------%%
 A precursor to the problem of caption generation from input visual features, is
 the simpler problem of learning to map both visual features and the
@@ -192,9 +190,8 @@ language model using the same input matrix, forcing the model to learn a common
 joint embedding for them.
 
 %%----------------------------------%%
-\subsection{Recent Literature on Captioning}
+\section{Recent Literature on Captioning}
 %%----------------------------------%%
-\red{NEEDS REVIEW and Extension}
 Visual caption generation (or, more generally, visual description generation)
 techniques include a wide range of methods and models.
 %%
@@ -279,3 +276,34 @@ learning.
 %%
 Then, a maximum entropy language model takes these detector outputs as input to
 generate the candidate sentence.
+%%
+This concept detector based approach has been also applied to video captioning
+in~\cite{DBLP:journals/corr/RohrbachTRTPLCS16}, where the authors train a
+"visual label" detector on the LSMDC dataset and use it as an input to a LSTM
+language model.
+
+In \cite{Xu2015show}, instead of using a single image feature vector from a
+fully connected layer, multiple local image features from a lower layer in the
+CNN is used.
+%%
+Then an attention mechanism is proposed to choose the right image features to
+look at while generating different words in the caption.
+%%
+Similar attention mechanism is used in~\cite{you2016image}, but instead of using
+the attention model to pick local CNN features, it is used to pick the right
+semantic concept, from the output of a semantic concept detector.
+
+Attention models extended to temporal domain have been applied to video
+captioning task, in-order to dynamically choose the right video feature
+in~\cite{yao2015describing}.
+%
+Alternatively, a recurrent network is used to encode frame-level video features
+before inputting them to the language model in~\cite{venugopalan2015sequence}.
+%%
+Then a standard LSTM language model is used to decode these features into a
+caption.
+%%
+\section{Datasets for Image and Video Captioning}
+\fixme{Upto a page, mostly fresh writing, but parts can be taken from previous
+papers}
+%%===========================================================================%%
