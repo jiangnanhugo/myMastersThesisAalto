@@ -1,8 +1,16 @@
-\chapter{Vision and Language: Background} \label{chapter:background} 
+\chapter{Background : Vision and Language} \label{chapter:background} 
 %%===========================================================================%%
-Long held interest in AI of integrating vision and language (FIND REFERENCES). BUT WHY?? 
-Some simple motivation and a set up for the rest of the chapter
-\fixme{Fresh writing: 1 page}
+In this chapter we will look at some background literature exploring different
+aspects of integrating visual data and natural language annotations of them.
+%%
+This includes learning good representations for images and videos, different
+kinds of generative language models, techniques which attempt to rank similarity
+between visual data and language annotations, and finally some recent advances
+in captioning images and videos.
+%%
+We will also quickly review some datasets available for training such captioning
+models.
+
 %%===========================================================================%%
 \section{Visual features}
 %%----------------------------------%%
@@ -111,7 +119,7 @@ In this work we explore both these paradigms of video feature extraction and
 both hand-engineered trajectory features and deep video features for the task of
 automatic captioning.
 
-\section{Natural language modelling and generation}
+\section{Natural Language Modelling}
 %%----------------------------------%%
 Generative language models are widely used, in speech recognition and synthesis,
 to document analysis and automatic dialog systems.
@@ -154,7 +162,7 @@ ME-LM, and can learn the necessary word representations from the data.
 Indeed, such recurrent network based language models are quite popular in
 machine translation task~\cite{bahdanau2014neural}
 
-\section{Intermediate Problem: Multi-Modal embeddings}
+\section{Intermediate Problem: Multi-Modal \\Embeddings}
 %%----------------------------------%%
 A precursor to the problem of caption generation from input visual features, is
 the simpler problem of learning to map both visual features and the
@@ -190,9 +198,9 @@ language model using the same input matrix, forcing the model to learn a common
 joint embedding for them.
 
 %%----------------------------------%%
-\section{Recent Literature on Captioning}
+\section{Approaches to Visual Captioning}
 %%----------------------------------%%
-Visual caption generation (or, more generally, visual description generation)
+Visual captioning (or, more generally, visual description generation)
 techniques include a wide range of methods and models.
 %%
 They can be broadly categorized into two groups: ones generating captions by
@@ -304,6 +312,68 @@ Then a standard LSTM language model is used to decode these features into a
 caption.
 %%
 \section{Datasets for Image and Video Captioning}
-\fixme{Upto a page, mostly fresh writing, but parts can be taken from previous
-papers}
 %%===========================================================================%%
+The rapid progress in image and video captioning in the recent years has also been
+driven by the availability of large scale datasets to train and test such models
+on. 
+%%
+These captioning datasets have images/videos with one or more associated
+reference caption.
+%%
+The reference captions can be collected by large-scale human annotation using
+crowd sourcing tools Amazon Mechanical Turk or it could be mined from other
+related sources. 
+
+One of the early datasets for image captioning was the
+Pascal1K~\cite{Rashtchian2010} consisting of 1000 images five human annotated
+captions for each of them.
+%%
+Flickr8k~\cite{Hodosh2013} and Flickr30k~\cite{Young2014} are relatively much
+larger data sets, consisting of 8,000 images and 30,000 images, respectively. 
+%%
+They also have five human-written captions for each image.
+%%
+Currently, the most popular and largest dataset for image captioning, is the
+Microsoft Common Objects in Context (COCO)~\cite{Lin2014} with over 200,000
+images and at least five human-written captions per image.
+%%
+There exists also an associated MS-COCO evaluation server, where researchers can
+upload their captions on the blind test dataset and compare the performance of
+their system to the state-of-the-art methods on a public leaderboard.
+%%
+Due to its size and availability of standardized benchmark, we choose to conduct
+all our image captioning experiments on the MS-COCO dataset. 
+%%
+
+Video captioning datasets are more difficult to collect and thus we see 
+use of both automatic caption mining techniques and manual annotation used to
+collect them.
+%%
+YouTube corpus~\cite{chen2011collecting} consists of 2000 video clips with
+at least 27 descriptions for each video.
+%%
+The M-VAD~\cite{rohrbach15cvpr} and MPII-MD~\cite{AtorabiM-VAD2015}
+datasets used in the first Large Scale Movie Description Challenge~(LSMDC), were
+collected using by using movie clips and transcribing associated audio
+description available in the movie DVDs.
+%%
+In total the dataset contains about ~100k clips from 202 movies and one
+reference caption associated with each clip. 
+%%
+This dataset is also associated with an evaluation server in-order to
+standardize the testing and comparison of performance on it.
+%%
+More recently released Microsoft Video to Text dataset~(MSR-VTT) contains 10,000
+with 20 human annotated captions for each of them. 
+%%
+This makes it the largest video captioning dataset in terms of video-caption
+pairs.
+%%
+MSR-VTT dataset was also used in the recently concluded MSR-VTT video captioning
+challenge.
+
+%%
+We conduct our video captioning experiments on both the LSMDC and the MSR-VTT
+datasets and also report results from our participation of the video captioning
+challenges associated with these datasets. 
+

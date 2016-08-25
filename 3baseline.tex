@@ -58,9 +58,7 @@ features and the language model used in the baseline architecture.
   \label{fig_fullModel}
 \end{figure}
 
-\fixme{Upto 3 pages, from ACMMM paper and Project Report}
-
-\subsection{Visual Feature extraction}
+\subsection{Visual Feature Extraction}
 
 \paragraph{Baseline image feature}: As discussed in \ref{chapter2:visFeat},
 image features extracted from CNNs pre-trained on ImageNet have become
@@ -368,7 +366,7 @@ was proposed recently in \cite{Vedantam_2015_CVPR}, specifically for this task.
 Next we will discuss each of these four metrics briefly to better understand
 what exactly they measure.
 
-\subsection*{BLEU}
+\subsection{BLEU}
 BLEU is a simple metric which scores captions based on the n-gram matches
 between the candidate and the reference captions.
 %%
@@ -395,7 +393,7 @@ candidates like the one containing just single words will always score better.
 
 In image captioning evaluation, BLEU-1 to BLEU-4 have been used. 
 %%
-\subsection*{ROUGE-L}
+\subsection{ROUGE-L}
 ROUGE metrics were proposed for evaluating text summaries.
 %%
 The version used in image captioning evaluation is ROUGE-L, a metric based on
@@ -423,7 +421,7 @@ P_{lcs}/R_{lcs}$
         F_{lcs} = \frac{(1+\beta^2)R_{ics}P_{lcs}}{R_{lcs}+ \beta^2 P_{lcs}}
 \end{equation}
 
-\subsection*{METEOR}
+\subsection{METEOR}
 In order to computer METEOR metric, the candidate and reference sentences are
 first aligned, wherein each word in the candidate sentence is matched to
 at most one word in the reference.
@@ -455,7 +453,7 @@ correlation of the metric with human judgement.
 When there are multiple references, the maximum METEOR score between the
 candidate and a reference is taken.
 
-\subsection*{CIDEr}
+\subsection{CIDEr}
 CIDEr metric aims to measure how well the candidate caption matches with the
 consensus formed by the multiple reference caption.
 %%
