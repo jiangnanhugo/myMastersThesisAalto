@@ -1,63 +1,84 @@
 \chapter{Introduction}
 \label{chapter:intro}
-\setlength{\epigraphwidth}{3in}
-\epigraph{A picture is worth a thousand words.\\[1mm] But how many can the machine
-say?}
+\setlength{\epigraphwidth}{\textwidth}
+\epigraph{A picture is worth a thousand words. But how many can the machine
+say?}{Our adaption of an old English proverb}
 
 The famous English adage states "A picture is worth a thousand
-words"~\cite{ThousandQuote}. This is meant to convey that there is a lot the
-viewer can learn/infer from a single still image and enumerating all the
-information encoded in an image can use up even a thousand words. This is
-illustrated in our extensive use of images in all forms of communication, from
-scientific journals to Twitter chats. 
+words"~\cite{ThousandQuote}.
+%%
+Translated into technical terms, this is meant to convey that there is a lot
+the viewer can learn/infer from a single still image and enumerating all the
+information encoded in an image can use up even a thousand words.
+%%
+This is illustrated in our extensive use of images in all forms of
+communication, from scientific journals to Twitter chats. 
 %
 Humans are very good at processing images and videos and gathering all this
-encoed information, but the computers still struggle to maks sense of the
+encoded information, but the computers still struggle to make sense of the
 simplest ones.
 %
 One could even say it is still easier for computers to store, parse, search and
 even understand a thousand words than a single image.
 %
+
 The usage of multimedia on the internet has grown to staggering levels in the
-last few yeas, due to easy access to cameras through smart phones. For eg. about
-95 million photos are uploaded to Instagram every day~\cite{InstStats} and about
-400 hours of video is uploaded to Youtube every minute~\cite{YouStats}. This
-presents both an enoromous challenge and an oppurtunity to build smarter
-computer algorithms to summarize and understand this data. Such algorithms could
-hlep us index and search this huge amount of data better. \fixme{Something
-something about general AI}.
+last few yeas, due to easy access to cameras through smart phones.
+%%
+For e.g. about 95 million photos are uploaded to Instagram every
+day~\cite{InstStats} and about 400 hours of video is uploaded to Youtube every
+minute~\cite{YouStats}.
+%%
+This presents both an enormous challenge and an opportunity to build smarter
+computer algorithms to summarize and understand this data.
+%%
+Such algorithms could help us index and search this huge amount of data better.
+%%
+An algorithm which can learn to recognize and describe different objects and
+their relationships in an image or a video would be an essential building block
+of a general AI system.
+%%
+Thus, automatic understanding visual media is an interesting and important
+problem in many aspects of computer science.
 %
 
 One such problem at the heart of machine understanding of visual media, is
-automatic captioning of images and videos. This involves designing an algoritm
-which takes the image or the video as input and generates a natural language
-caption describing succintly the content of the media. Effectively solving this
-problem requires the machine to be able to identify the salient objects in the
-image/video, their states and the relationship between these objects and also
-correctly recognize the scene. It needs to be able to use this information to
-generate a natural language caption summarizing it.
+automatic captioning of images and videos.
+%%
+This involves designing an algorithm which takes the image or the video as input
+and generates a natural language caption describing succinctly the content of
+the media.
+%%
+Effectively solving this problem requires the machine to be able to identify the
+salient objects in the image/video, their attributes and the relationship
+between these objects and also correctly recognize the scene.
+%%
+It needs to be able to use this information to generate a natural language
+caption summarizing it.
 
 %%TODO: SHOULD THIS GO to literature review of features?
 Until recently, the task of identifying even a single object in an image
-reliably on a large datasets was hard. This changed dramatically with the
-availaibility of large scale annotated data like the ImageNet
-dataset~\cite{ImagenetOrig}, and  application of deep learning techniques,
-specifically convolutional neural networks (CNN). For example, in the image
-classification task of the ImageNet Large Scale Visual Recognition
-Challenge~\cite{ILSVRC15} (ILSVRC), which involves classifying images to one of
-thousand object classes, the accuracy has improved from 71.8\% to 95.06\%,
-surpassing the human performance on the same task. 
-
+reliably on a large datasets was hard.
+%%
+This changed dramatically with the availability of large scale annotated data
+like the ImageNet dataset~\cite{ImagenetOrig}, and  application of deep learning
+techniques, specifically convolutional neural networks (CNN).
+%%
+For example, in the image classification task of the ImageNet Large Scale Visual
+Recognition Challenge~\cite{ILSVRC15} (ILSVRC), which involves classifying
+images to one of thousand object classes, the accuracy has improved from 71.8\%
+to 95.06\%, surpassing the human performance on the same task. 
+%%
 It was also discovered that object classification networks which are trained on
-the large imagenet dataset, also generalize very well and can used as generic
+the large ImageNet dataset, also generalize very well and can used as generic
 image feature extraction for different tasks~\cite{yosinski2014transferable}.
+%%
 This has led to successful application of such deep networks to various other
-tasks in computer vision including the task of image captioning XXX: some
-citations.
+tasks in computer vision including the task of image captioning.
 
 In this thesis we will examine the task of automatic image/video captioning and
-discuss algorithms based on deep learning to solve this task. We will discuss
-the relavant literature, ....................................
+discuss algorithms based on deep learning to solve this task.
+We will discuss the relevant literature, ....................................
 
 %XXX: Talk about recent interest and mention the two stage pipeline with
 %references. 
