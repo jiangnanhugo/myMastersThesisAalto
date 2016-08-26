@@ -1,6 +1,24 @@
 \chapter{Enhancing Language Model}
 \label{chapter:langModel}
 %%===========================================================================%%
+In this chapter we will look at several extensions to our baseline language
+model.
+%%
+The first extension is to add an additional feature input channel to the
+language model aimed at helping us effectively utilize the multiple new image
+features proposed in chapter~\ref{chapter:VisFeatChapter}.
+%%
+We then discuss our adaptation of the residual connections proposed for CNNs
+recently to the LSTM language models.
+%%
+This allows us to effectively train deeper LSTM language models.
+%%
+Next we look at utilizing a hierarchical factorized decoder at the language
+model output, in a bid to produce richer captions.
+%%
+Finally we also present a few ensembling techniques we use to combine multiple
+language models.
+
 \section{Additional Feature Inputs to Language Model}
 %%
 The language model we use should be capable of utilizing different kinds of
@@ -10,7 +28,7 @@ simultaneously.
 But the baseline language model, presented in chapter~\ref{chapter:baseline} has
 only one input channel, shared between word vectors and image features.
 %%
-The visual features are thus input to the network only in the zeroth
+Hence, here the visual features are input to the network only in the zeroth
 round of iteration.
 %%
 We refer to this input channel as the \emph{init} input to the LSTM network.
@@ -24,16 +42,15 @@ language model.
 %%
 But in our experiments, we found that performing simple feature fusion, like
 concatenating the two feature vectors, and using it as as input in the baseline
-language model leads to inferior performance due to large dimensions of the
-resulting feature vector.
+language model leads to inferior performance.
 %%
 
-Thus, to address this issue we introduce another data input channel to our
+To address this issue we introduce another data input channel to our
 language model and make the visual features available through the whole
 inference process.
 %%
-This requires adding to the LSTM cell a new input path which we refer to as the
-\emph{persist} features.
+This requires adding a new input path to the LSTM cell which we refer to as the
+\emph{persist} input.
 %%
 This is illustrated in figure~/ref{fig:proplstmlang}.
 %%
@@ -43,7 +60,7 @@ input weights.
 %%
 For brevity, we won't repeat them here.
 %%
-The proposed framework thus computes the distribution
+Accordingly, the proposed framework computes the distribution:
 %%
 \begin{equation}
 p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(W_d y(t)) \;,
@@ -52,13 +69,13 @@ p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(W_d y(t)) \;,
 \noindent where $I$ and $P$ represent the \emph{init} and \emph{persist}
 features respectively.
 %%
-Training is again done by minimizing the cost function
+Training is again done by minimizing the negative log likelihood cost function
+as in the baseline model
 %%
 \begin{align}
   %\label{eqCost}
   \mathcal{L}(w_{1\cdots L} | I,P) = -\sum_{t=1}^n \log(p(w_t|w_{t-1},I,P)) \; .
 \end{align}
-
 
 %%
 Having separate input matrices for \emph{init} and \emph{persist} features
@@ -82,7 +99,7 @@ different sources.
 \end{figure*}
 
 %%===========================================================================%%
-\section{Deeper model, residual connections }
+\section{Deeper Models Using Residual Connections }
 %% ---------------------------------------------------------------------------
 Another extension we experiment with to improve the performance of our language
 model is to add depth to the LSTM network used in it.
@@ -97,15 +114,32 @@ within an LSTM layer and not across the layers.
 Softmax is applied at the output of the last LSTM layer only.
 %%
 
-Our last modification is adding multiple LSTM layers with residual connections
-after each layer as proposed in~\cite{He2015} for convolutional neural networks.
+Recently residual connections was proposed in~\cite{He2015} to be used in CNNs.
+%%
+It consists of adding a fixed identity connection from output of a lower layer,
+$f_1(x)$, to the output the layer above it, $f_2(x)$.
+%%
+This changes to equation of the output after two layers $f_1(x)$ and $f_2(x)$
+from $f_2(f_1(x)$ to $f_1(x)+f_2(f_1(x))$.
+%%
+Now the second layer only needs to learn only a residual function to push the
+output of the first layer towards the desired output.
+%%
+If the first layer is already performing well, this makes the task of second
+layer much easier.
+%%
+This seemingly simple technique helped greatly increase the depth of the CNN
+networks and achieve state-of-the-art performance on ImageNet dataset.
+
+Inspired by this success, we adapt this method to our LSTM language model and
+add residual connections between LSTM layers. 
 %%
 These residual connections, shown in Figure~\ref{fig:proplstmlang}, improve the
 training convergence speed greatly.
 %%
 We have also found out that the use of residual connections produces
 significantly lower values for both the training cost function and the model
-perplexity, as will be detailed in Section~\ref{chapter:results}.
+perplexity, as will be presented in Section~\ref{chapter:results}.
 
 %%===========================================================================%%
 \section{Hierarchical Decoder}
@@ -116,14 +150,14 @@ classification between two closely related objects.
 %%
 For example we have noticed that a persons gender is often described wrongly.
 %%
-Similar uncertainty is also seen in telling apart various fruits and vegetables etc.
+Similar uncertainty is also seen in telling apart various fruits and vegetables.
 %%
-This happens because these objects often occur in the same contexts, hence
+This happens because these objects often occur in similar contexts, hence
 context cannot help differentiate them, and the generator needs to learn really
 fine grained classification to get these right.
 %%
 
-We hypothesize that this problem arises due to the fact that the language model
+We hypothesize that this problem exacerbated by the fact that the language model
 essentially needs to do a N way classification at every time-step, where N is
 the size of the vocabulary.
 %%
@@ -147,16 +181,16 @@ into two parts as follows:
   P(w_t | I,P, W^{t-1}) = P(c_t| I,P, W^{t-1})*P(w_t | c_t, I,P,W^{t-1})
 \end{equation}
 \noindent where $c_t$ is the class of word $w_t$ and $W^{t-1}$ is sequence of words
-seen upto time $t-1$, $w_0\cdots w_{t-1}$.
+seen up to time $t-1$, $w_0\cdots w_{t-1}$.
 
-This allows us to split the N-way softmax in the LSTM language model into two
+This allows us to split the N-way softmax in the language model into two
 parts, a $N_c$-way softmax to predict the correct class and a $N_{wc}$-way
 softmax to predict the correct word within this class.
 %%
 Here $N_{wc}$ is the number of words within a class.
 %%
-This hierarchy allows LSTM to learn separate decoders for each class allowing it to
-possibly learn fine grained classification.
+This hierarchy allows the language model to learn separate decoders for each
+class allowing it to possibly learn fine grained classification.
 %%
 The hierarchical structure is also more amenable to adding new words to the vocabulary.
 %%
@@ -168,15 +202,15 @@ distribution of the word within the class.
 The first step in implementing the hierarchical structure in the decoder is to
 cluster words into different classes.
 %%
-There are many approaches to do this clustering in the literature.
+There are two kinds of approaches to do this clustering in the literature.
 %%
-First category of methods use knowledge bases like Wordnet to find similar words
+First group of methods use knowledge bases like WordNet to find similar words
 and group them together.
 %%
 Second category of methods are completely data driven and use just the training
 data statistics to build these clusters.
 %%
-Here we will look at two different methods relying solely on the coco training
+Here we will look at two different methods relying solely on the COCO training
 data to cluster words into classes.
 
 \subsubsection*{Brown Clustering}
@@ -196,59 +230,59 @@ The cost function is simply the perplexity assigned by a class based bi-gram
 model to the training corpus, which in our case is all the reference captions in
 the training set.
 %%
-Thus this cost function of any given clustering mapping, C, can be written as,
+The clustering cost can be written as a function of the given cluster assignment 
+, C, as below: 
 \begin{equation}
   \label{eq:brown} 
         Quality(C) = \frac{1}{n} log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i))
 \end{equation}
 \noindent where C, is the mapping which assigns words $w$ to their class $C(w)$
 
-The process is terminated once number of leaf nodes have been reduced to the
-desired number of clusters. 
+The process is terminated once the number of leaf nodes have been reduced to the
+desired number of clusters.
 %%
-Although this process leads to hierarchical clusters, we ignore the hierarchy
-and take all the classes in the final clustering output as independent classes
+Although this method produces hierarchical clusters, we ignore the hierarchy
+and take all the classes in the final output as independent classes
 in our language model 
 \subsubsection*{K-means Clustering}
 
-K-means is a simple yet very effective clustering algorithm which can be used to
-cluster numerical data.
+K-means is a simple yet very effective clustering algorithm widely used on
+high-dimensional vectorial data.
 %%
 The algorithm tries to partition the input data vectors into $k$ clusters such
 that each data point belongs to the cluster whose mean vector is closest to it.
 %%
 Usually, euclidean distance is used to measure distance between data points.
 %%
-But we cannot directly use this to cluster words as we cannot measure easily the
+But we cannot directly use this to cluster words as we cannot easily measure the
 distance between words.
 
 Instead, we can make use of the word-embeddings which are learnt in our language
 model, to represent words as vectors in d-dimensional space.
 %%
-With this we can measure distance between words and thus utilize K-means
-algorithm to cluster words into $K$ classes.
-%%
-In our experiments, we use the word embeddings learnt in our best language model to
-represent the words and run K-means clustering on these word vectors.
+With this, we can use the euclidean distance between word embeddings as a measure
+of distance between the words and thus utilize K-means algorithm to cluster
+words into $K$ classes.
 %%
 Once $K$ cluster centers are obtained, each word is assigned to its closest center
 and this partitioning is used in the language model.
 
 \subsection{Factorizing LSTM decoder output}
-In order to implement the hierarchical in our LSTM language model, we need to
-split the decoder matrix, $W_d$ into a set of $K+1$ smaller matrices.
+In order to implement the hierarchical decoder in our LSTM language model, we
+need to split the decoder matrix, $W_d$ into a set of $K+1$ smaller matrices.
 %%
 This set contains one $W_{d\_cls}$  matrix of the size $\text{LSTM hidden size}
 \times k$
 which is used to compute class probability.
 %%
 It also has K class specific matrices ${W_{d}^{1},W_{d}^{2}\cdots W_{d}^{K}}$,
-each of size $\text{LSTM hidden size}\times |c^k|$, where $|c^k|$ is the size of class
-$c_k$.
+each of the size $\text{LSTM hidden size}\times |c^k|$.
 %%
-Thus computation done to predict the word at time-step $t$ has two stages, first
-to predict the right class of the word and then using the class specific decoder
-matrix to predict the word within the class.
+Here $|c^k|$ is the size of class $c_k$.
+%%
+Consequently, computation done to predict the word at time-step $t$ has two
+stages, first to predict the right class of the word and then using the class
+specific decoder matrix to predict the word within the class.
 \begin{align}
         \label{eq:classLStmdecoder}
         P(c_{t}^{k}| I,P, W^{t-1}) &= \text{softmax}(W_{d\_cls} y(t)) \\
@@ -256,14 +290,13 @@ matrix to predict the word within the class.
         P(w_t | I,P, w^{t-1}) &= P(c_t| I,P, w^{t-1}) \cdot \text{softmax}(W_{d}^{c_t} y(t))
 \end{align}
 
-Although, in theory this should be faster since we are doing two much smaller
-matrix multiplication instead of one large one, due to bottlenecks in our
-implementation, this hierarchical decoder as slightly slower, than the single
-stage decoder.
+Although, in theory this should be faster since we only need to compute two
+smaller matrix multiplications instead of one large one, due to bottlenecks in
+our implementation, this hierarchical decoder runs slower than the single stage
+decoder.
 %%
-This was mainly due to the GPU library restriction that required all class
-specific decoder matrices to be of the same size, resulting in lot of wasted
-computation.
+This is due to the GPU library restriction that required all class specific
+decoder matrices to be of the same size, resulting in lot of wasted computation.
 %%===========================================================================%%
 \section{Ensembling Techniques}
 %%----------------------------------%%

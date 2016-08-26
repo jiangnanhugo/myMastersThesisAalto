@@ -5,7 +5,7 @@ Finding good feature vector representations for the input images/videos is a
 very important task for successful design of captioning system.
 %%
 Such a feature representation should be compact, but also able to encode all the
-information relavant for the task. 
+information relevant for the task. 
 %%
 For image captioning task, the system should know all the objects in the image,
 their most essential properties such as color, their absolute position and
@@ -32,9 +32,9 @@ activation values extracted from the deep Convolutional Neural Network (CNN)
 layers.
 %%
 The CNN features encode a rich variety of information, including scene context,
-object type etc. as seen from its performance in the baseline model.
+object type etc.\@ as seen from its performance in the baseline model.
 %%
-But this representation is still very compact and probably (as seen later in
+But this representation is still very dense and probably (as seen later in
 experiments) in-efficient for the language model to be able to extract the
 information it needs to generate correct captions.
 %%
@@ -74,10 +74,14 @@ architectures.
 Both of these architectures were originally proposed achieve good results in the
 ILSVRC 2014 object classification challenge, with them coming first and second
 respectively in the competition.
+%%
+We use the GoogLeNet features as a direct input to our language model and to
+train our place and object detector modules, while the VGG net features are only
+used for the latter.
 
-\subsubsection{GoogleLeNet} 
+\subsubsection{GoogLeNet} 
 \label{subsec:gCNN}
-The main idea behind the GoogleLeNet architecture was to use small dense
+The main idea behind the GoogLeNet architecture was to use small dense
 structures like 1x1, 3x3 convolutions to mimic a large sparse layer.
 %%
 For this purpose they utilize the \emph{Inception} modules consisting of 1x1,
@@ -88,11 +92,11 @@ Classification Challenge, finishing first in the competition.
 
 We use two different versions of the GoogLeNet features in our experiments.
 %%
-Features from GoogLeNet trained on Imagenet dataset is used as direct input to
-our language model (referred to as "\emph{gCnn}" in the rest of the text),
+Features from GoogLeNet trained on ImageNet dataset is used as direct input to
+our language model (referred to as "\emph{gCNN}" in the rest of the text),
 whereas features from the GoogLeNet trained on MIT Places data (referred to as
-"\emph{pCnn}" in the rest of the text) is used to construct scene recognition
-features which are used as auxillary inputs to our language model.
+"\emph{pCNN}" in the rest of the text) is used to construct scene recognition
+features which are used as auxiliary inputs to our language model.
 %%
 
 To extract \emph{gCNN} features, we use the activations from the
@@ -112,10 +116,10 @@ feature vector by using average pooling or by just using the central crop.
 Finally, the activations of the two scales are concatenated resulting to
 2048-dimensional features.
 %%
-Note that due to two differnt pooling methods on the second scale, we obtain
+Note that due to two different pooling methods on the second scale, we obtain
 two somewhat different feature vectors of 2048 dimensions from the same network.
 %%
-Our final \emph{gCnn} feature vector of size 4096 dimensions is obtained by
+Our final \emph{gCNN} feature vector of size 4096 dimensions is obtained by
 concatenating these two feature vectors.
 %%
 This is also the feature vector used as the input to our baseline image
@@ -130,7 +134,7 @@ In this case, in addition to mean and center pooling in the second scale of
 reverse spatial pyramid, we also use max pooling, and thus obtain three
 different features with the dimensionality of 2048 each.
 %%
-Note that the term \emph{pCnn} refers collevtively to this set of 3 features.
+Note that the term \emph{pCNN} refers collectively to this set of 3 features.
 
 \subsubsection{VGG network} 
 VGG network was introduced in ~\cite{Simonyan14c}, where the authors study the
@@ -146,9 +150,6 @@ This network achieves the top-5 error rate of $7.3\%$ in the 1000 class ILSVRC
 
 We use two variants of the VGG net, namely 16-layered and the 19-layered ones
 from ~\cite{Simonyan14c} in our experiments.
-%%
-Features extracted from these two networks are referred to as ``\emph{VGG16}''
-and ``\emph{VGG19}'' respectively throughout the rest of the text.
 %%
 From both the variants, we extract the activations of the network on the second
 fully-connected 4096-dimensional \emph{fc7} layer for the given input images
@@ -178,9 +179,9 @@ maps~\cite{Vedaldi2010} of order $d=2$ to approximate the intersection kernel.
 Furthermore, we used two rounds of hard negative mining~\cite{Li2013} and
 sampled $5\,000$ negative examples on each round.
 
-\red{For each image we thus have 15 SVM outputs for each class (five features times
+For each image we thus have 15 SVM outputs for each class (five features times
 initial and two hard negative trained models) that we combine with simple
-arithmetic mean in the late fusion stage.}
+arithmetic mean in the late fusion stage.
 %%
 The 80 fused output values, one for each object category, are then concatenated
 to form a class membership vector for each image.
@@ -231,16 +232,18 @@ Knowing the locations of the objects helps to infer their roles in the scene and
 also to choose the right adjectives to describe their positions.
 
 For this purpose we use an object detector network, specifically the Faster
-Region-based Convolutional Neural Network (R-CNN) proposed in
-\cite{ren15fasterrcnn}, to detect the objects in image and to predict their
-bounding boxes.
+Region-based Convolutional Neural Network~(R-CNN) proposed in
+\cite{ren15fasterrcnn}, to detect the multiple objects in the input image and to
+predict their bounding boxes.
 %%
-We then project these bounding boxes onto a regular grid (eg.\@ $4\times4$) over
-the image. 
+
+We then project the object bounding boxes onto a non-overlapping $m \times n$
+grid over the image.
 %%
-Each of the 80 object categories maintains its own grid and each grid cell
-accumulates the intersection over union (IoU) value of any detected bounding box
-of that object overlapping with it.
+Each of the 80 object categories, $c$, maintains its own grid $F_c$.
+%%
+Each grid cell, $F_c(i,j)$, accumulates the intersection over union~(IoU) value
+of any overlapping bounding box of that object category. 
 %%
 This IoU value is also scaled with detection confidence score generated by the
 Faster R-CNN for that bounding box, as shown in (\ref{eqn:Iou}).
@@ -251,10 +254,12 @@ These representations are then concatenated to produce an $m\times
 n\times80$~-dimensional feature vector.
 %%
 The value of the feature vector component corresponding to the class $c$ and the
-grid cell position $(i,j)$ is thus computed as:
+grid cell position $(i,j)$ can be computed using equation below:
 %%
-\begin{equation} \label{eqn:Iou} F_c(i,j) = \sum_{b_k \in \text{\it
-BB}(c)}p(b_k)\frac{ A(b_k \cap G(i,j))}{A(b_k \cup G(i,j))} \;, \end{equation}
+\begin{equation} 
+\label{eqn:Iou} 
+F_c(i,j) = \sum_{b_k \in \text{\it BB}(c)}p(b_k)\frac{ A(b_k \cap G(i,j))}{A(b_k \cup G(i,j))} \;, 
+\end{equation}
 %%
 where $A(\cdot)$ is the pixel area, $\text{\it BB}(c)$ are the bounding boxes
 detected for objects of class $c$, $p(b_k)$ is the confidence assigned by the
@@ -274,7 +279,10 @@ Gaussians it overlaps with (over the overlapping region) as:
 {\text{\hspace{9mm}}b_k \cap G(i,j)}\text{\hspace*{-5mm}}
 p(b_k)N(\text{center}(b_k),\text{diag}(b_k)) \; , \end{equation}
 %%
-where $N(\mu,\sigma)$ are Gaussians of given mean and standard deviation.
+\noindent where $BB(c)$ is the set containing bounding box object proposals for
+category $c$, $p(b_k)$ is the confidence assigned by the detector to proposal
+$b_k$, $G(i,j)$ is the grid cell at position $(i,j)$ and $N(\mu,\sigma)$ are
+Gaussians of given mean $\mu$ and standard deviation $\sigma$.
 %%
 We abbreviate these features as ``$m$$\times${}$n$Gauss'' in the result tables.
 
@@ -308,11 +316,7 @@ model.
 We have to note here that it is computationally expensive relatively to extract
 these features, as it relies on running the Faster-RCNN network on the input
 image which, despite the moniker, is still much slower than running a single CNN
-like GoogleLeNet on the input image.
-
-\red{Visualizations of feature vectors ability to distinguish presence and
-absence of pairs of objects? Or t-sne of vectors corresponding to different no
-of objects etc..?}
+like GoogLeNet on the input image.
 
 %%===========================================================================%%
 \section{Video Feature Extraction}
@@ -333,20 +337,15 @@ frame/segment level features into one video-level feature vector.
 %%
 Number of feature vectors can also vary depending on the length of the video.
 %%
-But, since our language model takes only single feature of vector of fixed size
-as input, we need to further compress these multiple feature vectors into a
+But, since our language model cannot take arbitrary number of feature of vectors
+as input , we need to further compress these multiple feature vectors into a
 single video feature vector. 
 %%
-We will explore two different methods to accomplish this, one relying on simple
-pooling techniques like mean/max pooling and the other based on training a
-feature encoding recurrent network.
-%%
+We use mean pooling, which is just taking the average of these feature vectors,
+to reduce them to a single vector.
 
 %%----------------------------------%%
 \subsection{Key-frame and multi-frame features}
-ALSO COVER POOLING HERE
-RANK POOLING???
-
 In this approach, we will treat the video as a bag of static images, and use the
 same feature extraction techniques we used for image captioning to extract
 features from these video frames.
@@ -383,7 +382,7 @@ Although, the frame level features do well in capturing the overall scene
 context of the videos, they fail to recognize actions and other motion related
 events.
 %%
-This is because lot of action in vidoes involve very local motion patterns,
+This is because lot of action in videos involve very local motion patterns,
 which is hard to capture when looking at frames individually.
 %%
 Such actions can occur even without any whole objects moving, and thus causing
@@ -391,7 +390,7 @@ the CNN feature extractors to not notice any change.
 %%
 
 But this information is vital for video description task, as describing the
-salient actions occuring in the video correctly is an important part of it.
+salient actions occurring in the video correctly is an important part of it.
 %%
 Thus we need video feature extraction methods, which can effectively encode
 information about local motion patterns existing in the video into a fixed size
@@ -407,11 +406,11 @@ following sub sections.
 %%----------------------------------%%
 \subsubsection{Trajectory Features}
 
-Dense trajectories video features have been, despite being hand-engineered
-features without any learning from the data, one of the best performing features
-on various video analysis tasks involving action recognition.
+Dense trajectory video features have been one of the best performing features
+on various video analysis tasks involving action recognition, despite being
+hand-engineered features without any learning from the data.
 %%
-The technique involves sampling interest points from an initial frame in the
+This technique involves sampling interest points from an initial frame in the
 video and to track these interest points across the time.
 %%
 The location of interest points which can be tracked reliably are concatenated
@@ -425,23 +424,23 @@ We use the same four local descriptors as described in
 gradients~(HOG), histograms of optical flow~(HOF) and motion boundary
 descriptors in horizontal and vertical directions~(MBHx \& MBHy).
 %%
-Then, videos can be represented based on the type of trajectories it contains.
+Videos can then be represented based on the type of trajectories they contain.
 %%
-This can be accomplished by using vector encoding methods like bag-of-words or
-fisher vector encoding to encode the arbitrary number of trajectory features
+This can be accomplished by using vector encoding methods like bag of words or
+fisher vector encoding to compress the arbitrary number of trajectory features
 extracted from a video into a single vector of fixed dimensions.
 %%
 
-We have tried both the standard~\cite{DBLP:conf/cvpr/WangKSL11} and the improved
+We have used both the standard~\cite{DBLP:conf/cvpr/WangKSL11} and the improved
 versions~\cite{Wang2013} of the dense trajectory features.
 %%
-For both versions, the trajectories and their descriptors are first extracted
-from the entire video, with limiting the trajectory length to be maximum of 15
-frames.
+In both versions, the trajectories and their descriptors are first extracted
+from the entire video after limiting the trajectories to be a maximum of 15
+frames long.
 %%
-All of these five features, i.e. trajectory co-ordinates and the 4 descriptors,
-are separately encoded into a fixed-size vector using bag-of-features encoding
-with a codebook of 1000 vectors.
+All of these five features, trajectory co-ordinates and the 4 descriptors, are
+separately encoded into fixed-size vectors using bag-of-features encoding with a
+codebook of 1000 vectors.
 %%
 
 In bag-of-features encoding, first a fixed codebook containing representative
@@ -454,11 +453,10 @@ Then each feature vector from the set of features of a video is assigned to its
 nearest codebook vector.
 %%
 These assignments counts are accumulated for each codebook entry to give us a
-histogram for each video, with the histogram having 1000 bins. representation of the 
+histogram for each video, with the histogram having 1000 bins.
 %%
 Finally, concatenating the vector encodings of each of the descriptors we get a
 video feature vector of 5000 dimensions. 
-\red{SHOW VISUALIZATIONS of Trajectories}
 
 \subsubsection{3D Convolutional Network}
 %%----------------------------------%%
@@ -496,8 +494,6 @@ features.
 %%
 This gives us a set of 4096-dimensional feature vectors which represent the
 input video.
-
-\red{Visualizations of video feature vectors T-sne with 20 categories ??}
 
 % Comment: If your sentence ends in a capital letter, like here, you should
 % write \@ before the period; otherwise LaTeX will assume that this is not
