@@ -124,6 +124,7 @@
 % \usepackage{tgpagella}
 
 \usepackage{epigraph}
+\usepackage{lineno}
 
 
 % Optional packages
@@ -220,7 +221,7 @@
 %   twoinstructors  - changes the title of instructors to plural form
 %   twosupervisors  - changes the title of supervisors to plural form
 %\usepackage[mydraft]{aalto-thesis}
-\usepackage[mydraft,doublenumbering]{aalto-thesis}
+\usepackage[mydraft]{aalto-thesis}
 %\usepackage{aalto-thesis}
 
 
@@ -446,15 +447,15 @@ Thank you, and keep up the good work!
 % ------------------------------------------------------------------
 % You only need a list of tables for your thesis if you have very 
 % many tables. If you do, uncomment the following two lines.
-% \cleardoublepage
-% \listoftables
+ \cleardoublepage
+ \listoftables
 
 % Table of figures
 % ------------------------------------------------------------------
 % You only need a list of figures for your thesis if you have very 
 % many figures. If you do, uncomment the following two lines.
-% \cleardoublepage
-% \listoffigures
+ \cleardoublepage
+ \listoffigures
 
 % The following label is used for counting the prelude pages
 \label{pages-prelude}
@@ -472,6 +473,7 @@ Thank you, and keep up the good work!
 % The contents of the thesis are separated to their own files.
 % Edit the content in these files, rename them as necessary.
 % ------------------------------------------------------------------
+\linenumbers
 \input{1introduction.tex}
 
 \input{2background.tex}
