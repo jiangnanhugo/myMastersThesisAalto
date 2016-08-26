@@ -5,7 +5,7 @@ Finding good feature vector representations for the input images/videos is a
 very important task for successful design of captioning system.
 %%
 Such a feature representation should be compact, but also able to encode all the
-relevant information for the task. 
+information relavant for the task. 
 %%
 For image captioning task, the system should know all the objects in the image,
 their most essential properties such as color, their absolute position and
@@ -16,8 +16,8 @@ In case of video captioning, apart from all the above mentioned information, the
 feature vector should also encode sufficient temporal information to enable
 recognizing actions, order of events etc.
 
-In this chapter, we will describe the visual features we have used in
-our captioning model.
+In this chapter, we will describe the different visual features we have experimented with
+in our captioning model.
 %%
 The chapter is divided into two main sections, with one discussing the visual
 features used to represent images and the other describing the features used to
@@ -31,13 +31,6 @@ Features we use to represent images in our captioning model, are primarily,
 activation values extracted from the deep Convolutional Neural Network (CNN)
 layers.
 %%
-We extract features from couple of different CNN architectures, as it is yet
-unclear which are the best features for the captioning task.
-%%
-As seen before, our baseline image captioning model only one of these CNN
-features as input, and achieves reasonable performance.
-
-
 The CNN features encode a rich variety of information, including scene context,
 object type etc. as seen from its performance in the baseline model.
 %%
@@ -56,22 +49,17 @@ objects, scene types and object location.
 In this regard we train explicit object detectors and scene detectors based on
 the CNN features, and also construct features encoding object localization based
 on outputs from Faster Region-based Convolutional Neural Network (R-CNN).
-
-SHOW VISUALIZATIONS IF POSSIBLE
-    --> Feature vector TSNE
-    --> Non obvious information in object detectors, For eg. difference between
-    using binary vs real valued detector scores
 %%----------------------------------%%
 \subsection{Convolutional Neural Networks}
 %%----------------------------------%%
-Convolutional Neural Networks have in the recent years become the most
-widely used models for practically all tasks related to image
-classification and understanding.
+Convolutional Neural Networks have in the recent years become the most widely
+used models for practically all tasks related to image classification and
+understanding.
 %%
-It was shown in~\cite{Donahue2014} and~\cite{Razavian2014CVPR} that
-activations of the fully connected layers of a CNN trained for image
-classification task act as a general feature representation of the
-image and can be successfully used to solve other tasks as well.
+It was shown in~\cite{Donahue2014} and~\cite{Razavian2014CVPR} that activations
+of the fully connected layers of a CNN trained for image classification task act
+as a general feature representation of the image and can be successfully used to
+solve other tasks as well.
 %%
 In line with this, we extract image features from different CNN architectures
 pre-trained on two large datasets namely, ImageNet~\cite{ImagenetOrig} and MIT
