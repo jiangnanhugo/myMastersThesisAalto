@@ -1,23 +1,24 @@
 \chapter{Looking forward}
 \label{chapter:discussion}
-\section{Where do we stand?}
+\section{Where Do We Stand?}
 
 So far in this report we have seen in detail, how image and video captioning
 systems work, and how well they perform in terms of automatic evaluation
-metrics.
+metrics and heuristic diversity statistics.
 %%
 We have seen that the image captioning system works relatively better than the
-video captioning system, partly owing to smaller datasets and partly to
-in-efficient feature representations for videos.
+video captioning system, partly due to smaller training datasets for video and
+partly to deficient feature representations for videos.
 %%
 In particular, video captioning systems perform reasonably well on clips
-containing little shot changes and camera motion, for eg. in categories like
+containing less shot boundaries and camera motion, for eg. in categories like
 "how-to videos" and "games" on MSR-VTT dataset.
 %%
 But they suffer in categories containing complex video styles, for eg. in case
 of "news" one could have multi-pane videos, and videos containing lots of scene
 changes, eg. in "movies".
 %%
+
 In many cases, captions generated for images are descriptive and accurate, as
 seen from examples in \red{Appendix\ref{appXX}}.
 %%
@@ -68,23 +69,23 @@ by the bias in the language model.
 This interpretability becomes especially important to diagnose the erroneous
 captions.
 %%
-For e.g. when we see the model incorrectly caption an image containing a white
+For example when we see the model incorrectly caption an image containing a white
 fire hydrant as a "red fire hydrant", it is hard to tell if the image feature
 incorrectly encoded the color as red or if the language model, due to the bias
 in the training data towards red fire hydrants, overrides the image features to
 produce the wrong caption.  
 %%
 
-\section{Future directions}
+\section{Future Directions}
 %%
 Based on the shortcomings discussed in the previous sub-section, we now discuss
 a few problems worthwhile to explore, to address these shortcomings and
 further the image and video understanding research.
 %%
-Here we only try to define and motivate the problems but without any discussion
-on how they could be solved.
+Here we only try to define and motivate the problems but with only a limited
+discussion on how they could be solved.
 
-\subsection{Generating multiple captions}
+\subsection{Generating Multiple Captions}
 Any image and video is a rich source of information, and can be described by a
 multitude of captions describing different aspects of them. 
 %%
@@ -97,11 +98,12 @@ grammatical arrangements, and thus still only cover a small portion of visual
 information.
 %%
 
-Thus a system which can generate multiple captions, ideally with minimum overlap
+A system which can generate multiple captions, ideally with minimum overlap
 and maximum coverage of the visual information, would be a welcome extension.
 %%
 One way to design such a system would be to further condition the caption
-generation with information already described in previously generated captions.
+generation with an "information vector" which encodes the visual information
+already described in previously generated captions.
 %%
 The captioning could also instead be conditioned on specific bounding boxes
 instead of entire image, as done in~\cite{johnson2015densecap}, and produce
@@ -114,7 +116,7 @@ But, although captioning smaller bounding boxes is a way to generate multiple
 descriptions, this often leads to mundane captions describing a single object
 and ignoring the larger context in the image.
 
-\subsection{Better video encodings and longer video summaries}
+\subsection{Better Video Encodings}
 We have seen that our video captioning systems, perform inferior to our image
 captioning system.
 %%
@@ -144,11 +146,16 @@ generate detailed summaries of long videos.
 An attempt to generate descriptive paragraph captions for videos was made 
 in~\cite{yu2015video} recently.
 %%
-Here the authors use hierarchical recurrent networks to generate pargraph level
-captions, consisting of multiple sentences, describing 
-sentence \red{Finish this after reading the paper}
-
-\subsection{Scene Graph prediction/ matching}
+Here the authors use two recurrent networks in a hierarchical manner, lower one
+to generate the current sentence and the upper one to keep track of the
+paragraph state.
+%%
+The paragraph network re-initializes the sentence generating RNN after every
+sentence, based on the current state of the paragraph.
+%%
+But, this is still far-off from a complete video summarizer, which could watch
+long videos and provide a concise summary of the events in the video.
+\subsection{Scene Graph Prediction and Matching}
 Although the captioning is a good way to summarize the visual content in an
 image or a video for humans, it is not the optimal representation of such
 information for machines to process.
@@ -157,11 +164,11 @@ This is because, to build any application which uses this summary of visual
 information based on captions, we also need to be able to correctly parse the
 caption and extract the needed information.
 %%
-This is non-trivial due to ambiguities in natural language.
+This is not straightforward due to the inherent ambiguities in natural language.
 %%
 
-A more computationally useful representation of the visual information, is in
-form of scene graphs.
+A more computationally useful and less ambiguous representation of the visual
+information, is in form of scene graphs.
 %%
 Scene graphs are graphs with nodes being the entities present in the scene
 and edges encode the relationship between these entities.

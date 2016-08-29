@@ -341,6 +341,7 @@ We will examine them in detail in the following subsections.
 
 %%----------------------------------%%
 \subsection{Combining Multiple models using Mutual Evaluation}
+\label{subsec:MutEval}
 
 In this technique, we utilize the same language models which generated the
 captions to also evaluate the captions.
@@ -356,7 +357,6 @@ model which generated it, we could pick the caption with the highest probability
 score as the best caption.
 %%
 We refer to this method as "Self-Eval" in rest of the thesis. 
-
 
 Alternatively, we could also get the candidate captions evaluated by all the
 other models in the ensemble.

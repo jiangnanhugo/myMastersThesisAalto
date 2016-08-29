@@ -28,10 +28,10 @@ rest of the thesis.
 \section{Baseline Architecture} 
 
 Our caption generation model consists of two stages: the visual
-feature extraction stage followed by a language model
+feature extraction stage followed by a language model.
 %%
 In the first stage, we use various techniques to extract descriptors of
-the visual contents of input image or video.
+the visual contents of the input image or video.
 %%
 These descriptors are then represented as one or more vectors of fixed
 dimension.
@@ -57,11 +57,11 @@ features and the language model used in the baseline architecture.
 
 \subsection{Visual Feature Extraction}
 
-\paragraph{Baseline image feature}: As discussed in \ref{chapter2:visFeat},
-image features extracted from CNNs pre-trained on ImageNet have become
-ubiquitous in most image understanding tasks.
+\paragraph{Baseline image feature}: As discussed in
+chapter~\ref{chapter:background}, image features extracted from CNNs pre-trained
+on ImageNet have become ubiquitous in most image understanding tasks.
 %%
-Thus in our baseline captioning model, we use features extracted from
+Therefore, in our baseline captioning model we use features extracted from
 GoogleLeNet~\cite{DBLP:journals/corr/SzegedyLJSRAEVR14} as the image feature
 vector. 
 %%
@@ -88,9 +88,9 @@ can be compared.
 The next stage in the pipeline is a conditional language model which
 takes as input the image features and generates a caption. 
 %%
-Long-Short Term Memory (LSTM) networks~\cite{Hochreiter1997} have been a popular
-choice in the literature to model the probability of a sentence $S$ given an
-image $I$ as $P(S|I)$.
+The Long-Short Term Memory (LSTM) network~\cite{Hochreiter1997} architecture has
+been a popular choice in the literature to model the probability of a sentence
+$S$ given an image $I$ as $P(S|I)$.
 %%
 In the following two subsections we will first examine the LSTM cell in detail and
 then look at the way it is used to build a conditional language model.
@@ -161,7 +161,7 @@ training phase.
 \label{subsec:basiclstmodel}
 
 The block diagram of the baseline language model is shown in
-Figure~\ref{fig:baselinelstmlang}
+Figure~\ref{fig:baselinelstmlang}.
 %%
 The model consists of an LSTM network with a softmax layer at its output. 
 %%
@@ -189,8 +189,9 @@ highest probability to the next ground truth word given the current inputs and
 the hidden state.
 %%
 This is done by maximizing the log probability assigned to the training samples
-by the model. Equivalently, we can minimize the negative log likelihood given
-as:
+by the model. 
+%%
+Equivalently, we can minimize the negative log likelihood given as:
 %%
 \begin{align}
   \label{eqCost}
@@ -210,7 +211,7 @@ as:
 \subsection{Training and Regularization}
 %%----------------------------------%%
 Training the network involves tuning the parameters of the language model
-in-order to maximize the log likelihood cost function shown in Eq~\ref{eqCost}.
+in order to maximize the log likelihood cost function shown in equation~\ref{eqCost}.
 %%
 This optimization is achieved by backpropagating the cost through time and
 adjusting the LSTM parameters using gradient descent.
@@ -231,8 +232,8 @@ This is necessary as usually the feature extraction modules, e.g. image CNN
 network, are powerful models pre-trained on large datasets and can easily
 overfit on the relatively small datasets like the ones used in captioning.
 
-We use dropout for regularization in the LSTM language model.
-\cite{ZarembaSV14}.
+We use dropout for regularization in the LSTM language model as suggested
+in~\cite{ZarembaSV14}.
 %%
 Here dropout is only applied on the input and output of LSTM and not on the
 recurrent connections.
@@ -241,11 +242,11 @@ We find that dropout, with a drop probability of 0.5, greatly improves model
 generalization.
 %%
 Word embedding vectors and decoder matrix are regularized by adding a penalty to
-minimize their l2 norm.
+minimize their $l_2$ norm.
 
 \subsection{Test Mode: Beam Search}
 %%
-In the caption generation phase for test images, we don't have a reference
+In the caption generation phase for test images, we do not have a reference
 caption and need to sample from the distribution $p(S|I)$, to generate the
 caption.
 %%
@@ -255,16 +256,16 @@ network at time-step 0 followed by the 'START' symbol.
 Now, at time-step $t=1$, the word with highest probability at the softmax output
 is the word the model thinks is the most likely first word.
 %%
-Thus we pick this as the generated word and feed the word vector for this word
-as the input to the LSTM in the next time step, $t=2$.
+We pick this as the generated word and feed the corresponding word vector as the
+input to the LSTM in the next time step, $t=2$.
 %%
-This process is repeated until the model produces a period symbol('.').
+This iterative process is repeated until the model produces a period symbol('.').
 %%
 That marks the end of generation process and we have a candidate sentence.
 %%
 
-One problem here is that if we only consider the most likely word at each
-time-step we are not guaranteed to get the most likely sentence.
+One problem with this approach is that if we only consider the most likely word
+at each time step we are not guaranteed to get the most likely sentence.
 %%
 Ideally we need to have an approach like dynamic programming and search the
 entire space of possible sentences.
@@ -273,7 +274,7 @@ This is intractable as space of all sentences, even with a finite vocabulary, is
 infinite as sentences can be arbitrarily long.
 %%
 Even if we limit sentence length, the search space still grows factorially with
-the vocabulary size and thus too expensive.
+the vocabulary size and is still too expensive to search exhaustively.
 %%
 A good approximation is to use beam-search, wherein we maintain top k partial
 sentences at each step.
@@ -302,7 +303,7 @@ We can see an example of this in figure~\ref{fig_capdiversity}, where a sample
 image from MS-COCO training set is shown with the corresponding ground truth
 captions.
 %%
-Here we see that each caption focusses on different aspects of the image, from
+Here we see that each caption focuses on different aspects of the image, from
 the \emph{big rock} to \emph{crystal blue water}.
 %%
 But all the captions are equally valid.
@@ -315,7 +316,7 @@ But, we need to note that the reference captions only represent few samples from
 the space of all valid captions for input image.
 %%
 Having a large number of reference captions makes it more likely that solution space is
-better covered by them and thus it leads to more reliable evaluation.
+better covered by them and thereby leading to more reliable evaluation.
 %%
 
 \begin{figure}[h]
@@ -365,9 +366,9 @@ what exactly they measure.
 BLEU is a simple metric which scores captions based on the n-gram matches
 between the candidate and the reference captions.
 %%
-First, the total number of occurrences of a word in the candidate sentence,
-clipped to it's maximum occurrence in a single reference sentence, is
-accumulated.
+First, occurrence counts of different words in the candidate sentence are
+clipped to their maximum occurrence in a single reference sentence and
+then accumulated.
 %%
 Next a modified precision score is computed by dividing this accumulated score
 by the total number of words in the candidate.
@@ -380,13 +381,11 @@ Final BLEU score is given by:
     BLEU-N = BP\cdot{}exp(\sum_{n=1}^{N}w_{n}log(p_n))        
 \end{equation}
 
-\noindent where BP is the brevity penalty applied in-order to penalize 
+\noindent where BP is the brevity penalty applied in order to penalize 
 short candidate sentences.
 %%
 This additional term is required since, if we only use precision, degenerate
 candidates like the one containing just single words will always score better.
-
-In image captioning evaluation, BLEU-1 to BLEU-4 have been used. 
 %%
 \subsection{ROUGE-L}
 ROUGE metrics were proposed for evaluating text summaries.
@@ -417,15 +416,16 @@ P_{lcs}/R_{lcs}$
 \end{equation}
 
 \subsection{METEOR}
-In order to computer METEOR metric, the candidate and reference sentences are
+In order to compute the METEOR metric, the candidate and reference sentences are
 first aligned, wherein each word in the candidate sentence is matched to
 at most one word in the reference.
 %%
-When matching words, other than the exact match, WordNet synonyms, stemmed token
-matching and paraphrase matching is also considered in that order.
+When matching words between the candidate and the reference, apart from the
+exact match, WordNet synonyms, stemmed token matches and paraphrase matches are
+also considered in that order.
 %%
 The alignment is done so as to minimize the number of chunks, i.e. the group of
-words which are consecutive and in-order in both the sentences.
+words which are consecutive and in order in both the sentences.
 %%
 Once the two sentences are aligned, weighted precision and recall are computed
 on the matched words, with different weights being applied to different kinds of
@@ -444,7 +444,7 @@ precision and recall.
 number of chunks the alignment has, m is the length of the candidate and
 $\alpha$, $\gamma$ \& $\theta$ are hyper-parameters tuned to maximize
 correlation of the metric with human judgement.
-
+%%
 When there are multiple references, the maximum METEOR score between the
 candidate and a reference is taken.
 
@@ -476,15 +476,14 @@ captioning.
 
 
 In summary, all the four metrics discussed here evaluate suitability of a
-caption the input image, by comparing how well the caption matches the reference
-captions.
+caption to the visual input , by comparing how well the caption matches the
+reference captions.
 %%
-Thus they perform better with the increasing number of reference captions as was
+They perform better with the increasing number of reference captions as was
 found in~\cite{Vedantam_2015_CVPR}.
 %%
 This study also found that CIDEr and METEOR have the highest correlations to
 human judgement, followed by ROUGE-L and finally BLEU-4.
-
 %%
 All four of these metrics were used to rank submissions in the first MS-COCO
 Image captioning challenge.
@@ -493,7 +492,8 @@ The competition also collected human judgements to evaluate the submissions.
 %
 On comparing the two, it was found that ranking produced by METEOR and CIDEr
 were the most correlated with the ranking of submission as per human
-judgement~\cite{lsun2015CaptionSlides}.
+judgement~\cite{lsun2015CaptionSlides}, reaffirming the observations
+made in~\cite{Vedantam_2015_CVPR}.
 %%
-Hence we will pay most attention to METEOR and CIDEr metrics when evaluating our
-proposed methods in chapter~\ref{chapter:results}
+Hence we will pay the most attention to METEOR and CIDEr metrics when evaluating
+our proposed methods in chapter~\ref{chapter:results}

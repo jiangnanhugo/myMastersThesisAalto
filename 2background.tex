@@ -25,12 +25,12 @@ smaller feature vectors which attempt to encode the most important information
 present in them, while ignoring redundancies. 
 %%
 This feature extraction step is very important in any image understanding
-pipeline as it usually serves as input to subsequent modules and thus can be a
-major bottleneck to the performance of the entire system.
+pipeline as it usually serves as input to the subsequent modules and hence can
+be a major bottleneck to the performance of the entire system.
 %%
-Thus, we will now review some feature extraction techniques for images and
-videos and identify the best performing ones, which will be used in
-designing our captioning system later.
+Therefore, we will now review some feature extraction techniques for images and
+videos and identify the best performing ones, which will be used in designing
+our captioning system later.
 
 %=================================================================================
 \subsection{Image Features}
@@ -128,7 +128,7 @@ Our task of caption generation also involves learning a conditional generative
 language model which can generate captions given the input visual feature.
 %%
 For this purpose, we will now discuss a few different language modelling
-approaches, and discuss their suitability for our task.
+approaches, and evaluate their suitability for our task.
 
 The simple N-gram language models, which are based on counting co-occurrence
 statistics of sequence of n-words, are surprisingly good baselines for a lot of
@@ -144,9 +144,9 @@ The principle of maximum entropy dictates that among all the probabilistic
 models which satisfy the constraints of the training data, one should pick the
 model which is the most uniform.
 %%
-Thus it allows the model to share some probability for unseen n-grams as well.
+This allows the model to share some probability for unseen n-grams as well.
 
-But both the above models suffer from having to use a short context of previous
+But both the above models suffer from using a short context of previous
 words when predicting the next word, limited by the n-gram size, which can lead
 to longer generated sentences being in-coherent.
 %%
@@ -169,14 +169,14 @@ the problem of learning to map both visual features and the
 corresponding natural language labels into a common semantic space.
 %%
 This was posed as a solution to automatically annotate images
-in~\ref{weston2010large}.
+in~\cite{weston2010large}.
 %%
 Here, using a simple bag-of-visual words image representation, both image and
 words are projected into a common space, with training objective of ranking
 correctly the matching image and annotation pairs. 
 
-In~\cite{frome2013devise}, using CNN features as image representations and
-word vectors from word2vec~\cite{mikolov2013distributed} embeddings as word
+In~\cite{frome2013devise}, using the CNN features as the image representation and
+the word vectors from word2vec~\cite{mikolov2013distributed} embeddings as the word
 representation, a linear embedding is learnt to map the image vectors onto
 word vectors corresponding to the labels associated with the image.
 %%
@@ -188,10 +188,10 @@ semantic embedding space is done by a convex combinations of $n$ word vectors
 associated with top $n$ classes identified on the image.
 %%
 This does away with the need to learn the embedding, while still achieving
-impressive results in zero-shot classification on ImageNet dataset
+impressive results in zero-shot classification on the ImageNet dataset
 
-This literature forms the basis for the way visual features are used in
-captioning literature.
+The methods discussed above forms the basis for the way visual features are used
+in captioning literature.
 %%
 In many early works, both image features and word vectors are input to the LSTM
 language model using the same input matrix, forcing the model to learn a common
@@ -273,13 +273,13 @@ more general framework which can generate captions for videos.
 %%
 In case of videos, they replace the single image CNN feature with a sequence of
 conditional random field (CRF) video features and keep the language model
-configuration same.
+configuration identical.
 
 As opposed to such end-to-end learning systems, \cite{Fang2015} takes a modular
 approach. 
 %%
 They first train a set of object or concept detectors using multiple instance
-learning. 
+learning.
 %%
 Then, a maximum entropy language model takes these detector outputs as input to
 generate the candidate sentence.
@@ -301,7 +301,7 @@ the attention model to pick local CNN features, it is used to pick the right
 semantic concept, from the output of a semantic concept detector.
 
 Attention models extended to temporal domain have been applied to video
-captioning task, in-order to dynamically choose the right video feature
+captioning task, in order to dynamically choose the right video feature
 in~\cite{yao2015describing}.
 %
 Alternatively, a recurrent network is used to encode frame-level video features
@@ -317,7 +317,7 @@ driven by the availability of large scale datasets to train and test such models
 on. 
 %%
 These captioning datasets have images/videos with one or more associated
-reference caption.
+reference captions.
 %%
 The reference captions can be collected by large-scale human annotation using
 crowd sourcing tools Amazon Mechanical Turk or it could be mined from other
@@ -344,7 +344,7 @@ Due to its size and availability of standardized benchmark, we choose to conduct
 all our image captioning experiments on the MS-COCO dataset. 
 %%
 
-Video captioning datasets are more difficult to collect and thus we see 
+Video captioning datasets are more difficult to collect and consequently we see 
 use of both automatic caption mining techniques and manual annotation used to
 collect them.
 %%
@@ -353,14 +353,14 @@ at least 27 descriptions for each video.
 %%
 The M-VAD~\cite{rohrbach15cvpr} and MPII-MD~\cite{AtorabiM-VAD2015}
 datasets used in the first Large Scale Movie Description Challenge~(LSMDC), were
-collected using by using movie clips and transcribing associated audio
+collected using movie clips and transcribing associated audio
 description available in the movie DVDs.
 %%
 In total the dataset contains about ~100k clips from 202 movies and one
 reference caption associated with each clip. 
 %%
-This dataset is also associated with an evaluation server in-order to
-standardize the testing and comparison of performance on it.
+Creators of this dataset also provide an evaluation server to standardize the
+testing and comparison of performance on it.
 %%
 More recently released Microsoft Video to Text dataset~(MSR-VTT) contains 10,000
 with 20 human annotated captions for each of them. 
