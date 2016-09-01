@@ -4,11 +4,11 @@
 \epigraph{A picture is worth a thousand words. But how many can the machine
 say?}{Our adaption of an old English proverb}
 
-The famous English adage states "A picture is worth a thousand
-words".
+The famous English adage states ``A picture is worth a thousand
+words''.
 %%
 Translated into technical terms, this is meant to convey that there is a lot the
-viewer can learn/infer from a single still image and that enumerating all the
+viewer can learn or infer from a single still image and that enumerating all the
 information encoded in an image can take upto even a thousand words.
 %%
 This is illustrated in our extensive use of images in all forms of
@@ -18,78 +18,81 @@ Humans are very good at processing images and videos and gathering all this
 encoded information, but the computers still struggle to make sense of the
 simplest ones.
 %
-One could even say it is still easier for computers to store, parse, search and
-even understand a thousand words than a single image.
+One could say it is still easier for computers to store, parse, search and even
+understand a thousand words than a single image.
 %
 
-The usage of multimedia on the internet has grown to staggering levels in the
-last few yeas, due to easy access to cameras through smart phones.
+The use of multimedia on the internet has grown to staggering levels in the
+recent years, due to easy access to cameras in smart phones.
 %%
 For example about 95 million photos are uploaded to Instagram every
 day~\cite{InstStats} and about 400 hours of video is uploaded to YouTube every
 minute~\cite{YouStats}.
+%
+Rapidly growing amount of visual data being created due to this phenomenon
+presents both an enormous challenge and an opportunity to build smarter
+computer algorithms to understand and summarize the data.
 %%
-This presents both an enormous challenge and an opportunity to build smarter
-computer algorithms to understand and summarize this data.
-%%
-Such algorithms could help us index and search this huge amount of data better.
+Such algorithms could help us index and search this visual data better.
 %%
 An algorithm which can learn to recognize and describe different objects and
 their relationships in an image or a video would be an essential building block
-of a general AI system.
+of a general artificial intelligence~(AI) system.
 %%
 Hence, automatic understanding of visual media is an interesting and important
-problem in many aspects of computer vision and artificial intelligence.
+problem in many aspects of computer vision and AI.
 %
 
-One such problem at the heart of machine understanding of visual media, is
-automatic captioning of images and videos.
+An essential research topic at the heart of machine understanding of visual
+media is automatic captioning of images and videos.
 %%
-This involves designing an algorithm which takes the image or the video as input
-and generates a natural language caption describing succinctly the content of
-the media.
+This involves designing an algorithm which takes the image or the video as
+input and generates a natural language caption succinctly describing the
+content of the media.
 %%
-Effectively solving this problem requires the machine to be able to identify the
-salient objects in the image/video, their attributes and the relationship
-between these objects and also correctly recognize the scene.
+Effectively solving the above problem requires the machine to be able to
+identify the salient objects in the image or video, recognize their attributes,
+extract the relationships between these objects and also to correctly recognize
+the scene.
 %%
-It also needs to be able to then use this information to generate a natural language
-caption summarizing it.
+This machine also needs to be able to use the extracted information to generate
+a natural language caption summarizing the essence of it.
 %%
-Since this caption generation requires both visual feature extraction and natural
-language generation modules, it is also a good proxy task to measure the
-progress in both these domains. 
+Since the caption generation requires both visual feature extraction and
+natural language generation modules, it is also a good proxy task to measure
+the progress in both these domains. 
 %%
 
 %%TODO: SHOULD THIS GO to literature review of features?
-Until recently, the task of identifying even a single object in an image
-reliably across diverse and large scale datasets was hard.
+Until recently, the task of reliably identifying even a single object in an image
+across diverse and large-scale datasets was hard.
 %%
-This changed dramatically with the availability of large scale annotated data
-like the ImageNet dataset~\cite{ImagenetOrig}, and  application of deep learning
-techniques, specifically convolutional neural networks (CNN).
+This changed dramatically with the availability of large-scale annotated data
+such as the ImageNet dataset~\cite{ImagenetOrig}, and the application of deep
+learning techniques, specifically convolutional neural networks (CNN).
 %%
 For example, in the image classification task of the ImageNet Large Scale Visual
-Recognition Challenge~\cite{ILSVRC15} (ILSVRC), which involves classifying
+Recognition Challenge~ (ILSVRC)~\cite{ILSVRC15}, which involves classifying
 images to one of thousand object classes, the accuracy has improved from 71.8\%
 to 95.06\%, surpassing the human performance on the same task. 
 %%
-It was also discovered that image classification networks which are trained on
-the large ImageNet dataset, also generalize very well and can used as generic
-image feature extraction for different tasks~\cite{yosinski2014transferable}.
+It has also been discovered that image classification networks which are
+trained on the large ImageNet dataset, also generalize very well and can be
+used as generic image feature extraction for different
+tasks~\cite{yosinski2014transferable}.
 %%
 This has led to successful application of such deep networks to various other
 tasks in computer vision including the task of image captioning.
 %%
 
-In this thesis we will examine the task of automatic image/video captioning and
-discuss algorithms utilizing such tools from deep learning to solve this task.
+In this thesis we will examine the task of automatic image and video captioning and
+discuss algorithms utilizing tools from deep learning to solve this task.
 %%
 Much of the discussion presented in this thesis applies to both image and video
 captioning problems.
 %%
-In such cases, in the interest of conciseness, we use the term "visual
-captioning" to refer to both of these problems.
+In such cases, in the interest of conciseness, we use the term ``visual
+captioning'' to refer to both of these problems.
 %%
 Next, we will define the problem more precisely and list out the basic building
 blocks of a visual captioning pipeline.
@@ -114,17 +117,17 @@ Thus a caption can be precisely defined to be a sentence, $S$, which is a
 sequence of words $(w_0, w_1,\cdots, w_{n-1})$ with $n$ being the length of the
 sentence. 
 %%
-Thus we are trying to learn the distribution, $P(S|V)$, where V is the visual
+We are trying to learn the distribution, $P(S|V)$, where V is the visual
 input (either an image or a video). 
 %%
-This can be written as in eq.\ref{eq:langB1}. 
+This can be written as 
 
 \begin{equation}
-\label{eq:langB1} P(S|V) = P(w_0 w_1 \cdots w_{n-1}|V)
+\label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{n-1}|V)  .
 \end{equation}
 
-We will take a two staged approach to model this probability distribution, as
-has been popular in the image captioning literature. 
+In this work, the probability distribution, $P(S|V)$ is modelled using a two
+staged approach, as has been popular in the image captioning literature. 
 %%
 In the first stage the visual input $V$ is mapped onto one or more feature
 vectors $V_f$.
@@ -140,24 +143,25 @@ For images, we will experiment with features extracted from CNNs trained on
 ImageNet for single image classification, explicit object detector features, and
 features constructed from object localization networks.
 %%
-In case of videos, we will explore dense trajectory features, frame-level CNN
-features and 3D convolutional features. 
+In the case of videos, we will explore dense trajectory features, frame-level
+CNN features and 3D convolutional features. 
 
-Next stage, is the languge model, which takes the visual feature vector $V_f$ as
-input and learns a probability distibution over sentences.
+The next stage is the language model, which takes the visual feature vector
+$V_f$ as input and learns a probability distribution over sentences.
 %%
 Since the sentences are sequence of words, they lend themselves naturally to be
-modelled using sequential models like recurrent neural networks.
+modelled using sequential models such as recurrent neural networks.
 %%
 In this thesis we will only deal with language models based on the recurrent
-networks, specifically a variant called Long-Short Term Memory networks.
+networks, specifically a variant called Long-Short Term
+Memory~(LSTM)~\cite{Hochreiter1997} networks.
 %%
 We will implement and analyze a popular implementation proposed in
 literature~\cite{Vinyals_2015_CVPR}.
 %%
 Then we propose some extensions to this baseline language model by adding
 additional input channels, using deeper networks with residual connections,
-and class based factorization of the language model. 
+and class--based factorization of the language model. 
 %%
 We will also discuss several techniques to create an ensemble of language
 models, exploring the problem of picking one best caption from a pool of
@@ -167,23 +171,23 @@ Evaluating an image captioning system is also non-trivial, since we have to
 compare the generated caption against a few different reference captions.
 %%
 The standard recipe followed in the literature, which we also use here, is to
-use multiple automatic evaluation metrics adopted from machine translation
-field. 
+use multiple automatic evaluation metrics adopted from the field of machine
+translation research. 
 %%
 In addition, we present human evaluation results obtained by our participation
 in two automatic video captioning challenges.
 %%
-Concretely, we participated in the  Large Scale Movie Description
+Concretely, we participated in the Large Scale Movie Description
 Challenge~(LSMDC) 2015 and the Microsoft Video to Text Challenge~(MSR-VTT) 2016
-and we will present the results from these competition here.
+and the results from these competition will be presented here.
 %%
 Our video captioning models won both the competitions as judged by human
 evaluators.
 
-We analyze the results of the experiments qualitatively and discuss strengths
-and shortcomings of current solutions. 
+We analyze the results of the experiments qualitatively and discuss the
+strengths and shortcomings of current solutions. 
 %%
-Drawing from this analysis, we discuss a few promising new directions the
+Drawing from this analysis, we finally discuss a few promising new directions the
 research on vision and language is heading.
 
 In summary, the main contributions of this thesis are as follows:
@@ -202,10 +206,10 @@ In summary, the main contributions of this thesis are as follows:
        
 \end{itemize}
 
-Some content of this thesis overlaps with the three papers we have published
-related to this work.
+Some content of this thesis overlaps with the three papers published related to
+this work.
 %%
-Part of our experiments on image captioning has been published
+A part of the experiments on image captioning has been published
 in~\cite{ShettyACMMM2016Wrk}.
 %%
 Our video captioning solution which won the LSMDC 2015 has been published
@@ -217,29 +221,30 @@ published in~\cite{ShettyACMMM2016}.
 \label{section:structure} 
 The rest of the thesis is organized as follows.
 %%
-In Chapter~\ref{chapter:background}, we discuss background literature related
-to the building blocks of caption generation models, i.e.\@ visual feature
-extraction and language modelling. 
+In Chapter~\ref{chapter:background}, a discussion on the background literature
+related to the building blocks of caption generation models, i.e.\@ visual
+feature extraction and language modelling, is presented. 
 %%
 Here we will also review the several related works on visual captioning
 and discuss the datasets available to train such models.
 %%
-We discuss the details of our baseline caption generation model and the
-automatic metrics used to evaluate a captioning system in Chapter~\ref{chapter:baseline}. 
+The details of our baseline caption generation model and the automatic metrics
+used to evaluate a captioning system are discussed in
+Chapter~\ref{chapter:baseline}. 
 %%
-Next in Chapter~\ref{chapter:VisFeatChapter} we present some extensions to
-image and video features compared to the ones used in the baseline model.
+Chapter~\ref{chapter:VisFeatChapter} presents some extensions to the image
+and video features compared to the ones used in the baseline model.
 %%
-In Chapter~\ref{chapter:langModel}, we explore several extensions to the
-baseline language model and present some ensembling techniques to combine
-multiple language models.
+Chapter~\ref{chapter:langModel} discusses several extensions to the baseline
+language model and presents some ensembling techniques to combine multiple
+language models.
 %%
 Chapter~\ref{chapter:results} contains results from several experiments to
 determine the best configurations for our image and video captioning systems and
-provide comparisons to few other state-of-the-art models from the literature.
+provide comparisons to a few other state-of-the-art models from the literature.
 %%
-In Chapter~\ref{chapter:discussion}, we will identify few problem areas with our
-visual captioning systems and discuss a few interesting problems to explore to
-address these issues.
+In Chapter~\ref{chapter:discussion}, some shortcomings of our visual captioning
+systems are identified and a few interesting problems to explore to address
+these issues are discussed.
 %%
-We conclude the thesis in chapter~\ref{chapter:conclusions}.
+The thesis is concluded in Chapter~\ref{chapter:conclusions}.
