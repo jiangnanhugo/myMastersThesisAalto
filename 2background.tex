@@ -1,7 +1,7 @@
 \chapter{Background: Vision \& Language} \label{chapter:background} 
 %%===========================================================================%%
 In this chapter we will review some background literature exploring different
-facets of integrating visual data and natural language annotations of them.
+facets of integrating visual data and their natural language annotations.
 %%
 This includes learning good representations for images and videos, different
 kinds of generative language models, techniques which attempt to rank similarity
@@ -12,15 +12,15 @@ Additionally, we will review some datasets available for training such captionin
 models.
 
 %%===========================================================================%%
-\section{Visual features}
+\section{Visual Features}
 %%----------------------------------%%
 Visual media, be it image or video, are inherently very high-dimensional data.
 %%
 This large dimensionality poses a challenge for machine learning systems trying
-to extract higher level semantic information directly from such visual inputs,
-such as in case of captioning.
+to extract higher-level semantic information directly from such visual inputs,
+as in case of captioning.
 %%
-To address this, images and videos have been traditionally represented with
+To address this, images and videos have traditionally been represented with
 smaller feature vectors which attempt to encode the most important information
 present in them, while ignoring redundancies. 
 %%
@@ -30,51 +30,56 @@ be a major bottleneck to the performance of the entire system.
 %%
 Therefore, we will now review some feature extraction techniques for images and
 videos and identify the best performing ones, which will be used in designing
-our captioning system later.
+the captioning system later.
 
 %=================================================================================
 \subsection{Image Features}
-Traditionally, tasks like object recognition have relied on using
-hand-engineered features to represent images. 
+Traditionally, tasks such as object recognition have relied on using
+hand-crafted features to represent images. 
 %%
-But recently deep Convolutional Neural Networks~(CNN), which learn to extract
-features necessary for the task entirely from the data, have become a popular
-choice for image feature extraction.
+Recently, however, deep Convolutional Neural Networks~(CNN), which learn to
+extract features necessary for the task entirely from the data, have become a
+popular choice for image feature extraction.
 %%
 This was triggered by the spectacular improvement in image classification
 accuracy seen on the ImageNet Large Scale Visual Recognition Challenge~(ILSVRC)
-2012, with the first use of CNNs in this challenge.
+2012, with the first use of CNNs in this competition.
 %%
-In this challenge involving classifying the input images to one of thousand
-classes, the submission by~\cite{Krizhevsky2012} using a deep CNN outperformed
-all the other submission by a large margin.
+In this challenge, involving classifying the input images to one of thousand
+classes, the submission by Krizhevsky \emph{et al}.\@~\cite{Krizhevsky2012}
+using a deep CNN outperformed all the others by a large margin.
 %%
-This set-off further exploration into CNN architectures and has driven up the
-performance in the ImageNet classification task to even surpass human
-performance~\cite{he2015delving}.
+This set off further exploration into CNN architectures and has driven up the
+performance in the ImageNet classification task to even surpass the human
+classification accuracies~\cite{he2015delving}.
 %%
 
-More interestingly, these deep CNNs trained on the large ImageNet dataset for
+More interestingly, the deep CNNs trained on the large ImageNet dataset for
 the classification task have been shown to generalize very well to other
 datasets and tasks as well.
 %%
-In~\cite{yosinski2014transferable}, it is shown that using the weights from the
-CNNs pre-trained on ImageNet as initialization when using similar CNNs for other
-datasets and tasks help learn significantly better models.
+In~\cite{yosinski2014transferable}, it is shown that the weights learnt by the
+CNNs pre-trained on the ImageNet dataset are good initializers for other tasks
+as well.
 %%
-Alternatively, even using activations from a higher layer of a ImageNet
-pre-trained CNN as off-the shelf image features is also shown to produce
-state-of-the art results~\cite{Donahue2014,Razavian2014CVPR} in several datasets
-and tasks, including object detection, scene recognition etc.
+That is, if we use the weights from CNNs pre-trained on ImageNet to initialize
+the networks before training it on other datasets and tasks, we can learn much
+better models than just using random initialization. 
 %%
-We will use this second approach, i.e.\@ use activations from CNNs pre-trained
-on ImageNet as feature input to our captioning model, without any fine-tuning of
-the CNNs for this task.
+Alternatively, using activations from some higher layer of an ImageNet
+pre-trained CNN as off-the-shelf image features has also been shown to produce
+state-of-the-art results~\cite{Donahue2014, Razavian2014CVPR, ShettyACMMM2016,
+ShettyACMMM2016Wrk} in several datasets and tasks, including object detection,
+scene recognition, image and video captioning, etc.
 %%
-GoogleLeNet~\cite{DBLP:journals/corr/SzegedyLJSRAEVR14} and
-VGG~\cite{Simonyan14c} architectures, which won the different categories of
-ILSVRC 2014 competition, have been popular source of such feature extraction in
-the community with the ready availability of the code and pre-trained models.
+We will follow this second approach, i.e.\@ use activations from CNNs
+pre-trained on ImageNet as feature input to our captioning model, without any
+fine-tuning of the CNNs for this task.
+%%
+GoogLeNet~\cite{DBLP:journals/corr/SzegedyLJSRAEVR14} and VGG~\cite{Simonyan14c}
+architectures, which won the different categories of ILSVRC 2014 competition,
+have been popular models for such feature extraction in the community with the
+ready availability of the code and pre-trained models.
 
 %=================================================================================
 \subsection{Video Features}
@@ -87,17 +92,17 @@ Dense trajectories~\cite{DBLP:conf/cvpr/WangKSL11} and Improved dense
 trajectories~\cite{Wang2013} have been popular video feature extraction methods
 for the task of action recognition.
 %%
-In these methods, some interest points are densely sampled in an initial frame
+In these methods, interest points are densely sampled in an initial frame
 and then tracked across frames, to form trajectories.
 %%
 Furthermore, a set of local descriptors are extracted around the trajectory
-co-ordinates to obtain a rich representation of the trajectory.
+coordinates to obtain a rich representation of the trajectory.
 %%
-These trajectories can encode motion patterns from variety of sources, including
-actions from agents in the video, camera motion etc.
+These trajectories can encode motion patterns from a variety of sources, including
+actions from agents in the video, camera motion, etc.
 %%
 
-Following the success of deep CNN models on static images, there have been
+Following the success of the deep CNN models on static images, there have been
 attempts to train 3-D CNNs which operate directly on video
 segments~\cite{3dCNN_ji2013, KarpathyCVPR14, DBLP:C3D}.
 %%
@@ -105,8 +110,8 @@ However, these models need a lot of training data and are usually pre-trained on
 some large action recognition dataset, e.g.\@ the Sports-1M
 dataset~\cite{KarpathyCVPR14}.
 
-All of the above features encode action related information very well but fail to
-capture the information about identity of the objects in the video.
+All of the above features encode action-related information very well, but fail to
+capture information about the identity of the objects in the video.
 %%
 The task of caption generation also requires us to describe the objects seen in
 the video and their attributes, in addition to recognizing actions.
@@ -115,87 +120,87 @@ This can be addressed by extracting features from individual
 frames~\cite{venugopalan2015sequence} or key-frames~\cite{shetty2015video} using
 CNNs pre-trained on the ImageNet dataset.
 
-In this work we explore both these paradigms of video feature extraction and
-both hand-engineered trajectory features and deep video features for the task of
-automatic captioning.
+In this work we explore both these paradigms of video feature extraction, namely
+hand-crafted trajectory features and deep video features, for the task of
+automatic visual captioning.
 
 \section{Natural Language Modelling}
 %%----------------------------------%%
 Generative language models are widely used in various tasks including speech
-recognition and synthesis, document analysis, dialog systems etc.
+recognition and synthesis, document analysis, dialog systems, etc.
 %%
 Our task of caption generation also involves learning a conditional generative
-language model which can generate captions given the input visual feature.
+language model which can generate captions given the input visual features.
 %%
 For this purpose, we will now discuss a few different language modelling
 approaches, and evaluate their suitability for our task.
 
-The simple N-gram language models, which are based on counting co-occurrence
-statistics of sequence of n-words, are surprisingly good baselines for a lot of
-language modelling tasks.
+The simple $n$-gram language models, which are based on counting co-occurrence
+statistics of sequence of $n$ words, are surprisingly good baselines for a lot
+of language modelling tasks.
 %%
-But they are constrained to generate sentences only using n-grams it has seen in
-the training set.
+However, they are constrained to generate sentences only by using $n$-grams they
+have seen in the training set.
 %%
-Maximum entropy language model~\cite{berger1996maximum}(ME-LM) overcomes this
+The maximum entropy language model~(ME-LM)~\cite{berger1996maximum} overcomes this
 problem by using the principle of maximum entropy while learning the model.
 %%
-The principle of maximum entropy dictates that among all the probabilistic
-models which satisfy the constraints of the training data, one should pick the
-model which is the most uniform.
+The principle dictates that among all the probabilistic models which satisfy the
+constraints of the training data, one should pick the model which is the most
+uniform.
 %%
-This allows the model to share some probability for unseen n-grams as well.
+This allows the model to share some probability for unseen $n$-grams as well.
 
-But both the above models suffer from using a short context of previous
-words when predicting the next word, limited by the n-gram size, which can lead
-to longer generated sentences being in-coherent.
+Both the above models suffer from using a short context of previous words when
+predicting the next word, limited by the $n$-gram size, which can lead to longer
+generated sentences being incoherent.
 %%
 Alternatively, one could use recurrent neural networks as generative language
 models as proposed in~\cite{mikolov2010recurrent}.
 %%
-Recurrent neural networks have the benefit of having access to infinite context
-through its hidden state.
+Recurrent neural networks have the benefit of having access to theoretically
+infinite context through their hidden state.
 %%
 Additionally, these models do not need pre-defined language features, unlike in case
 ME-LM, and can learn the necessary word representations from the data. 
 %%
 Indeed, such recurrent network based language models are quite popular in
-machine translation task~\cite{bahdanau2014neural}
+the machine translation task~\cite{bahdanau2014neural}.
 
 \section{Intermediate Problem: Multi-Modal \\Embeddings}
 %%----------------------------------%%
 A precursor to the problem of caption generation from input visual features, is
-the problem of learning to map both visual features and the
-corresponding natural language labels into a common semantic space.
+the problem of learning to map both visual features and the corresponding
+natural language labels into a common semantic space.
 %%
 This was posed as a solution to automatically annotate images
 in~\cite{weston2010large}.
 %%
-Here, using a simple bag-of-visual words image representation, both image and
-words are projected into a common space, with training objective of ranking
-correctly the matching image and annotation pairs. 
+Here, using a simple bag-of-visual-words image representation, both the image
+and words are projected into a common space, with the training objective of
+ranking correctly the matching image and annotation pairs. 
 
-In~\cite{frome2013devise}, using the CNN features as the image representation and
-the word vectors from word2vec~\cite{mikolov2013distributed} embeddings as the word
-representation, a linear embedding is learnt to map the image vectors onto
-word vectors corresponding to the labels associated with the image.
+In~\cite{frome2013devise}, using the CNN features as the image representation
+and the word vectors from word2vec~\cite{mikolov2013distributed} embeddings as
+the word representation, a linear embedding is learnt to map the image vectors
+onto word vectors corresponding to the labels associated with the image.
 %%
-This allows the model to do ``zero-shot'' recognition on image classes it has
+This allows the model to do ``zero-shot'' recognition of image classes it has
 not seen before, by finding the nearest label to the embedded image feature.
 %%
 A much simpler approach is used in~\cite{norouzi2013zero}, where the mapping to
-semantic embedding space is done by a convex combinations of $n$ word vectors
-associated with top $n$ classes identified on the image.
+semantic embedding space is done by a convex combinations of $c$ word vectors
+associated with the top $c$ classes identified in the image.
 %%
 This does away with the need to learn the embedding, while still achieving
-impressive results in zero-shot classification on the ImageNet dataset
+impressive results in zero-shot classification on the ImageNet dataset.
 
 The methods discussed above forms the basis for the way visual features are used
 in captioning literature.
 %%
-In many early works, both image features and word vectors are input to the LSTM
-language model using the same input matrix, forcing the model to learn a common
-joint embedding for them.
+In many early works, both image features and word vectors are input to the
+Long-Short Term Memory~(LSTM) language model using the same input matrix,
+forcing the model to learn a joint embedding for them.
 
 %%----------------------------------%%
 \section{Approaches to Visual Captioning}
@@ -207,91 +212,92 @@ retrieving from a database~\cite{Farhadi2010, Hodosh2013,Karpathy2014},
 and ones using natural language generation techniques to produce
 captions~\cite{Li2011,kulkarni2013babytalk,Vinyals_2015_CVPR,Fang2015}.
 %%
-While the retrieval based methods tend to be semantically more accurate as they
+While the retrieval-based methods tend to be semantically more accurate as they
 do not need to learn grammatical rules to generate a caption, the captions they
-produce are strictly restricted to the caption database, and thus won't work
+produce are strictly restricted to the caption database, and thus will not work
 well on unseen data.
 %%
-In contrast, although generative models can learn to create novel captions and even
-perform reasonably well on unseen data, they tend to have poorer semantic
+In contrast, although generative models can learn to create novel captions and
+even perform reasonably well on unseen data, they tend to have poorer semantic
 accuracy and details.
 
 Early work on captioning images presented in~\cite{Farhadi2010} was retrieval
 based, wherein a similarity score between sentences and images is computed and
 is used to retrieve the best matching caption to an input image. 
 %%
-This method relied on few hand engineered image features and dependency parsing
-based features for sentences.
+This method relied on few hand-engineered image features and
+dependency-parsing-based features for sentences.
 %%
-In ~\cite{Hodosh2013}, authors pose the image description as a ranking problem
+In ~\cite{Hodosh2013}, authors pose image description as a ranking problem
 involving correctly ranking a set of captions by their relevance to the input
 image.
 %%
-They argue that, ability to rank the captions correctly is a good measure of
-semantic image understanding, with the added benifit that it is much easier to
-automatically evaluate such ranked lists than evaluating generated novel
+They argue that the ability to rank captions correctly is a good measure of
+semantic image understanding, with the added benefit that it is much easier to
+automatically evaluate such ranked lists than to evaluate generated novel
 captions.
 %%
-Such retrieval based system is further enhanced by use of deep image feature and
-word embeddings in~\cite{Karpathy2014}.
+Such retrieval-based system is further enhanced by the use of deep image
+features and word embeddings in~\cite{Karpathy2014}.
 
 One of the early models to successfully generate novel image captions was
 described~\cite{kulkarni2013babytalk}, albeit relying on pre-defined sentence
 templates to generate captions.
 %%
-In ~\cite{Li2011}, this template based language model is replaced with a n-gram
-based one learnt from large scale natural language data from the web.
+In ~\cite{Li2011}, this template based language model is replaced with a
+$n$-gram based one learnt from large-scale natural language data collected from
+the web.
 
-Following the successful use of recurrent network based language models on
-tasks like automatic speech recognition~\cite{mikolov2010recurrent} and machine
-translation~\cite{bahdanau2014neural}, it was quickly adapted to the image
-captioning literature as well~\cite{Karpathy_2015_CVPR, Vinyals_2015_CVPR,
-donahue2015long}.
+Following the successful use of recurrent network--based language models on
+tasks such as automatic speech recognition~\cite{mikolov2010recurrent} and
+machine translation~\cite{bahdanau2014neural}, this approach was quickly adapted
+to the image captioning literature as well~\cite{Karpathy_2015_CVPR,
+Vinyals_2015_CVPR, donahue2015long}.
 %%
-All these methods consists of two-stage encoder--decoder models, with 
-encoder being the image feature extraction module and decoder being the
-recurrent language model.
+All these methods consist of two-stage encoder--decoder models, with the encoder
+being the image feature extraction module and the decoder being the recurrent
+language model.
 %%
-One major advantage of this approach is it allows end to end training of the
+One major advantage of this approach is that it allows end-to-end training of the
 entire system.
 %%
-In case of ~\cite{Karpathy_2015_CVPR}, CNN based image features and a simple
-recurrent neural network~(RNN) based language model are used as encoder and
-decoder respectively.
+In the case of ~\cite{Karpathy_2015_CVPR}, CNN-based image features and a simple
+recurrent neural network~(RNN) based language model are used as the encoder and
+the decoder, respectively.
 %%
 The authors also propose techniques to align different parts of a caption to
 different regions in the image. 
 %%
 Similarly in~\cite{Vinyals_2015_CVPR}, authors also use CNN image features, but
-an LSTM based network is used for the language model.
+an LSTM-based network is used for the language model.
 %%
 In their method, the image features are fed to the LSTM only at the beginning of
 the recursion, in order to prevent the network from over-fitting.
 %%
-Starting from a similar CNN+LSTM based pipeline,\cite{donahue2015long} propose a
-more general framework which can generate captions for videos.
+Starting from a similar CNN+LSTM based pipeline,\cite{donahue2015long} proposes
+a more general framework which can generate captions for both images and videos.
 %%
-In case of videos, they replace the single image CNN feature with a sequence of
-conditional random field (CRF) video features and keep the language model
+In the case of videos, they replace the single image CNN feature with a sequence
+of conditional random field~(CRF) video features and keep the language model
 configuration identical.
 
 As opposed to such end-to-end learning systems, \cite{Fang2015} takes a modular
 approach. 
 %%
 They first train a set of object or concept detectors using multiple instance
-learning.
+learning~\cite{maron1998framework}.
 %%
 Then, a maximum entropy language model takes these detector outputs as input to
 generate the candidate sentence.
 %%
-This concept detector based approach has been also applied to video captioning
+This concept detector--based approach has been applied also to video captioning
 in~\cite{DBLP:journals/corr/RohrbachTRTPLCS16}, where the authors train a
-"visual label" detector on the LSMDC dataset and use it as an input to a LSTM
+``visual label'' detector on the LSMDC dataset and use it as an input to an LSTM
 language model.
 
 In \cite{Xu2015show}, instead of using a single image feature vector from a
-fully connected layer, multiple local image features from a lower layer in the
-CNN is used.
+fully connected CNN layer, multiple local image features extracted from a lower
+layer in the CNN are used.
 %%
 Then an attention mechanism is proposed to choose the right image features to
 look at while generating different words in the caption.
@@ -300,9 +306,9 @@ Similar attention mechanism is used in~\cite{you2016image}, but instead of using
 the attention model to pick local CNN features, it is used to pick the right
 semantic concept, from the output of a semantic concept detector.
 
-Attention models extended to temporal domain have been applied to video
+Attention models extended to temporal domain have been applied to the video
 captioning task, in order to dynamically choose the right video feature
-in~\cite{yao2015describing}.
+~\cite{yao2015describing}.
 %
 Alternatively, a recurrent network is used to encode frame-level video features
 before inputting them to the language model in~\cite{venugopalan2015sequence}.
@@ -312,67 +318,68 @@ caption.
 %%
 \section{Datasets for Image and Video Captioning}
 %%===========================================================================%%
-The rapid progress in image and video captioning in the recent years has also been
-driven by the availability of large scale datasets to train and test such models
-on. 
+The rapid progress in automatic image and video captioning in the recent years
+has also been driven by the availability of large-scale datasets to train and
+test such models on. 
 %%
-These captioning datasets have images/videos with one or more associated
+These captioning datasets have images or videos with one or more associated
 reference captions.
 %%
-The reference captions can be collected by large-scale human annotation using
-crowd sourcing tools Amazon Mechanical Turk or it could be mined from other
-related sources. 
+The reference captions can be collected with large-scale human annotation using
+crowd sourcing tools such as Amazon Mechanical Turk or they can be mined from
+other related sources.
 
-One of the early datasets for image captioning was the
-Pascal1K~\cite{Rashtchian2010} consisting of 1000 images five human annotated
+One of the early datasets for image captioning was 
+Pascal1K~\cite{Rashtchian2010} consisting of 1000 images five human-annotated
 captions for each of them.
 %%
 Flickr8k~\cite{Hodosh2013} and Flickr30k~\cite{Young2014} are relatively much
-larger data sets, consisting of 8,000 images and 30,000 images, respectively. 
+larger datasets, consisting of 8,000 and 30,000 images, respectively. 
 %%
 They also have five human-written captions for each image.
 %%
-Currently, the most popular and largest dataset for image captioning, is the
-Microsoft Common Objects in Context (COCO)~\cite{Lin2014} with over 200,000
-images and at least five human-written captions per image.
+Currently, the most popular and largest dataset for image captioning is the
+Microsoft Common Objects in Context (COCO) collection~\cite{Lin2014} with over
+200,000 images and at least five human-written captions per image.
 %%
 There exists also an associated MS-COCO evaluation server, where researchers can
 upload their captions on the blind test dataset and compare the performance of
 their system to the state-of-the-art methods on a public leaderboard.
 %%
-Due to its size and availability of standardized benchmark, we choose to conduct
-all our image captioning experiments on the MS-COCO dataset. 
+Due to its size and availability of a standardized benchmark, all the image
+captioning experiments reported in this thesis are conducted on the MS-COCO
+dataset. 
 %%
 
-Video captioning datasets are more difficult to collect and consequently we see 
-use of both automatic caption mining techniques and manual annotation used to
+Video captioning datasets are more difficult to collect and we can consequently
+see both automatic caption mining techniques and manual annotation used to
 collect them.
 %%
 YouTube corpus~\cite{chen2011collecting} consists of 2000 video clips with
-at least 27 descriptions for each video.
+at least 27 textual descriptions for each video.
 %%
-The M-VAD~\cite{rohrbach15cvpr} and MPII-MD~\cite{AtorabiM-VAD2015}
-datasets used in the first Large Scale Movie Description Challenge~(LSMDC), were
-collected using movie clips and transcribing associated audio
-description available in the movie DVDs.
+The M-VAD~\cite{rohrbach15cvpr} and MPII-MD~\cite{AtorabiM-VAD2015} datasets
+used in the first Large Scale Movie Description Challenge~(LSMDC), were
+collected by extracting movie clips and transcribing the associated audio
+descriptions available in the movie DVDs.
 %%
-In total the dataset contains about ~100k clips from 202 movies and one
+In total the LSMDC dataset contains about ~100k clips from 202 movies and one
 reference caption associated with each clip. 
 %%
 Creators of this dataset also provide an evaluation server to standardize the
 testing and comparison of performance on it.
 %%
 More recently released Microsoft Video to Text dataset~(MSR-VTT) contains 10,000
-with 20 human annotated captions for each of them. 
+short videos with 20 human annotated captions for each of them. 
 %%
-This makes it the largest video captioning dataset in terms of video-caption
+This makes it the largest video captioning dataset in terms of video--caption
 pairs.
 %%
-MSR-VTT dataset was also used in the recently concluded MSR-VTT video captioning
+The MSR-VTT dataset was also used in the recently concluded MSR-VTT video captioning
 challenge.
 
 %%
-We conduct our video captioning experiments on both the LSMDC and the MSR-VTT
+We conduct our video captioning experiments on both the LSMDC and MSR-VTT
 datasets and also report results from our participation of the video captioning
 challenges associated with these datasets. 
 

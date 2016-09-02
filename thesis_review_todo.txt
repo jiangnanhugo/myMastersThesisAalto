@@ -9,3 +9,9 @@
 9.  Check for image amd video feature references for consistency
 10. Check for passive vs active consistency 
 11. Check if all lines have a period
+
+
+J
+1. like -> such as
+2. no BUT in the beginning
+3. look for data sets
