@@ -114,7 +114,7 @@ Our task is to generate a caption given an input image or video.
 We are going to focus on methods to generate single sentence captions only. 
 %%
 Thus a caption can be precisely defined to be a sentence, $S$, which is a
-sequence of words $(w_0, w_1,\cdots, w_{n-1})$ with $n$ being the length of the
+sequence of words $(w_0, w_1,\cdots, w_{L-1})$ with $L$ being the length of the
 sentence. 
 %%
 We are trying to learn the distribution, $P(S|V)$, where V is the visual
@@ -123,13 +123,13 @@ input (either an image or a video).
 This can be written as 
 
 \begin{equation}
-\label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{n-1}|V)  .
+\label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{L-1}|V)  .
 \end{equation}
 
 In this work, the probability distribution, $P(S|V)$ is modelled using a two
 staged approach, as has been popular in the image captioning literature. 
 %%
-In the first stage the visual input $V$ is mapped onto one or more feature
+In the first stage the visual input V is mapped onto one or more feature
 vectors $V_f$.
 %%
 This process is deterministic and the feature vectors extracted are of fixed
