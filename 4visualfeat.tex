@@ -192,7 +192,7 @@ ImageNet-trained VGG and GoogLeNet features are used as input to the 80 object
 detector SVMs. 
 %%
 In particular, we here utilized linear SVMs with homogeneous kernel
-maps~\cite{Vedaldi2010} of order $d=2$ to approximate the intersection kernel.
+maps~\cite{Vedaldi2010} of second order to approximate the intersection kernel.
 %%
 Furthermore, we used two rounds of hard negative mining~\cite{Li2013} and
 sampled $5\,000$ negative examples on each round.
@@ -303,9 +303,13 @@ Gaussians in their overlapping region as
 N(x,y,\text{center}(b_k),\text{diag}(b_k)) dx dy \; , \end{equation}
 %%
 \noindent where $BB(c)$ is the set containing bounding box object proposals for
-category $c$, $p(b_k)$ is the confidence assigned by the detector to proposal
-$b_k$, $G(i,j)$ is the grid cell at position $(i,j)$ and $N(x,y,\mu,\sigma)$ are
-Gaussians in $x$ and $y$ variables of given mean $\mu$ and standard deviation $\sigma$.
+category $c$, $p(b_k)$ is the confidence assigned by the detector to the
+bounding box proposal $b_k$, $G(i,j)$ is the grid cell at position $(i,j)$ and
+$N(x,y,\mu,\sigma)$ are Gaussians in $x$ and $y$ variables of given mean $\mu$
+and standard deviation $\sigma$.
+%%
+The double integral in the above equation is done computed the area of intersection
+between bounding box, $b_k$ and grid cell $G(i,j)$, $b_k \cap G(i,j)$.
 %%
 We abbreviate these features as ``$m$$\times${}$n$Gauss'' in the result tables.
 

@@ -88,7 +88,7 @@ takes as input the visual features and generates a caption.
 %%
 The Long-Short Term Memory (LSTM) network~\cite{Hochreiter1997} architecture has
 been a popular choice in the literature to model the probability of a sentence
-$S$, given an image $I$, as $P(S|I)$.
+$S$, given an visual feature $V$, as $P(S|V)$.
 %%
 The following two subsections contain a discussion of the LSTM cell in detail
 and on the way it is used to build a conditional language model.
@@ -167,10 +167,11 @@ The model consists of an LSTM network with a softmax layer at its output.
 The softmax outputs the probability distribution over the model's vocabulary as:
 %%
 \begin{align}
-p(w_t | w_{t-1},\cdots,w_0, V) = \text{softmax}(W_d y(t)) \;,
+p(w_t | w_{t-1},\cdots,w_0, V) = \text{softmax}(D y(t)) \;,
 \end{align}
-\noindent where $W_d$ is the decoder matrix which maps the vector $y(t)$, with
-the same dimensions as the number of LSTM units, to the output vocabulary size.
+\noindent where $D$ is the decoder matrix which maps the vector $y(t)$, with
+the same dimensions as the number of LSTM units, to the output vocabulary size,
+$Z$.
 %%
 
 The visual features $V$ are fed into the LSTM through an embedding matrix
@@ -194,7 +195,7 @@ Equivalently, we can minimize the negative log likelihood given as
 %%
 \begin{align}
   \label{eqCost}
-  NL(w_0,\cdots, w_{L-1} | V) = -\sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},V)) \; ,
+  \mathcal{NL}(w_0,\cdots, w_{L-1} | V) = -\sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},V)) \; ,
 \end{align}
 \noindent where $w_{-1}$ is the start symbol and L is the length of the sentence.
 %%

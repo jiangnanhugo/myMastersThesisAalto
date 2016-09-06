@@ -1,35 +1,35 @@
 \chapter{Enhancing Language Model}
 \label{chapter:langModel}
 %%===========================================================================%%
-In this chapter we will look at several extensions to our baseline language
+In this chapter we will look at several extensions to the baseline language
 model.
 %%
 The first extension is to add an additional feature input channel to the
 language model aimed at helping us effectively utilize the multiple new image
-features proposed in chapter~\ref{chapter:VisFeatChapter}.
+features proposed in Chapter~\ref{chapter:VisFeatChapter}.
 %%
-We then discuss our adaptation of the residual connections proposed for CNNs
-recently to the LSTM language models.
+We then discuss an adaptation of the residual connections, recently proposed for
+CNNs, to the LSTM language models.
 %%
 This allows us to effectively train deeper LSTM language models.
 %%
 Next we look at utilizing a hierarchical factorized decoder at the language
 model output, in a bid to produce richer captions.
 %%
-Finally we also present a few ensembling techniques we use to combine multiple
-language models.
+Finally, a few ensembling techniques for combining multiple language models are
+also presented.
 
-\section{Additional Feature Inputs to Language Model}
+\section{Additional Feature Inputs}
 %%
-The language model we use should be capable of utilizing different kinds of
-visual features presented in chapter~\ref{chapter:VisFeatChapter}
-simultaneously.
+The language model we use should be capable of simultaneously utilizing
+different kinds of visual features presented in
+Chapter~\ref{chapter:VisFeatChapter}.
 %%
-But the baseline language model, presented in chapter~\ref{chapter:baseline} has
-only one input channel, shared between word vectors and image features.
+However, the baseline language model, presented in Chapter~\ref{chapter:baseline} has
+only one input channel, shared between the word vectors and image features.
 %%
-Hence, here the visual features are input to the network only in the zeroth
-round of iteration.
+Hence, in the baseline model the visual features are input to the network only
+in the zeroth round of iteration.
 %%
 We refer to this input channel as the \emph{init} input to the LSTM network.
 %%
@@ -40,41 +40,43 @@ Therefore, the only way the baseline language model can utilize multiple visual
 features is if they are fused into a single vector before presenting to the
 language model.
 %%
-But in our experiments, we found that performing simple feature fusion, like
-concatenating the two feature vectors, and using it as as input in the baseline
-language model leads to inferior performance.
+In our experiments, we have unfortunately found that performing simple feature
+fusion, such as concatenating the two feature vectors, and using it as an input
+in the baseline language model leads to inferior performance.
 %%
 
-To address this issue we introduce another data input channel to our
-language model and make the visual features available through the whole
-inference process.
+To address this issue, another data input channel is introduced to the language
+model proposed in this thesis.
+%%
+Furthermore, utilizing the new input channel, the visual features are made
+available through the whole inference process.
 %%
 This requires adding a new input path to the LSTM cell which we refer to as the
 \emph{persist} input.
 %%
-This is illustrated in figure~/ref{fig:proplstmlang}.
+This is illustrated in figure~\ref{fig:proplstmlang}.
 %%
-Note that the persist input plays the same role as $x(t)$ in
+Note that the \emph{persist} input plays the same role as $x(t)$ in
 equations~(\ref{eqn:lstmstrt})--(\ref{eqn:lstmend}), but it has its own set of
 input weights.
 %%
-For brevity, we won't repeat them here.
+For brevity, we will not repeat them here.
 %%
-Accordingly, the proposed framework computes the distribution:
+Accordingly, the proposed framework computes the distribution
 %%
 \begin{equation}
-p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(W_d y(t)) \;,
+p(w_t | w_{t-1},\cdots,w_0, I, P) = \text{softmax}(D y(t)) \;,
 \end{equation}
 %%
 \noindent where $I$ and $P$ represent the \emph{init} and \emph{persist}
 features respectively.
 %%
 Training is again done by minimizing the negative log likelihood cost function
-as in the baseline model
+as in the baseline model:
 %%
 \begin{align}
   %\label{eqCost}
-  \mathcal{L}(w_{1\cdots L} | I,P) = -\sum_{t=1}^n \log(p(w_t|w_{t-1},I,P)) \; .
+  \mathcal{NL}(w_0,\cdots, w_{L-1} | I, P) = -\sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},I,P)) \; .
 \end{align}
 
 %%
@@ -84,7 +86,7 @@ visual features and in-turn makes the language model more powerful.
 %%
 We can also now input different visual features in the \emph{init} and
 \emph{persist} paths thereby allowing the model to learn simultaneously from two
-different sources.
+complimentary sources.
 
 \begin{figure*}[t]
 \begin{center}
@@ -92,9 +94,8 @@ different sources.
 \end{center}
 \vspace*{-4mm}
 \caption{The proposed language model architecture. The dashed blue lines
-        highlight the changes we have proposed over the baseline. 
-        Here we show a two-layer LSTM with residual connections is
-        shown.}
+        highlight the changes proposed over the baseline. A two-layer LSTM with
+residual connections is shown here.}
 \label{fig:proplstmlang}
 \end{figure*}
 
@@ -114,117 +115,117 @@ within an LSTM layer and not across the layers.
 Softmax is applied at the output of the last LSTM layer only.
 %%
 
-Recently residual connections was proposed in~\cite{He2015} to be used in CNNs.
+Residual connections were recently proposed in~\cite{He2015} to be used in CNNs.
 %%
-It consists of adding a fixed identity connection from output of a lower layer,
-$f_1(x)$, to the output the layer above it, $f_2(x)$.
+The method consists of adding a fixed identity connection from the output of a
+lower layer, $f_1(x)$, to the output the layer above it, $f_2(x)$.
 %%
 This alters the output after two layers from $f_2(f_1(x))$ to $f_1(x)+f_2(f_1(x))$.
 %%
-Now the second layer only needs to learn only a residual function to push the
+Now the second layer only needs to learn a residual function to push the
 output of the first layer towards the desired output.
 %%
-If the first layer is already performing well, this makes the task of second
+If the first layer is already performing well, this makes the task of the second
 layer much easier.
 %%
-This seemingly simple technique allowed to train much deeper CNNs~(almost 3
+This seemingly simple technique allowed to train much deeper CNNs~(almost three
 times of the GoogLeNet) and achieve state-of-the-art performance on ImageNet
-dataset in image classification task.
+dataset in the image classification task~\cite{He2015}.
 
-Inspired by this success, we adapt this method to our LSTM language model and
-add residual connections between LSTM layers. 
+Inspired by this success, we adapt the method to our LSTM language model and
+add residual connections between the LSTM layers. 
 %%
-These residual connections, shown in Figure~\ref{fig:proplstmlang}, improve the
-training convergence speed greatly.
+These residual connections, shown in Figure~\ref{fig:proplstmlang}, greatly
+improve the training convergence speed.
 %%
 We have also found out that the use of residual connections produces
 significantly lower values for both the training cost function and the model
-perplexity, as will be presented in Section~\ref{chapter:results}.
+perplexity, as will be presented in Section~\ref{subsec:exptdepth}.
 
 %%===========================================================================%%
 \section{Hierarchical Decoder}
 \label{sec:ClassFact}
-Analyzing the baseline language model outputs for errors, one category of
-mistakes we often see are where the model misses the fine grain
+Analyzing the erroneous outputs from the baseline language model, one category of
+mistakes we often see are where the model misses the fine-grain
 classification between two closely related objects.
 %%
-For example we have noticed that a persons gender is often described wrongly.
+For example, we have noticed that a person's gender is often described wrongly.
 %%
 Similar uncertainty is also seen in telling apart various fruits and vegetables.
 %%
-This happens because these objects often occur in similar language contexts and hence
-context cannot help differentiate them.
+This happens because these objects often occur in similar language contexts and
+hence the context cannot help differentiate them.
 %%
-To correctly identify them the LSTM generator needs to learn really fine grained
+To correctly identify them, the LSTM generator needs to learn really fine-grained
 object classification.
 %%
 
-We hypothesize that this problem exacerbated by the fact that the language model
-essentially needs to do a N-way classification at every time-step, where N is
-the size of the vocabulary.
+In this thesis, it is hypothesized that the above problem is exacerbated by the
+language model essentially having to do a $Z$-way classification at every
+time-step, where $Z$ is the size of the vocabulary.
 %%
-When the size of the vocabulary is large, e.g.\@ on COCO dataset the vocabulary
-contains 8790 words, this is a hard classification problem.
+When the size of the vocabulary is large, e.g.\@ on the COCO dataset the vocabulary
+contains 8790 words, this $Z$-way classification is a hard problem.
 %%
-Additional complexity arises because the errors made in this N-way
+Additional complexity arises because the errors made in the $Z$-way
 classification at any time-step affects all future predictions made during the
 generation of that caption.
 
-We attempt to address this problem by splitting the N-way classification into
+We attempt to address this problem by splitting the $Z$-way classification into
 two smaller hierarchical classification problems.
 %%
-To do this, the language model vocabulary is first split into $K$ classes and
+To do this, the language model vocabulary is first split into $Z^c$ classes and
 each word in the vocabulary is assigned to one class. 
 %%
 Then the conditional probability of a word given the context can be factorized
 into two parts as follows:
 \begin{equation}
   \label{eq:class} 
-  P(w_t | I,P, W^{t-1}) = P(c_t| I,P, W^{t-1})*P(w_t | c_t, I,P,W^{t-1})
+  P(w_t | I,P, W^{t-1}) = P(c_t| I,P, W^{t-1}) P(w_t | c_t, I,P,W^{t-1}) \; ,
 \end{equation}
 \noindent where $c_t$ is the class of word $w_t$ and $W^{t-1}$ is sequence of words
 seen up to time $t-1$, ($w_0\cdots w_{t-1}$).
 
-This allows us to split the N-way softmax at the LSTM output into two parts, a
-$N_c$-way softmax to predict the correct class and a $N_{wc}$-way softmax to
+This allows us to split the $Z$-way softmax at the LSTM output into two parts, a
+$Z^c$-way softmax to predict the correct class and a $Z_w^c$-way softmax to
 predict the correct word within this class.
 %%
-Here $N_{wc}$ is the number of words within a class.
+Here $Z_w^c$ is the number of words within the class $c$.
 %%
 This hierarchy allows the language model to learn separate decoders for each
-class allowing it to possibly learn fine grained classification.
+class, possibly allowing it to learn more fine-grained classification.
 %%
 The hierarchical structure is also more amenable to adding new words to the
 vocabulary.
 %%
 Adding a new word to a specific class already transfers the knowledge the model
 has about the class to the word, and the model only needs to learn the
-distribution of the word within the class.
+probability distribution of the new word within the class.
 
-\subsection{Clustering words into classes}
+\subsection{Clustering Words to Classes}
 The first step in implementing the hierarchical structure in the decoder is to
 cluster words into different classes.
 %%
 There are two kinds of approaches to do this clustering in the literature.
 %%
-First group of methods use knowledge bases like WordNet to find similar words
-and group them together.
+The first group of methods use knowledge bases such as WordNet to find similar
+words and group them together.
 %%
-Second category of methods are completely data driven and use just the training
-data statistics to build these clusters.
+The second category of methods are completely data-driven and use just the
+training data statistics to build the clusters.
 %%
 Here we will look at two different methods relying solely on the COCO training
 data to cluster words into classes.
 
 \subsubsection*{Brown Clustering}
-A popular data driven clustering algorithm is \emph{Brown clustering} proposed
+A popular data-driven clustering algorithm is \emph{Brown clustering} proposed
 in~\cite{BrownClust}.
 %%
-This is a hierarchical clustering algorithm which produces a hierarchical tree
-like clusters of all the words in the vocabulary.
+It is a hierarchical agglomerative clustering algorithm which produces a hierarchical
+tree-like clusters of all the words in the vocabulary.
 %%
 To begin with, all the words in the vocabulary are assigned to individual leaf
-nodes in a tree. 
+nodes. 
 %%
 Then, starting from the leaf nodes, two nodes whose merging would reduce the
 clustering cost function the most are combined into a single node.
@@ -232,204 +233,213 @@ clustering cost function the most are combined into a single node.
 The clustering cost function is simply the perplexity assigned by a class based
 bi-gram model to the training corpus. 
 %%
-In our case the training corpus is all the reference captions in the training
-set.
+In our case the training corpus consists of all the reference captions in the
+training set.
 %%
-The clustering cost can be written as a function of the given cluster assignment 
-, C, as below: 
+The clustering cost can be written as a function of the given cluster
+assignment, $C$, as 
 \begin{equation}
   \label{eq:brown} 
-        Quality(C) = \frac{1}{n} log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i))
+        Quality(C) = \frac{1}{n} log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i)) \; ,
 \end{equation}
-\noindent where C, is the mapping which assigns words $w$ to their class $C(w)$
+\noindent where $C$ is the mapping which assigns words $w$ to their cluster
+$C(w)$.
 
 The process is terminated once the number of nodes have been reduced to the
-desired number of clusters.
+desired number of clusters, $Z^c$.
 %%
-Although this method produces hierarchical clusters, we ignore the hierarchy
-and take all the classes in the final output as independent classes
-in our language model 
-\subsubsection*{K-means Clustering}
+Although this method produces hierarchical clusters, one can ignore the
+hierarchy and take all the classes in the final output as independent classes in
+the language model. 
+\subsubsection*{$K$-means Clustering}
 
-K-means is a simple yet very effective clustering algorithm widely used on
+$K$-means is a simple yet very effective clustering algorithm widely used on
 high-dimensional vectorial data.
 %%
-The algorithm tries to partition the set of input data vectors into $k$ clusters
+The algorithm tries to partition the set of input data vectors into $K$ clusters
 such that each data point belongs to the cluster whose mean is closest to
 it.
 %%
-Usually, euclidean distance is used to measure distance between data points.
+Usually, the Euclidean distance is used to measure distance between data points.
 %%
-But we cannot directly use this method to cluster words as we cannot measure the
-distance between words.
+One cannot, however, directly use the $K$-means method to cluster words as one
+cannot measure the distance between words.
+%%
+Instead, the word-embeddings which are learnt in the language model can be used
+to represent words as vectors in $d$-dimensional space.
+%%
+With this modification, the Euclidean distance between word embeddings can be
+used as a measure of distance between the words and thus the $K$-means algorithm
+can be utilized to find into $Z^c$ cluster centers in the word embedding space,
+by setting $K=Z^c$.
+%%
+Once $Z^c$ cluster centers are obtained, each word is assigned to its closest
+center and this partitioning is used in the language model.
 
-Instead, we can use the word-embeddings which are learnt in our language model
-to represent words as vectors in d-dimensional space.
-%%
-With this, we can use the euclidean distance between word embeddings as a
-measure of distance between the words and thus utilize K-means algorithm to
-cluster words into $K$ classes.
-%%
-Once $K$ cluster centers are obtained, each word is assigned to its closest center
-and this partitioning is used in the language model.
-
-\subsection{Factorizing LSTM decoder output}
+\subsection{Factorizing LSTM Decoder Output}
 In order to implement the hierarchical decoder in our LSTM language model, we
-need to split the decoder matrix, $W_d$ into a set of $K+1$ smaller matrices.
+need to split the decoder matrix, $D$ into a set of $Z^c+1$ smaller matrices.
 %%
-This set contains one $W_{d\_cls}$ matrix of size $\text{LSTM hidden size}
-\times k$ which is used to compute class probability.
+This set contains one $D_{cls}$ matrix of size $h_{sz} \times Z^c$ which is
+used to compute the class probability.
 %%
-It also has K class specific matrices ${W_{d}^{1},W_{d}^{2}\cdots W_{d}^{K}}$,
-each of the size $\text{LSTM hidden size}\times |c^k|$.
+Here, $h_{sz}$ is the hidden size of the LSTM layer in the language model.
 %%
-Here $|c^k|$ is the size of class $c_k$.
+It also has K class specific matrices ${D^{1},D^{2}\cdots D^{Z^c}}$,
+each of the size $h_{sz}\times Z_w^c$.
+%%
+Here $Z_w^c$ is the number of words in the class $c$.
 %%
 Consequently, computation performed to predict the word at time-step $t$ has two
 stages, first to predict the right class of the word and then using the class
-specific decoder matrix to predict the word within the class.
+specific decoder matrix to predict the word within the class:
 \begin{align}
         \label{eq:classLStmdecoder}
-        P(c_{t}^{k}| I,P, W^{t-1}) &= \text{softmax}(W_{d\_cls} y(t)) \\
-        c_t &= argmax_k\left(P(c_{t}^k| I,P, w^{t-1})\right) \\
-        P(w_t | I,P, w^{t-1}) &= P(c_t| I,P, w^{t-1}) \cdot \text{softmax}(W_{d}^{c_t} y(t))
+        P(c_{t}^{k}| I,P, W^{t-1}) &= \text{softmax}(D_{cls} y(t)) \\
+        c_t &= \argmax_k\left(P(c_{t}^k| I,P, w^{t-1})\right) \\
+        P(w_t | I,P, w^{t-1}) &= P(c_t| I,P, w^{t-1}) \cdot \text{softmax}(D^{c_t} y(t))
 \end{align}
 
-Although in theory this model should be faster since we only need to compute the
-two smaller matrix multiplications instead of the one large one, due to
-bottlenecks in our implementation, this hierarchical decoder runs slower than
-the single stage decoder.
+In theory this model should be faster since we only need to compute the
+two smaller matrix multiplications instead of the one large one.
+%%
+However, due to bottlenecks in our implementation, this hierarchical decoder
+runs slower than the single-stage decoder.
 %%===========================================================================%%
 \section{Ensembling Techniques}
 %%----------------------------------%%
-Using the many different image features and LSTM language model architectures we
-have discussed before, we can train a set of different language models.
+Using the many different image features and the LSTM language model
+architectures we have discussed before, we can train a set of different language
+models.
 %%
 When examining the pool of captions generated by such models for a set of
 images, we have found out that different models tend to generate the best
-captions for different kinds of images/video.
+captions for different kinds of images and videos.
 %%
 This indicates that ensembling these different generative models could be a good
 idea.
 %%
-If we could evaluate the suitability of a given caption for a
-given image, we could possibly pick out the best candidate from the pool and
+If one could evaluate the suitability of a given caption for a
+given image, one could possibly pick out the best candidate from the pool and
 achieve better results than with any single model.
 %%
 In this section we will examine two methods of evaluating the suitability
-of a caption to the input image/video and thus effectively ensembling multiple
+of a caption to the visual input and thus effectively ensembling multiple
 language models.
 %%
 
-Concretely, given an input image/video, $V$, and a set of $p$ candidate
-captions, $C_p = \left\{S_1,S_2,\cdots S_p \right\}$, generated by $m$ language
-models, $LM = \left\{lm_1,lm_2,\cdots lm_m \right\}$, we wish to find the
-evaluation function $E(S|V)$, such that $\text{argmax}_{S_i} E(S_i|V)$ is the
-most suitable caption for $V$ in the set $C_p$.
+Concretely, given an input image or video feature, $V$, and a set of $p$
+candidate captions, $C_p = \left\{S_1,S_2,\cdots, S_p\right\}$, generated by $m$
+language models, $LM = \left\{lm_1,lm_2,\cdots, lm_m\right\}$, we wish to find
+the evaluation function $E(S|V)$, such that $\argmax_{S_i} E(S_i|V)$ is
+the most suitable caption for $V$ in the set $C_p$.
 %%
-Note that this is different from using evaluation metrics to evaluate a
-captioning system, as here we are assessing the captions without using the
-ground truth. 
+The value of $p \leq (b\times m)$, with $p<(b\times m)$ when same captions are
+generated by multiple models.
+%%
+Note that this evaluation function is different from using evaluation metrics to
+evaluate a captioning system, as here we are assessing the captions without
+using the ground truth. 
 %%
 
-First method relies on the caption generating language models themselves to
+The first method relies on the caption-generating language models themselves to
 evaluate the candidates, while the second method involves training a separate
-evaluator model to measure the similarity between the candidate caption and the
-input.
+evaluator model to measure the similarity between the candidate captions and the
+visual input.
 %%
 We will examine them in detail in the following subsections.
 
 %%----------------------------------%%
-\subsection{Combining Multiple models using Mutual Evaluation}
+\subsection{Combining Models with Mutual Evaluation}
 \label{subsec:MutEval}
 
 In this technique, we utilize the same language models which generated the
 captions to also evaluate the captions.
 %%
-All our LSTM language models learn the conditional probability distribution of
-the caption given the visual input, $P(S|V)$.
+All the LSTM language models presented so far learn the conditional probability
+distribution of the caption given the visual input, $P(S|V)$.
 %%
-We utilize this probability, $P(S|I)$, as a measure of the goodness of the
-caption w.r.t the input, and hence use it to rank the candidate captions.
+We utilize this probability, $P(S|V)$, as a measure of the goodness of the
+caption w.r.t the input, and then use it to rank the candidate captions.
 %%
 Considering only the probability assigned to a caption $S_i$ by the language
 model which generated it, we could pick the caption with the highest probability
 score as the best caption.
 %%
-We refer to this method as "Self-Eval" in rest of the thesis. 
+We refer to this method as ``Self-Eval'' in rest of the thesis. 
 
-Alternatively, we could also get the candidate captions evaluated by all the
+Alternatively, one could also get the candidate captions evaluated by all the
 other models in the ensemble.
 %%
-Thus we get $m$ scores per caption, which can be used to pick the best candidate
-either using the "max-mean" method or the "max-max" method.
+Thus one gets $m$ scores per caption, which can then be used to pick the best
+candidate either using the ``max-mean'' method or the ``max-max'' method.
 %%
-In the "max-mean" case, the candidate with the highest mean of probability
+In the ``max-mean'' case, the candidate with the highest mean of probability
 scores is chosen as the best caption.
 %%
-In case of the "max-max" method, the candidate with the highest maximum among
-the $m$ probability scores is chosen as the best candidate.
+In the case of the ``max-max'' method, the candidate with the highest maximum among
+the $m$ probability scores is chosen as the best candidate:
 \begin{eqnarray}
   \label{eq:cmme} 
   \text{max-mean:}& S_{best} &= \argmax_{S_j}\left(\frac{1}{m}\sum_{i=1}^{m}
-  P_{lm_i}(S_j | V)\right)\\
+  P_{lm_i}(S_j | V)\right) \; ,\\
   \text{max-max:}& S_{best} &= \argmax_{S_j} \left(\max_i P_{lm_i}(S_j |
-  V)\right)
+  V)\right) \; ,
 \end{eqnarray}
 \noindent where $P_{lm_i}$ is the probability distribution learned by model
 $lm_i$.
 
-Since in this method models are evaluating each others sentences, we refer to it
-as "Mutual-Eval". 
+Since in this method models are evaluating each others' sentences, we refer to it
+as ``Mutual-Eval''. 
 %%
 This method is also similar to the peer-review model used in academic
 publishing, where researchers with expertise in related fields evaluate each
-others work.
+others' work.
 %%
 It works best when all the models in the ensemble are equally competitive, with
 expertise in slightly different sub-domains of the dataset.
 
 %%----------------------------------%%
 \subsection{CNN Evaluator}
-The language models we used in for evaluation of a candidate captions in the
+The language models we described for the evaluation of candidate captions in the
 previous subsection are trained generatively.
 %%
 Thus they need to learn to model both the semantic and syntactic structures of a
 sentence and their relation to the input image.
 %%
-But, in our experiments, we have noticed that these language models are very
-effective at learning to syntactic structures of sentences, and grammatical
+In our experiments, we have noticed that these language models indeed are very
+effective at learning syntactic structures of sentences, and grammatical
 mistakes are rare in the generated captions.
 %%
 Most of the errors in the generated captions are of semantic nature, wherein the
 models tend to get the objects or the relations between the objects wrong.
 %%
-This could be because similar syntactic structures repeat across large number of
-the reference captions in the training dataset, but similar semantic relations
+This could be because similar syntactic structures repeat across a large number of
+reference captions in the training dataset, but similar semantic relations
 are found only in smaller parts of the dataset.
-
-This indicates that the evaluator function we use should mainly focus on
+%%
+This indicates that the evaluator function should mainly focus on
 evaluating the semantic correctness of the candidate captions, and not worry
 about nitty-gritties of syntactic correctness. 
 %%
 Thus, a generatively trained model will be suboptimal at this task and
-discriminative training would more suitable. 
+discriminative training would be more suitable. 
 %%
 
-Our solution to this is to discriminatively train a new model whose task is to
+A solution to address this is to discriminatively train a new model whose task is to
 pick out the best candidate from the candidate set, given an input image or
 video.
 %%
 We refer to this as an evaluator network.
 %%
-This network takes as input one visual feature vector and an input sentence and
-computes a similarity score between the sentence and the visual feature. 
+The network takes as input one visual feature vector and an input sentence and
+computes a similarity score between them. 
 %%
 The model is composed of a convolutional network to encode the sentences into a
 sentence embedding, and a projection matrix which projects the visual feature
 into the same space as the sentence embedding.
 %%
-A cosine similarity measure is used to evaluate the similarity between the
+The cosine similarity measure is used to evaluate the similarity between the
 sentence embedding vector and the projected visual feature vector. 
 %%
 
@@ -467,22 +477,25 @@ encoding of the sentence.
 
 The first layer in the CNN consists of convolutional filters of different sizes.  
 %%
-All the filters operate over entire word vectors, but vary in the number of
-words they cover, i.e., each filter is of the size $N_{\text{gram}} \times
-N_{\text{word vec dim}}$. 
+All the filters operate over the entire word vectors, but vary in the number of
+words they cover, i.e., each filter is of the size $n \times
+W_{\text{dim}}$. 
 %%
-We can have filters operating over bigrams, trigrams, etc.
+Here, $n$ is the $n$-gram over which filter operates and $W_size$ is the
+dimensions of the word vector representation used in the CNN.
 %%
-Specifically, our model has filters with bigrams, trigrams, 4-grams and 5-grams. 
+For example, one can have filters operating over bigrams, trigrams, etc.
 %%
-Additionally, we use multiple filters of any given size and so the total number
-of convolutional filters in the evaluator model can be written as
-$N_{\text{filt}} \cdot N_{\text{filt type}}$.
+Specifically, the CNN evaluator used in this work has filters with bigrams,
+trigrams, 4-grams and 5-grams. 
+%%
+Additionally, $F_n$ number of filters of each $n$-gram type is used.
+%%
 
 The filter outputs are max-pooled, which reduces the filter response over entire
 sentence into a single scalar, i.e., its maximum response. 
 %%
-We can therefore think of each filter as looking for a specific n-gram,
+We can therefore think of each filter as looking for a specific $n$-gram,
 disregarding its location within the sentence.
 %%
 These pooled outputs are concatenated and then projected to the desired vector
@@ -493,31 +506,31 @@ size to produce the final sentence encoding.
 \subsubsection{Training the Evaluator Network}
 
 The evaluator network needs to be trained to assign a high score for the best
-caption and a lower scores for other captions.
+caption and lower scores for other captions.
 %%
-This is done by letting the network, for each training set image or video $V$,
-to score its ground truth caption, $S^+$, and $k$ negative samples, $S_i^-,
-i=1,\ldots,k$, drawn randomly from the ground truth captions of other media in
+For each training set image or video $V$, the CNN evaluator scores the
+corresponding ground truth caption, $S^+$, and $k$ negative samples, $S_i^-,
+i=1,\ldots,k$, drawn randomly from the ground truth captions of other samples in
 the training dataset.
 %%
 Now the training cost function $C$ is devised to maximize the score for the
 positive sample and to minimize it for the negative samples. 
 %%
 This is achieved by applying a softmax on the scores of this batch (one positive
-and $k$ negative samples) and maximize the softmax score of the positive sample:
+and $k$ negative samples) and maximizing the softmax score of the positive sample:
 %%
 \begin{align}
   \label{eq:cnnprob} 
-  P(S^+|S^-,I) &= \frac{\exp(-f(S^+,I))}{\exp(-f(S^+,I)) +
-           \sum\limits_i^k{\exp(-f(S_i^- ,I))}} \\
-  C &= -\log P(S^+|S^-,I) \;.
+  P(S^+|S^-,V) &= \frac{\exp(-f(S^+,V))}{\exp(-f(S^+,V)) +
+           \sum\limits_i^k{\exp(-f(S_i^- ,V))}} \\
+  C &= -\log P(S^+|S^-,V) \;.
 \end{align}
 %%
-Equation~(\ref{eq:cnnprob}) shows this computation with $f(S,I)$ representing
+Equation~(\ref{eq:cnnprob}) shows this computation with $f(S,V)$ representing
 the similarity metric between the sentence candidate $S$ and media $V$.
 %%
 In our current method, we use the cosine similarity between the two vectors for
-the purpose of $f(S,I)$.
+the purpose of $f(S,V)$.
 
 %% --------------------------------------
 

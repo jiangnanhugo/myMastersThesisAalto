@@ -392,6 +392,7 @@ information apart from the CNN features and is our best performing model with
 this language model configuration.
 
 \subsubsection{How deep should we go?}
+\label{subsec:exptdepth}
 \begin{table*}[htp]
   \centering
   \newcommand{\bs}{\small}
@@ -443,7 +444,7 @@ biggest gain seen in CIDEr metric.
 %%
 We also found that residual connections improve the training convergence speed.
 %%
-This is illustrated in figure~\ref{fig:MetVsPerplex}, where we show the
+This is illustrated in figure~\ref{fig:ResVsReg}, where we show the
 progression of perpelxity measure during training of the 4-layered models
 with~(C18) and without~(C15) residual connections.
 %%
@@ -464,7 +465,7 @@ experiments.
 \vspace*{-10mm}
 \caption{Comparing the evolution of perplexity during training of a 4-layered
         model with and without residual connections on COCO dataset.}
-\label{fig:MetVsPerplex}
+\label{fig:ResVsReg}
 \end{figure*}
 %------------------------------------
 
