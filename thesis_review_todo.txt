@@ -18,3 +18,11 @@ J
 
 
 4. Look for we or our for tone fixing
+5. Last subsec of chapter 5 is too short
+6. Adding visualizations in chapter 3 for scores
+7. Adding vis in chapter 4 for features
+8. Add decoder in figures of lang models
+9. Abstract
+10. Appendix
+11. Fig 6.2 title connections
+12. Scale figure to be in textwidth

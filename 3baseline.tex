@@ -244,7 +244,7 @@ This makes the neurons less co-dependent and more robust.
 As suggested in~\cite{ZarembaSV14}, the dropout is only applied on the input and
 output of LSTM and not on the recurrent connections.
 %%
-We find that using dropout with a drop probability of 0.5 greatly improves the
+We find that using dropout with a drop probability of $0.5$ greatly improves the
 model generalization.
 %%
 Word embedding vectors and decoder matrix are regularized by adding a penalty to
@@ -479,7 +479,8 @@ in human judgements.
 This is referred to as CIDEr-D and is the version widely used in image
 captioning.
 
-\bigskip
+\subsection{Reliability of the Automatic Metrics}
+\label{subsec:autMetRel}
 In summary, all the four metrics discussed here evaluate the suitability of a
 caption to the visual input, by comparing how well the candidate caption
 matches the reference captions.
@@ -490,7 +491,8 @@ found in~\cite{Vedantam_2015_CVPR}.
 The same study also found that CIDEr and METEOR have the highest correlations
 to human judgement, followed by ROUGE-L and finally BLEU-4.
 %%
-All the four were used to rank submissions in the first MS-COCO
+
+All the four metrics were used to rank submissions in the first MS-COCO
 image captioning challenge.
 %%
 The competition also collected human judgements to evaluate the submissions.
@@ -500,6 +502,20 @@ CIDEr were the ones most correlated with the ranking of submissions as per human
 judgement~\cite{lsun2015CaptionSlides}, reaffirming the observations made
 in~\cite{Vedantam_2015_CVPR}.
 %%
+Similar trend was also seen in the first Large-Scale Movie Description
+Challenge~(LSMDC) 2015.
+%%
+The LSMDC 2015 used both the automatic metrics and the human judgements
+to rank the submitted captions to the test videos.
+%%
+Even here, the ranking of the submissions produced by the automatic metrics
+poorly correlated with the rankings produced by human judgements.
+
 Hence in Chapter~\ref{chapter:results}, when evaluating the visual features and
 language model architectures proposed in this thesis, most importance will be
 given to METEOR and CIDEr metrics.
+%%
+We will also present results from human judgements of the video captioning
+models presented in this thesis, obtained through participation in the LSMDC
+2015 and the MSR-VTT challenges.
+
