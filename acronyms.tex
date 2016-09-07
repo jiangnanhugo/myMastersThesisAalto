@@ -1,20 +1,43 @@
 \addcontentsline{toc}{chapter}{Abbreviations and Symbols}
-\chapter*{Abbreviations and Symbols}
+\chapter*{Acronyms and Symbols}
 
 % The longtable environment should break the table properly to multiple pages, 
 % if needed
 
 \noindent
+\renewcommand*{\arraystretch}{1.4} 
 \begin{longtable}{@{}p{0.25\textwidth}p{0.7\textwidth}@{}}
-        \bf Symbol & \bf Meaning\\\\
-        $b$   & Size of the beam used in beamsearch\\
-        $C$   & \\
-        $D$ & Decoder weight matrix\\
-        $L$   & Length of a caption in words\\
-        $\mathcal{NL}$ & Negative log likelihood \\
-        $V$   & Visual feature vector\\
+        \bf Acronyms & \bf Expansions\\\\
+        CNN & convolutional neural networks\\
+        GPU & graphics processing Unit \\
+        LSMDC   & Large-scale Movie Description Challenge\\
+        LSTM   & Long-Short Term Memory \\
+        MS-COCO & Microsoft Common Objects in Context \\
+        MSR-VTT& Microsoft Video To Text\\
+        \\
+        \bf Symbols & \bf Meaning\\\\
+        $b$   & size of the beam used in beam search\\
+        $C(.)$ & function mapping a word to it's class\\
+        $D$ & decoder matrix mapping LSTM hidden state to the output vocabulary\\
+        $D_{cls}$ & decoder mapping LSTM hidden state to the number of classes\\
+        $D_{c}$ & decoder matrix corresponding to class $c$\\
+        $F_c$ & grid cell corresponding to object of class $c$ in spatial map
+        features\\
+        $I, P$ & \emph{init} and \emph{persist} inputs in the proposed language
+        model\\
+        $i, o, f $ & input, output and forget gates of an LSTM cell \\
+        $m$ & memory unit in an LSTM cell \\
+        $L$   & length of a caption in words\\
+        $LCS$   & longest common subsequence\\
+        $\mathcal{NL}$ & negative log likelihood \\
+        $S$ & a caption or a sentence\\
+        $V$   & visual input, an image or a video\\
+        $w_i$   & $i^{th}$ word in a sentence $(w_0,\cdots,w_{L-1})$\\
+        $W^t$ & Partial sequence of words upto $t$ $(w_0,\cdots,w_t)$\\
         $W_{ix},W_{ox},W_{fx}, W_{mx}$ & input to gate matrices in an LSTM cell \\
         $W_{iy},W_{oy},W_{fy}, W_{my}$ & recurrent gate matrices in an LSTM cell \\
-        $Z$   & Size of the Vocabulary\\
+        $Z$   &  number of words in the vocabulary\\
+        $Z^c$   & number of classes the vocabulary is split into\\
+        $Z_w^c$   & number of words in the class $c$\\
 
 \end{longtable}

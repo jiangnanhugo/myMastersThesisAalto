@@ -237,12 +237,12 @@ In our case the training corpus consists of all the reference captions in the
 training set.
 %%
 The clustering cost can be written as a function of the given cluster
-assignment, $C$, as 
+assignment, $C(.)$, as 
 \begin{equation}
   \label{eq:brown} 
         Quality(C) = \frac{1}{n} log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i)) \; ,
 \end{equation}
-\noindent where $C$ is the mapping which assigns words $w$ to their cluster
+\noindent where $C(.)$ is the mapping which assigns words $w$ to their cluster
 $C(w)$.
 
 The process is terminated once the number of nodes have been reduced to the

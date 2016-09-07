@@ -400,12 +400,12 @@ recall and precision scores of the longest common subsequences~(LCS) between the
 reference and candidate sentences:
 %%
 \begin{align}
-        R_{lcs} &= \frac{LCS(C,Ref)}{Reference\ length} \; ,\\[0.75ex]
-        P_{lcs} &= \frac{LCS(C,Ref)}{Candidate\ length} \; ,
+        R_{lcs} &= \frac{LCS(Cand,Ref)}{Reference\ length} \; ,\\[0.75ex]
+        P_{lcs} &= \frac{LCS(Cand,Ref)}{Candidate\ length} \; ,
 \end{align}
 %%
 \noindent where $R_{lcs}$ and $P_{lcs}$ are recall and precision metrics,
-$LCS(C,Ref)$ is the longest common subsequence between the candidate $C$ and reference
+$LCS(Cand,Ref)$ is the longest common subsequence between the candidate $Cand$ and reference
 $Ref$.
 
 The metric looks for common sub-sequences by looking for words which appear in the
