@@ -210,6 +210,39 @@ as ``\emph{SVM80}'' in the rest of the thesis.
 \subsection{Scene Detectors}
 %%----------------------------------%%
 %%
+\begin{figure*}[tbh] 
+  \centering
+  \includegraphics[width=0.6\textwidth]{./images/95474.pdf} 
+  \caption{Visualization of top five detected objects~(FRC80) and scene
+  types~(SUN397) along with the associated confidence scores for an image from
+  the MS-COCO validation set.}
+  \label{fig:COCODetVis} 
+\end{figure*}
+
+%\begin{figure}[t]
+%    \begin{minipage}[c]{0.45\linewidth}
+%        %\begin{center}
+%            \includegraphics[width=\textwidth]{images/COCO_train2014_00000095474.jpg}
+%        %\end{center}
+%    \end{minipage}\hfill
+%    \begin{minipage}[c]{0.52\linewidth}
+%    \begin{tabular}{c|c|c|c|}
+%          \cline{2-4}
+%            \textbf{C1:} a beach with people relaxing on a \underline{sunny day}. \\
+%            \textbf{C2}: people are relaxing on the beach where there is a \underline{big rock}. \\
+%            \textbf{C3}: a beach with a group of people with surf boards and \underline{umberellas}. \\
+%            \textbf{C4}: a group of people enjoy a beach near a lagoon filled with \underline{crystal blue
+%            water}. \\
+%            \textbf{C5}: a \underline{man walking} on a beach with his surf board in a case. \\
+%    \end{minipage}
+%  \vspace*{-3mm}
+%  \caption{Visualization of top five detected objects~(FRC80) and scene
+%  types~(SUN397) along with the associated confidence scores for an image from
+%  the MS-COCO validation set.}
+%  \label{fig:COCODetVis} 
+%\end{figure}
+
+
 
 In order to provide the language model with explicit information on the visual
 environment or the scene type of the images, we used the SUN Scene
@@ -243,6 +276,9 @@ The concatenation of the fused category-wise detector outputs results in
 %%
 These feature vectors are referred to as ``\emph{SUN397}'' in the rest of the
 thesis.
+%%
+Figure~\ref{fig:COCODetVis} shows the top five detected scene categories using
+the \emph{SUN397} features for an image from the COCO validation set.
 
 %% --------------------------------------
 \subsection{Spatial Map Encodings}
@@ -336,11 +372,15 @@ and get plain Faster R-CNN based object detector feature vectors, similar to the
 features described in the previous section.
 %%
 These vectors are referred to as ``FRC80'' in the rest of this text. 
+%%
+An illustration of the top five objects detected using the \emph{FRC80} features
+for an image from the COCO validation set is shown in
+Figure~\ref{fig:COCODetVis}.
 
 %%
 We have to note here that it is computationally relatively expensive to extract
 these features, as  running the Faster-RCNN network on the input image which,
-despite the moniker, is \red{still much slower} than running a single CNN such as the
+despite the moniker, is still much slower than running a single CNN such as the
 GoogLeNet on the input image.
 
 %%===========================================================================%%
@@ -437,6 +477,13 @@ following subsections.
 
 %%----------------------------------%%
 \subsubsection{Dense Trajectory Features}
+\begin{figure*}[t] 
+  \centering
+  \includegraphics[width=0.6\textwidth]{./images/IDenseTrajVis.png} 
+  \caption{A visualization of the improved dense trajectory features for a video
+          from the MSR-VTT training set.}
+  \label{fig:DenseTrajVis} 
+\end{figure*}
 
 Dense trajectory video features have been one of the best-performing features
 on various video analysis tasks involving action recognition, despite being
@@ -465,19 +512,24 @@ compress the arbitrary number of trajectory features extracted from a video into
 a single vector of fixed dimensions.
 %%
 
-Both the standard~\cite{DBLP:conf/cvpr/WangKSL11} and the improved
-versions~\cite{Wang2013} of the dense trajectory features are utilized in this
-thesis.
+Both the standard~\cite{DBLP:conf/cvpr/WangKSL11}~(DT) and the improved
+versions~\cite{Wang2013}~(IDT) of the dense trajectory features are utilized in
+this thesis.
 %%
 In both versions, the trajectories and their descriptors are first extracted
 from the entire video after limiting the trajectories to be a maximum of 15
 frames long.
 %%
-All of these five features, trajectory co-ordinates and the four descriptors,
-are separately encoded into fixed-size vectors using the bag-of-features encoding
-with a codebook of 1000 vectors.
+A visualizations of trajectories extracted using the IDT method from a video in
+the MSR-VTT training set is shown in Figure~\ref{fig:DenseTrajVis}.
 %%
+We can see in this example that most of the trajectories are concentrated around
+the man performing an action.
 
+Each of the five types of features extracted, trajectory co-ordinates and the
+four descriptors, are separately encoded into fixed-size vectors using the
+bag-of-features encoding with a codebook of 1000 vectors.
+%%
 In the bag-of-features encoding, first a fixed codebook containing representative
 sample features from the training set is chosen.
 %%

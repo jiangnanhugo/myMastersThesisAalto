@@ -536,10 +536,21 @@ the purpose of $f(S,V)$.
 
 \subsubsection{Utilizing the Evaluator Network}
 
-Once trained, we can then use the evaluator network to compute the similarity
-between each candidate in the pool of captions and the visual feature vector. 
+Once trained, the evaluator network can be utilized to compute the similarity
+for a visual-input--caption pair.
+%%
+In this work, it is used to ensemble a set of language models.
+%%
+Concretely, every caption, $S_i$, in the candidate set, $C_p$, is paired with
+the visual input and is fed to the evaluator network. 
+%%
+This gives us $p$ similarity scores $(E_{cnn}(S_0,V),\cdots,E_{cnn}(S_p,V))$,
+one for each candidate caption, $S_i$.
 %%
 The candidate with the highest similarity is chosen as the output caption from
-the ensemble for the input media.
+the ensemble for the visual input.
 
+\begin{equation}
+        S_{cnn} = \argmax_{S_i} E_{cnn}(S_i,V)\\
+\end{equation}
 %% ===========================================================================
