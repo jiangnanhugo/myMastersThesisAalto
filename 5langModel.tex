@@ -240,7 +240,7 @@ The clustering cost can be written as a function of the given cluster
 assignment, $C(.)$, as 
 \begin{equation}
   \label{eq:brown} 
-        Quality(C) = \frac{1}{n} log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i)) \; ,
+        Quality(C) = \frac{1}{n} \log \prod_{i=1}^{n} P(C(w_i)|C(w_{i-1})) P(w|C(w_i)) \; ,
 \end{equation}
 \noindent where $C(.)$ is the mapping which assigns words $w$ to their cluster
 $C(w)$.
@@ -265,7 +265,7 @@ Usually, the Euclidean distance is used to measure distance between data points.
 One cannot, however, directly use the $K$-means method to cluster words as one
 cannot measure the distance between words.
 %%
-Instead, the word-embeddings which are learnt in the language model can be used
+Instead, the word-embeddings which are learned in the language model can be used
 to represent words as vectors in $d$-dimensional space.
 %%
 With this modification, the Euclidean distance between word embeddings can be

@@ -58,7 +58,7 @@ More interestingly, the deep CNNs trained on the large ImageNet dataset for
 the classification task have been shown to generalize very well to other
 datasets and tasks as well.
 %%
-In~\cite{yosinski2014transferable}, it is shown that the weights learnt by the
+In~\cite{yosinski2014transferable}, it is shown that the weights learned by the
 CNNs pre-trained on the ImageNet dataset are good initializers for other tasks
 as well.
 %%
@@ -124,7 +124,7 @@ In this work we explore both these paradigms of video feature extraction, namely
 hand-crafted trajectory features and deep video features, for the task of
 automatic visual captioning.
 
-\section{Natural Language Modelling}
+\section{Natural Language Modeling}
 %%----------------------------------%%
 Generative language models are widely used in various tasks including speech
 recognition and synthesis, document analysis, dialog systems, etc.
@@ -132,12 +132,12 @@ recognition and synthesis, document analysis, dialog systems, etc.
 Our task of caption generation also involves learning a conditional generative
 language model which can generate captions given the input visual features.
 %%
-For this purpose, we will now discuss a few different language modelling
+For this purpose, we will now discuss a few different language modeling
 approaches, and evaluate their suitability for our task.
 
 The simple $n$-gram language models, which are based on counting co-occurrence
 statistics of sequence of $n$ words, are surprisingly good baselines for a lot
-of language modelling tasks.
+of language Modeling tasks.
 %%
 However, they are constrained to generate sentences only by using $n$-grams they
 have seen in the training set.
@@ -182,7 +182,7 @@ ranking correctly the matching image and annotation pairs.
 
 In~\cite{frome2013devise}, using the CNN features as the image representation
 and the word vectors from word2vec~\cite{mikolov2013distributed} embeddings as
-the word representation, a linear embedding is learnt to map the image vectors
+the word representation, a linear embedding is learned to map the image vectors
 onto word vectors corresponding to the labels associated with the image.
 %%
 This allows the model to do ``zero-shot'' recognition of image classes it has
@@ -245,7 +245,7 @@ described~\cite{kulkarni2013babytalk}, albeit relying on pre-defined sentence
 templates to generate captions.
 %%
 In ~\cite{Li2011}, this template based language model is replaced with a
-$n$-gram based one learnt from large-scale natural language data collected from
+$n$-gram based one learned from large-scale natural language data collected from
 the web.
 
 Following the successful use of recurrent network--based language models on

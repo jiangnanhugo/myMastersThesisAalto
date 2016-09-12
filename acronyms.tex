@@ -9,20 +9,26 @@
 \renewcommand*{\arraystretch}{1.4} 
 \begin{longtable}{@{}p{0.25\textwidth}p{0.7\textwidth}@{}}
         \bf Acronyms & \bf Expansions\\\\
-        CNN & Convolutional Neural Networks\\
+        BLEU & Bilingual Evaluation Understudy\\
+        CIDEr& Consensus-based Image Description Evaluation\\
+        CNN & Convolutional Neural Network\\
         DT & Dense Trajectories \\
         GPU & Graphics Processing Unit \\
         IDT & Improved Dense Trajectories \\
-        LSMDC   & Large-scale Movie Description Challenge\\
+        LCS & Longest Common Subsequence\\
+        LSMDC   & Large-Scale Movie Description Challenge\\
         LSTM   & Long-Short Term Memory \\
         MS-COCO & Microsoft Common Objects in Context \\
         MSR-VTT& Microsoft Video To Text\\
+        METEOR & Metric for Evaluation of Translation with Explicit ORdering \\
+        ROUGE  & Recall-Oriented Understudy for Gisting Evaluation\\
+        SVM & Support Vector Machine\\
         \\
         \bf Symbols & \bf Meaning\\\\
         $b$   & size of the beam used in beam search\\
-        $C(.)$ & function mapping a word to it's class\\
+        $C(\cdot)$ & function mapping a word to its class\\
         $D$ & decoder matrix mapping LSTM hidden state to the output vocabulary\\
-        $D_{cls}$ & decoder mapping LSTM hidden state to the number of classes\\
+        $D_{cls}$ & decoder matrix mapping LSTM hidden state to a vector of class scores\\
         $D_{c}$ & decoder matrix corresponding to class $c$\\
         $F_c$ & grid cell corresponding to object of class $c$ in spatial map
         features\\
@@ -31,12 +37,12 @@
         $i, o, f $ & input, output and forget gates of an LSTM cell \\
         $m$ & memory unit in an LSTM cell \\
         $L$   & length of a caption in words\\
-        $LCS$   & longest common subsequence\\
         $\mathcal{NL}$ & negative log likelihood \\
+        $R, P$ & Recall and Precision\\
         $S$ & a caption or a sentence\\
         $V$   & visual input, an image or a video\\
         $w_i$   & $i^{th}$ word in a sentence $(w_0,\cdots,w_{L-1})$\\
-        $W^t$ & Partial sequence of words upto $t$ $(w_0,\cdots,w_t)$\\
+        $W^t$ & partial sequence of words upto $t$ $(w_0,\cdots,w_t)$\\
         $W_{ix},W_{ox},W_{fx}, W_{mx}$ & input to gate matrices in an LSTM cell \\
         $W_{iy},W_{oy},W_{fy}, W_{my}$ & recurrent gate matrices in an LSTM cell \\
         $Z$   &  number of words in the vocabulary\\

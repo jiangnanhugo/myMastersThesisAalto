@@ -223,8 +223,8 @@
 %   twoinstructors  - changes the title of instructors to plural form
 %   twosupervisors  - changes the title of supervisors to plural form
 %\usepackage[mydraft]{aalto-thesis}
-\usepackage[mydraft]{aalto-thesis}
-%\usepackage{aalto-thesis}
+%\usepackage[mydraft]{aalto-thesis}
+\usepackage{aalto-thesis}
 
 
 % Hyperref
@@ -310,7 +310,7 @@
 % Professorship code is the same in all languages
 \newcommand{\PROFCODE}{T-61}
 \newcommand{\KEYWORDS}{Image Captioning, Video Description, Deep Learning,
-LSTM, Language Modelling}
+Long-short term memory, Language Modeling}
 \newcommand{\LANGUAGE}{English}
 
 % Author is the same for all languages
@@ -393,76 +393,105 @@ LSTM, Language Modelling}
 
 % Abstracts
 % ------------------------------------------------------------------
-% Include an abstract in the language that the thesis is written in,
-% and if your native language is Finnish or Swedish, one in that language.
+% Include an abstract in the language that the thesis is written in, and if
+% your native language is Finnish or Swedish, one in that language.
 
 % Abstract in English
 % ------------------------------------------------------------------
-\thesisabstract{english}{
+\thesisabstract{english}{ 
+        
 Understanding visual media, i.e.\@ images and videos, has been a cornerstone
 topic in computer vision research for a long time.
 %%
-Recently, a problem within the purview of this research area, the task of
+Recently, a new task within the purview of this research area, that of
 automatically captioning images and videos, has garnered wide-spread interest.
 %%
+The task involves generating a short natural language description of an image
+or a video.
+%%
 %This recent popularity is driven by the availability of large-scale annotated
-%datasets and effectiveness of deep learning techniques to assimilate this visual
-%data and perform useful functions including automatic captioning.
+%datasets and effectiveness of deep learning techniques to assimilate this
+%visual data and perform useful functions including automatic captioning.
 %%
 
 This thesis studies the automatic visual captioning problem in its entirety.
 %%
-A baseline visual captioning pipeline is examined, including the two constituent
-blocks, namely visual feature extraction and the language model.
+A baseline visual captioning pipeline is examined, including its two
+constituent blocks, namely visual feature extraction and language modeling.
 %%
 We then discuss the challenges involved and the methods available to evaluate a
 visual captioning system.
 %%
-Building on this baseline model, we propose several enhancements to improve the
-performance of both the visual feature extraction and the language modelling.
+Building on this baseline model, several enhancements are proposed to improve
+the performance of both the visual feature extraction and the language
+modeling.
 %%
-The CNN based image features used in the baseline model are augmented with
-explicit object and scene detection features.
+Deep convolutional neural network based image features used in the baseline
+model are augmented with explicit object and scene detection features.
 %%
-In the case of videos a combination of action recognition and  static
+In the case of videos, a combination of action recognition and  static
 frame-level features are used.
 %%
-The LSTM based language model used in the baseline is extended by introduction
-of an additional input channel and residual connections.
+The long-short term memory network based language model used in the baseline is
+extended by introduction of an additional input channel and residual
+connections.
 %%
 Finally, an efficient ensembling technique based on a caption evaluator network
 is presented.
 
-We report results from the extensive experiments conducted to evaluate each of
-the above mentioned enhancements.
+Results from extensive experiments conducted to evaluate each of the above
+mentioned enhancements are reported.
 %%
 The image and video captioning architectures proposed in this thesis achieve
 state-of-the-art performance on the corresponding tasks.
 %%
-To support our claims we also report results from two video captioning
-challenges, both of which were won by the models presented in the thesis.
+To support these claims, results from two video captioning challenges organized
+over the last year are reported, both of which were won by the models presented
+in the thesis.
 %%
-We also analyse the automatic captions generated quantitatively and
-identify several shortcomings of the current system.
+We also quantitatively analyze the automatic captions generated and identify
+several shortcomings of the current system.
 %%
 After having identified the deficiencies, we briefly look at a few interesting
-problems which could take the automatic visual captioning research forward.
-}
+problems which could take the automatic visual captioning research forward.  }
 
 % Acknowledgements
 % ------------------------------------------------------------------
 % Select the language you use in your acknowledgements
 \selectlanguage{english}
 
-% Uncomment this line if you wish acknoledgements to appear in the 
-% table of contents
+% Uncomment this line if you wish acknoledgements to appear in the table of
+% contents
 %\addcontentsline{toc}{chapter}{Acknowledgements}
 
-% The star means that the chapter isn't numbered and does not 
-% show up in the TOC
+% The star means that the chapter isn't numbered and does not show up in the TOC
 \chapter*{Acknowledgements}
 
-
+This thesis was completed under the supervision of Prof.\@ Juha Karhunen, and I
+would like to thank him for his support.
+\\[3mm]
+\noindent I cannot thank enough my advisor Dr.\@ Jorma Laaksonen for his constant support,
+help with the research work, the funding to carry out this research, diligent
+feedback and his patience with my erratic writing.
+\\[3mm]
+\noindent I wish to thank Dr.\@ Hamed R.\@-Tavakoli for many insightful inputs which
+has contributed a lot to this thesis.
+\\[3mm]
+\noindent I would like to thank my collogues Vikram Kamath and Pablo Alonso for some very
+interesting discussions we had.
+\\[3mm]
+\noindent I acknowledge the computational resources provided by the Aalto Science-IT
+project.
+%%
+The calculations presented in this thesis were partly performed using computer resources within
+the Aalto University School of Science "Science-IT" project
+\\[3mm]
+\noindent I thank my parents and my brother for being my source of inspiration and
+comfort.
+\\[3mm]
+\noindent Finally, to Klaara, thank you for the support and motivation you
+provided to help me make it past the finish line.
+\\[15mm]
 \noindent Espoo, \DATE
 \vskip 5mm
 \noindent\AUTHOR

@@ -73,7 +73,7 @@ GoogLeNet.
 videos, we use the same GoogLeNet features as above, but extracted only from a
 single key frame of the video.
 %%
-We choose the key frame as the frame at the center of the video's timespan.
+We choose the key frame as the frame at the center of the video's time-span.
 %%
 The idea behind using this simple feature vector is to enable the video
 captioning baseline model to use the same pipeline as for images and to obtain a
@@ -224,7 +224,7 @@ The training samples are used in random mini batches of sentence--image pairs,
 and gradient descent is done after accumulating the cost for each mini batch.
 
 All the LSTM parameters, the word embedding vectors and the decoder matrix are
-learnt using this method.
+learned using this method.
 %%
 The parameters of the feature extraction modules are not trained but are held
 fixed in order to prevent overfitting.
@@ -382,10 +382,10 @@ scores $p_n$.
 %%
 The final BLEU score is given by
 \begin{equation}
-    \text{BLEU-n} = BP\cdot{}\exp(\sum_{n=1}^{N}w_{n}log(p_n)) \; ,
+    \text{BLEU-n} = BP\cdot{}\exp(\sum_{n=1}^{N}w_{n}\log(p_n)) \; ,
 \end{equation}
 
-\noindent where BP is the brevity penalty applied in order to penalize
+\noindent where $BP$ is the brevity penalty applied in order to penalize
 short candidate sentences.
 %%
 This additional term is required since, if we only use precision, degenerate
@@ -448,7 +448,7 @@ precision and recall:
 \noindent where $R_m$ and $P_m$ are the recall and precision metrics, $ch$ is
 the number of chunks the alignment has, $m$ is the length of the candidate and
 $\alpha$, $\gamma$ and $\theta$ are hyper-parameters tuned to maximize the
-correlation of the metric with human judgement.
+correlation of the metric with human judgment.
 %%
 When there are multiple references, the maximum METEOR score between the
 candidate and any reference is taken.
@@ -474,7 +474,7 @@ Final CIDEr metric is the mean of the four $\text{CIDEr}_n$ metrics, with $n=1,2
 
 Few modifications were made to this original CIDEr metric to prevent gaming,
 i.e.\@ producing captions which could achieve higher CIDEr scores but fail badly
-in human judgements.
+in human judgments.
 %%
 This is referred to as CIDEr-D and is the version widely used in image
 captioning.
@@ -489,33 +489,33 @@ They perform better with the increasing number of reference captions as was
 found in~\cite{Vedantam_2015_CVPR}.
 %%
 The same study also found that CIDEr and METEOR have the highest correlations
-to human judgement, followed by ROUGE-L and finally BLEU-4.
+to human judgment, followed by ROUGE-L and finally BLEU-4.
 %%
 
 All the four metrics were used to rank submissions in the first MS-COCO
 image captioning challenge.
 %%
-The competition also collected human judgements to evaluate the submissions.
+The competition also collected human judgments to evaluate the submissions.
 %
 On comparing the two, it was found that the rankings produced by METEOR and
 CIDEr were the ones most correlated with the ranking of submissions as per human
-judgement~\cite{lsun2015CaptionSlides}, reaffirming the observations made
+judgment~\cite{lsun2015CaptionSlides}, reaffirming the observations made
 in~\cite{Vedantam_2015_CVPR}.
 %%
 Similar trend was also seen in the first Large-Scale Movie Description
 Challenge~(LSMDC) 2015.
 %%
-The LSMDC 2015 used both the automatic metrics and the human judgements
+The LSMDC 2015 used both the automatic metrics and the human judgments
 to rank the submitted captions to the test videos.
 %%
 Even here, the ranking of the submissions produced by the automatic metrics
-poorly correlated with the rankings produced by human judgements.
+poorly correlated with the rankings produced by human judgments.
 
 Hence in Chapter~\ref{chapter:results}, when evaluating the visual features and
 language model architectures proposed in this thesis, most importance will be
 given to METEOR and CIDEr metrics.
 %%
-We will also present results from human judgements of the video captioning
+We will also present results from human judgments of the video captioning
 models presented in this thesis, obtained through participation in the LSMDC
 2015 and the MSR-VTT challenges.
 
