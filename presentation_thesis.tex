@@ -89,13 +89,13 @@
 \begin{frame}{Basic Framework}
 \textbf{Given an input image or video, $V$, output a caption, $S$}
 \begin{itemize}
-\item<2-> $S$ is not unique
-\item<3-> Learn a probabilistic model, $P(S|V)$
-\item<4-> $S$, is a sequence of words $(w_0, w_1,\cdots, w_{L-1})$
+\item $S$ is not unique
+\item Learn a probabilistic model, $P(S|V)$
+\item $S$, is a sequence of words $(w_0, w_1,\cdots, w_{L-1})$
 \begin{equation}
 \label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{L-1}|V)
 \end{equation}
-\item<5-> Two-staged approach
+\item Two-staged approach
     %\only<5>{\begin{itemize}
     %    \item Visual feature extraction: $V_f = f(V)$
     %    \item Language modeling: $P(S|V) ~= P(S|V_f)$ 
@@ -176,12 +176,12 @@
         \item Retrieval-based 
         \item Generative models (Ours)
       \end{enumerate}
-  \item<2-> Earliest works were retrieval based
+  \item Earliest works were retrieval based
           {\begin{itemize}
           \item Based on common embedding on input image and textual descriptions  
       \end{itemize}}
-  \item<3-> Early caption generation models were sentence template based
-  \item<4-> This has been replaced with generative language models 
+  \item Early caption generation models were sentence template based
+  \item This has been replaced with generative language models 
   %\item<5-> Retrieval Vs Generative: 
   %    \begin{itemize}
   %      \item Retrieval problem: Easy to evaluate, no novelty 
@@ -626,7 +626,7 @@ Experiments conducted on the COCO validation set to answer the below questions
            \item<2-> Depth of 2/3 layers increases performance as per metrics moderately, perplexity is worse!
            \item<3-> Residual connections improve perplexity greatly 
            \item<4-> Residual connections also improve convergence speeds 
-           \only<5>{\hspace{-10mm}\begin{figure}[h]
+           \only<4>{\hspace{-10mm}\begin{figure}[h]
                 \centering
                 \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
            \end{figure}}
@@ -638,8 +638,8 @@ Experiments conducted on the COCO validation set to answer the below questions
     %   \end{itemize}
     \item Benefits of Ensembling  
        \begin{itemize}
-        \item<8-> CNN evaluator improves the performance moderately  
-        \item<9-> Caption diversity is greatly improved 
+        \item<5-> CNN evaluator improves the performance moderately  
+        \item<6-> Caption diversity is greatly improved 
        \end{itemize}
 \end{itemize}
 \end{frame}
