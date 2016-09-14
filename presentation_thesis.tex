@@ -260,6 +260,43 @@
 \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
+\subsection{Datasets}
+%%-----------------------------------------------------------------------------
+\begin{frame}{MS-COCO dataset}
+\begin{itemize}
+    \item Microsoft Common Objects in Context (MS COCO)
+       \begin{itemize}
+            \item $\sim164$k images: $\sim80$k train, $\sim40$k val \& $\sim40$k test 
+            \item 5 Human Annotated captions per image.
+            \item 80 commonly occurring object categories and bounding box annotation
+            \item Evaluation server implementing the four metrics 
+       \end{itemize}
+\end{itemize}\vspace{-3mm}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/Coco_sample.png}
+        \vfill
+    \end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Video Datasets}
+\begin{itemize}
+    \item Large-Scale Movie Description Challenge dataset~(LSMDC)
+       \begin{itemize}
+           \item $\sim100$k clips extracted from movie DVDs
+           \item Short clips, avg.\@ 4.8 seconds long
+           \item Only one caption per movie clip 
+           \item Captions based on script or transcription of audio description \\[10mm]
+   \end{itemize}
+    \item Microsoft Video to Text dataset (MSR-VTT) 
+       \begin{itemize}
+           \item $10$k clips obtained from web videos 
+           \item Longer clips, 10-30 seconds long
+           \item 20 captions per clip collected from human annotators
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
 %%=============================================================================
 %%=============================================================================
 \section{Enhancing Visual Features}
@@ -552,44 +589,6 @@
 \begin{frame}{Up Next.....}
 \tableofcontents[currentsection] 
 \end{frame}
-%%-----------------------------------------------------------------------------
-\subsection{Datasets}
-%%-----------------------------------------------------------------------------
-\begin{frame}{MS-COCO dataset}
-\begin{itemize}
-    \item Microsoft Common Objects in Context (MS COCO)
-       \begin{itemize}
-            \item $\sim164$k images: $\sim80$k train, $\sim40$k val \& $\sim40$k test 
-            \item 5 Human Annotated captions per image.
-            \item 80 commonly occurring object categories and bounding box annotation
-            \item Evaluation server implementing the four metrics 
-       \end{itemize}
-\end{itemize}\vspace{-3mm}
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.5\textwidth]{images/Coco_sample.png}
-        \vfill
-    \end{figure}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Video Datasets}
-\begin{itemize}
-    \item Large-Scale Movie Description Challenge dataset~(LSMDC)
-       \begin{itemize}
-           \item $\sim100$k clips extracted from movie DVDs
-           \item Short clips, avg.\@ 4.8 seconds long
-           \item Only one caption per movie clip 
-           \item Captions based on script or transcription of audio description \\[10mm]
-   \end{itemize}
-    \item Microsoft Video to Text dataset (MSR-VTT) 
-       \begin{itemize}
-           \item $10$k clips obtained from web videos 
-           \item Longer clips, 10-30 seconds long
-           \item 20 captions per clip collected from human annotators
-       \end{itemize}
-\end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
 \subsection{Image Captioning Experiments}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Image Captioning Experiments}
@@ -687,44 +686,6 @@ Experiments conducted on the COCO validation set to answer the below questions
   }
   \caption{Best published results on COCO 2014 validation set.}
 \end{table}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Sample Results on COCO}
-\begin{figure}[h]
-  \begin{center}
-  \centering
-  %\tabcolsep=0.05cm
-  \scalebox{0.6}{
-  \begin{tabular}{c|c|c|c|}
-          \cline{2-4}
-    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
-    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
-     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
-     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
-    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
-     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
-  \end{tabular}
-  }
-  \end{center}
-  \caption{Captions generated for some images from the COCO validation set by two of our
-    models. The first row contains samples where the ensemble model,
-    C27, performs better, and the second row cases where C19 is
-    better.}
-  \label{fig:cococapSamps}
-\end{figure}
-
 \end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Video Captioning Experiments}
@@ -831,34 +792,70 @@ Experiments conducted on the COCO validation set to answer the below questions
 \end{table}
 \end{columns}
 \end{frame}
+%%=============================================================================
+\section{Conclusions}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Qualitative Analysis}
-\vspace{-5mm}
-\begin{columns}
-  \column{.5\linewidth}
-  \begin{figure}[t]
-    \centering
-    \includegraphics[trim={2cm 0 2cm 0},clip,width=0.8\linewidth]{images/VTTCiderCateg.pdf}
-    \vspace{-5mm}
-    \caption{Performance by video category}%
-  \end{figure}
-  \column{.5\linewidth}
-  \begin{figure}[t]
-    \centering
-    \includegraphics[trim={2cm 0 2cm 0},clip, width=0.8\linewidth]{images/VTTCiderLengths.pdf}
-    \vspace{-5mm}
-    \caption{Performance by video length}
-    \label{fig:VttLenPerf}
-  \end{figure}
-\end{columns}
+%\begin{frame}{Next.....}
+%\tableofcontents[currentsection] 
+%\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Conclusions}
 \begin{itemize}
-    \item Video category has a huge impact
+    \item The proposed object and scene detector features complement the CNN features well 
+    \item Two extensions proposed to the language model were useful. 
        \begin{itemize}
-               \item \emph{How to}, \emph{video games} perform best 
-               \item \emph{News}, \emph{tv} perform worst 
+           \item The \emph{persist} input channel greatly improved performance
+           \item The residual connections achieve lower training cost, and convergence time
        \end{itemize}
-    \item Surprisingly, length doesn't seem effect much (in-conclusive) 
+    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
+    \item Good performance was achieved in all the three datasets
+    \item Our models won two video captioning challenges judged by human evaluators 
 \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{}
+\begin{center}
+    \Large Thank You for Listening\\[6mm]
+    \Large Any Questions? 
+\end{center}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Sample Results on COCO}
+\begin{figure}[h]
+  \begin{center}
+  \centering
+  %\tabcolsep=0.05cm
+  \scalebox{0.7}{
+  \begin{tabular}{c|c|c|c|}
+          \cline{2-4}
+    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
+     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
+  \end{tabular}
+  }
+  \end{center}
+  \caption{Captions generated for some images from the COCO validation set by two of our
+    models. The first row contains samples where the ensemble model,
+    C27, performs better, and the second row cases where C19 is
+    better.}
+  \label{fig:cococapSamps}
+\end{figure}
+
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Sample Captions Video}
@@ -895,29 +892,35 @@ Experiments conducted on the COCO validation set to answer the below questions
   \label{fig:VttcapSamps}
 \end{figure}
 \end{frame}
-%%=============================================================================
-\section{Conclusions}
 %%-----------------------------------------------------------------------------
-%\begin{frame}{Next.....}
-%\tableofcontents[currentsection] 
-%\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Conclusions}
+\begin{frame}{Qualitative Analysis}
+\vspace{-5mm}
+\begin{columns}
+  \column{.5\linewidth}
+  \begin{figure}[t]
+    \centering
+    \includegraphics[trim={2cm 0 2cm 0},clip,width=0.8\linewidth]{images/VTTCiderCateg.pdf}
+    \vspace{-5mm}
+    \caption{Performance by video category}%
+  \end{figure}
+  \column{.5\linewidth}
+  \begin{figure}[t]
+    \centering
+    \includegraphics[trim={2cm 0 2cm 0},clip, width=0.8\linewidth]{images/VTTCiderLengths.pdf}
+    \vspace{-5mm}
+    \caption{Performance by video length}
+    \label{fig:VttLenPerf}
+  \end{figure}
+\end{columns}
 \begin{itemize}
-    \item The proposed object and scene detector features complement the CNN features well 
-    \item Two extensions proposed to the language model were useful. 
+    \item Video category has a huge impact
        \begin{itemize}
-           \item The \emph{persist} input channel greatly improved performance
-           \item The residual connections achieve lower training cost, and convergence time
+               \item \emph{How to}, \emph{video games} perform best 
+               \item \emph{News}, \emph{tv} perform worst 
        \end{itemize}
-    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
-    \item Good performance was achieved in all the three datasets
-    \item Our models won two video captioning challenges judged by human evaluators 
+    \item Surprisingly, length doesn't seem effect much (in-conclusive) 
 \end{itemize}
-
 \end{frame}
-%%-----------------------------------------------------------------------------
-%%-----------------------------------------------------------------------------
 \begin{frame}[allowframebreaks]
         \frametitle{References}
         \bibliography{bib_thesis_used_only}
