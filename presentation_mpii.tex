@@ -1,0 +1,929 @@
+\documentclass{beamer}
+\usetheme{Frankfurt}
+\usecolortheme{beaver}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\setlength{\itemsep}{\fill}
+
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{longtable}
+
+\def\cvs{${[}$Id: slides.tex,v 1.19 2015/12/09 16:42:43 shettyr1 Exp ${]}$}
+
+%\beamertemplatenavigationsymbolsempty
+\bibliographystyle{acm}
+
+\newcommand{\slide}[1]{\scalebox{1.0}{\includegraphics[page=#1]{slides}}}
+\newcommand{\mct}[1]{\multicolumn{2}{c|}{\bf#1}}
+\newcommand{\mcCell}[1]{\multicolumn{1}{|c|}{#1}}
+\newcommand{\bs}{\small\bf}
+\begin{document}
+
+%%-----------------------------------------------------------------------------
+
+\title{Natural Language Description of \\Images and Videos}
+\subtitle{Ph.\@D.\@ Application Talk at Max Planck Institute, Saarbrucken}
+\author[Rakshith Shetty]{Rakshith Shetty\\[4mm] {\small Supervisor: Professor Juha Karhunen\\ Advisor: D.\@Sc.\@ (Tech.\@) Jorma Laaksonen}}
+\institute{Department of Computer Science, \\Aalto University}
+\date{\today}
+
+\frame{\titlepage} 
+
+%%\frame{\frametitle{Table of contents}\tableofcontents} 
+
+%%-----------------------------------------------------------------------------
+
+\begin{frame}{Understanding Visual Media}
+  \begin{itemize}
+  \item<1-> Images = \{objects, attributes, relations\}\\
+  \begin{figure}[h]
+    \begin{columns}
+    \column{.5\linewidth}
+    %\hspace{-8mm}%
+    \hfill\includegraphics[width=0.6\textwidth]{images/COCO_train2014_000000544856.jpg}
+    \hspace{-5mm}\column{.5\linewidth}
+    \centering
+    \caption{\only<5->{a giraffe walking through a patch of high dried out grass.}}
+    \end{columns}
+  \end{figure}
+  \item<2->Videos = \{Images + temporal relations\}\\[4mm]
+  \item<3->\only<3>{\Large Simple labels do not capture enough }
+           \only<4>{\Large How do we summarize this information?}
+           \only<5>{\Large Humans rely on natural language descriptions}
+           \only<6>{\Large Can computers generate captions too?}
+  \end{itemize}
+\end{frame}
+
+%%-----------------------------------------------------------------------------
+\begin{frame}{Why Captioning?}
+%\includegraphics[width=1\textwidth]{images/VideoCaptionModified.png}
+\begin{itemize}
+\item Moving beyond single label classification.
+\item Better search and indexing of visual data.
+\item Measure visual features and language generation.
+\item Enabling better accessibility to the blind.
+\item Enable computers to connect textual and visual data. 
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Table of Contents}
+%\begin{itemize}
+%\item Background 
+%\item Baseline model
+%\item How do we evaluate captions?
+%\item Enhancing visual features and language model 
+%\item Results
+%\item Conclusions 
+%\end{itemize} 
+%\end{frame}
+%%-----------------------------------------------------------------------------
+
+%%=============================================================================
+\section{Elements of Visual Captioning}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Up Next.....}
+\tableofcontents[currentsection] 
+\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Problem Statement}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Basic Framework}
+\textbf{Given an input image or video, $V$, output a caption, $S$}
+\begin{itemize}
+\item $S$ is not unique
+\item Learn a probabilistic model, $P(S|V)$
+\item $S$, is a sequence of words $(w_0, w_1,\cdots, w_{L-1})$
+\begin{equation}
+\label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{L-1}|V)
+\end{equation}
+\item Two-staged approach
+    %\only<5>{\begin{itemize}
+    %    \item Visual feature extraction: $V_f = f(V)$
+    %    \item Language modeling: $P(S|V) ~= P(S|V_f)$ 
+    %\end{itemize}
+    %}
+    {
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/Thesis_generalBaseline.pdf}
+        \end{figure}
+     }
+\end{itemize} 
+\end{frame}
+\subsection{Visual Features}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Image Features}
+\begin{itemize}
+\item Deep convolutional neural networks for image classification 
+    \begin{itemize}
+        \item Lower layers contain convolutional filters 
+        \item Followed by fully connected layers
+    \end{itemize}
+\item Learn hierarchical features
+\item Higher layers are good out-of-the-box features  
+    \begin{itemize}    
+        \item Activations from fully connected layers before softmax 
+    \end{itemize}
+\item Widely used in recent image captioning literature~\cite{Vinyals_2015_CVPR,Fang2015} 
+\end{itemize} 
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Video Features}
+\begin{itemize}
+\item Still rely heavily on hand-crafted features\\
+\item Features designed to extract movement related information\\
+        \begin{itemize}
+            \item Dense trajectory features
+            \item 3-D convolutional features
+        \end{itemize}
+\item Captioning needs both static object related info and actions\\ 
+\item Need to combine two paradigms: 
+   \begin{itemize}
+     \item Frame-level features for object and attributes
+     \item Segment-level features for actions
+   \end{itemize}
+\end{itemize} 
+\end{frame}
+\subsection{Language Model}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Recurrent Language Model}
+\begin{itemize}
+\item Recurrent networks: current output = input + hidden state
+\item Long-Short Term Memory~(LSTM) based language model.
+\item Use non-linear gates to control flow of information
+\item Can essentially store information for infinite amount of time 
+\item Good for modeling discrete sequences like words 
+%%-----------------------------------------------------------------------------
+%\begin{frame}{LSTM Cell}
+%    \begin{figure}[h]
+%        \centering
+%        \includegraphics[width=0.3\textwidth]{images/LstmBlockDiag.pdf}
+%    \end{figure}
+%    \begin{itemize}
+%        \item Use non-linear gates to control flow of information
+%        \item Can essentially store information in $m$ for infinite amount of time 
+%        \item Good for modeling discrete sequences like words 
+%    \end{itemize}
+%\end{frame}
+\end{itemize} 
+\end{frame}
+%%-----------------------------------------------------------------------------
+%%-----------------------------------------------------------------------------
+\subsection{Baseline Model}
+\begin{frame}{Captioning Techniques in Literature}
+\begin{itemize}
+  \item Two different approaches:
+      \begin{enumerate}
+        \item Retrieval-based 
+        \item Generative models (Ours)
+      \end{enumerate}
+  \item Earliest works were retrieval based
+          {\begin{itemize}
+          \item Based on common embedding on input image and textual descriptions  
+      \end{itemize}}
+  \item Early caption generation models were sentence template based
+  \item This has been replaced with generative language models 
+  %\item<5-> Retrieval Vs Generative: 
+  %    \begin{itemize}
+  %      \item Retrieval problem: Easy to evaluate, no novelty 
+  %      \item Generative problem: Novel captions, harder to evaluate
+  %    \end{itemize}
+\end{itemize} 
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Baseline Model}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.4\linewidth]{images/Thesis_lstmLangGen.pdf}
+    \end{figure}
+    \begin{itemize}
+        \item Adopted from~\cite{Vinyals_2015_CVPR} 
+        \item LSTM network based language model
+        \item The sequence $(V,START,w_0, w_1, \cdots,w_{L-1})$ is the input
+        \item Words are represented as word vectors 
+        \item Visual feature is presented only in the initialization 
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Training and Generation}
+%    \begin{itemize}
+%        \item Pick a caption--image pair and maximize the probability assigned to caption 
+%        \item Minimize the negative log likelihood 
+%            \begin{align*}
+%              \mathcal{NL}(w_0,\cdots, w_{L-1} | V) = -\sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},V))
+%            \end{align*}
+%        \item Stochastic gradient descent using RMSProp 
+%        \item Training limited to language model parameters 
+%        \item Beamsearch is used in test mode to generate captions 
+%    \end{itemize}
+%\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Evaluation Methods}
+%%-----------------------------------------------------------------------------
+\begin{frame}{How do we evaluate generated captions?}
+\begin{figure}[t]
+    \begin{minipage}[c]{0.45\linewidth}
+        %\begin{center}
+            \includegraphics[width=\textwidth]{images/COCO_train2014_000000440903.jpg}
+        %\end{center}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.52\linewidth}
+            \textbf{C1:} a beach with people relaxing on a \underline{sunny day}. \\
+            \textbf{C2}: people are relaxing on the beach where there is a \underline{big rock}. \\
+            \textbf{C3}: a beach with a group of people with surf boards and \underline{umberellas}. \\
+            \textbf{C4}: a group of people enjoy a beach near a lagoon filled with \underline{crystal blue
+            water}. \\
+            \textbf{C5}: a \underline{man walking} on a beach with his surf board in a case. \\
+    \end{minipage}
+  \vspace*{-3mm}
+\end{figure}
+    \begin{itemize}
+        \item Captions are not unique -- no single right answer
+        \item Both semantically and syntactically diverse valid captions
+        \item Candidate caption can be compared to reference captions 
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Evaluation metrics}
+\begin{itemize}
+    \item Metrics adopted from machine translation 
+       \begin{itemize}
+           \item \textbf{BLEU-4}: Score based on n-gram matches
+           \item \textbf{METEOR}: Incorporates a dictionary based soft matches
+           \item \textbf{ROUGE-L}: Matches longest common sub-sequence of words 
+       \end{itemize}
+    \item Proposed specifically for Captioning 
+       \begin{itemize}
+           \item \textbf{CIDEr}: Based on n-gram matches and TF-IDF weighting to boost uncommon words
+       \end{itemize}
+    \item Used in recent captioning competitions, widely reported in literature 
+    \item Based on MS-COCO Image Captioning Challenge 2015, \emph{METEOR} and \emph{CIDEr} better track human judgement
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Datasets}
+%%-----------------------------------------------------------------------------
+\begin{frame}{MS-COCO dataset}
+\begin{itemize}
+    \item Microsoft Common Objects in Context (MS COCO)
+       \begin{itemize}
+            \item $\sim164$k images: $\sim80$k train, $\sim40$k val \& $\sim40$k test 
+            \item 5 Human Annotated captions per image.
+            \item 80 commonly occurring object categories and bounding box annotation
+            \item Evaluation server implementing the four metrics 
+       \end{itemize}
+\end{itemize}\vspace{-3mm}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/Coco_sample.png}
+        \vfill
+    \end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Video Datasets}
+\begin{itemize}
+    \item Large-Scale Movie Description Challenge dataset~(LSMDC)
+       \begin{itemize}
+           \item $\sim100$k clips extracted from movie DVDs
+           \item Short clips, avg.\@ 4.8 seconds long
+           \item Only one caption per movie clip 
+           \item Captions based on script or transcription of audio description \\[10mm]
+   \end{itemize}
+    \item Microsoft Video to Text dataset (MSR-VTT) 
+       \begin{itemize}
+           \item $10$k clips obtained from web videos 
+           \item Longer clips, 10-30 seconds long
+           \item 20 captions per clip collected from human annotators
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+%%=============================================================================
+%%=============================================================================
+\section{Enhancing Visual Features}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Up Next.....}
+\tableofcontents[currentsection] 
+\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Image Features}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Proposed Image Features}
+    \begin{itemize}
+            \item Primary features are extracted from GoogLeNet~(\textbf{\emph{gCNN}})
+        \begin{itemize}
+            \item Won ILSVRC 2014 
+            \item 22 Layer deep
+            \item Extracted from the 5th inception layer 
+        \end{itemize}
+        \item CNN features: Not clear if multiple objects are encoded 
+        \item Localization information is lost by design! 
+        \item What about the background!? 
+        \item Hence three additional features 
+           \begin{itemize}
+               \item Explicit object detector features
+               \item Explicit scene detector features 
+               \item Object location features 
+           \end{itemize}
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Explicit Object Detector}
+    \begin{itemize}
+        \item Train object detectors for each object category 
+        \item Use CNN features~(ImageNet trained) and train SVM object detectors 
+        \item One for each category of COCO (80 objects) 
+        \item Referred to as~(\textbf{\emph{SVM80}})  
+    \end{itemize}
+  \begin{figure}[h]
+    \begin{columns}
+    \column{.5\linewidth}
+    %\hspace{-8mm}%
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/16285.pdf}
+    \hspace{-5mm}\column{.5\linewidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/450728.pdf}
+    \end{columns}
+  \end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Explicit Scene Detector}
+    \begin{itemize}
+        \item Utilize SUN dataset with 108,756 images with 397 scene types 
+        \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
+        \item One for each category in SUN (397 objects) 
+        \item Referred to as~(\textbf{\emph{SUN397}})  
+    \end{itemize}
+  \begin{figure}[h]
+    \begin{columns}
+    \column{.5\linewidth}
+    %\hspace{-8mm}%
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/503790.png}
+    \hspace{-5mm}\column{.5\linewidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/69356.png}
+    \end{columns}
+  \end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Object Localization Features}
+    \begin{itemize}
+        \item Faster R-CNN networks output bounding boxes 
+        \item Trained on COCO dataset using the box annotations 
+        \item Boxes are mapped to grids corresponding to each object category 
+           \begin{itemize}
+               \item Use intersection over union~(IoU) scores
+               \item Use smooth Gaussian and integrate 
+           \end{itemize}
+        \item Grids can be non-overlapping $m\times n$ or overlapping $m+n$
+        \item Feature size is $(80\times m\times n)$ or  $(80\times (m+n))$
+        \item Can be collapsed (i.e.\@ $m=n=1$) to get object detector vector~(\textbf{\emph{FRC80}}) 
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{More Examples}
+  \begin{figure}[h]
+    \begin{columns}
+    \column{.33\linewidth}
+    \centering
+    \includegraphics[width=1.2\textwidth]{images/241668.png}
+    \hspace{-5mm}\column{.33\linewidth}
+    \centering
+    \includegraphics[width=1.2\textwidth]{images/533506.png}
+    \hspace{-5mm}\column{.33\linewidth}
+    \centering
+    \includegraphics[width=1.2\textwidth]{images/69223.png}
+    \end{columns}
+  \end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Video Features}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Key-Frame Video Features}
+    \begin{itemize}
+        \item Video treated as a bag of frames
+        \item Temporal information ignored 
+        \item CNN features are extracted from individual frames 
+        \item Additionally \emph{SVM80} features are extracted too 
+        \item Redundant to do this on every frame 
+           \begin{itemize}
+               \item Use a single key-frame or
+               \item One frame every second.
+           \end{itemize}
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Video-Segment Features}
+\begin{itemize}
+    \item Two different features are experimented
+       \begin{itemize}
+           \item Hand engineered dense trajectory features
+           \item Deep 3-D CNN based C3D features~\cite{DBLP:C3D}
+       \end{itemize}
+    \item Dense Trajectory features~(DT~\cite{DBLP:conf/cvpr/WangKSL11}, IDT~\cite{Wang2013}) 
+       \begin{itemize}
+            \item Densely sample few interest points 
+            \item Track them and form trajectories 
+            \item Extract local descriptors around trajectories 
+            \item Two versions available  
+       \end{itemize}
+    \item C3D features
+       \begin{itemize}
+           \item 3D CNN pre-trained on Sports-1m dataset
+           \item Process 16 frames at a time
+           \item Activations from \emph{fc7} layer 
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{Dense Trajectory Features}
+%\begin{columns}
+%\column{0.65\linewidth}
+%\begin{itemize}
+%        \item Based on tracking interest points
+%        \begin{itemize}
+%            \item Densely sample few interest points 
+%            \item Track them and form trajectories 
+%            \item Extract local descriptors around trajectories 
+%        \end{itemize}
+%    \end{itemize}
+%    \column{.35\linewidth}
+%    \begin{figure}[h] 
+%      \includegraphics[width=1.0\textwidth]{./images/IDenseTrajVis.png}\hfill 
+%    \end{figure}
+%\end{columns}
+%\begin{columns}
+%\hspace{-8mm}\column{1.0\linewidth}
+%\begin{itemize}
+%   \item Trajectory type can be identified by the local descriptors 
+%       \begin{itemize}
+%           \item Different actions produce different trajectory types
+%           \item Actions can be identified by trajectory types 
+%       \end{itemize}
+%   \item Video can contain arbitrary no of trajectories 
+%       \begin{itemize}
+%           \item Language model expects fixed sized vector
+%       \end{itemize}
+%   \item Encode into fixed size using bag-of-words
+%       \begin{itemize}
+%           \item Create a codebook using K-means
+%           \item Assign each trajectory to nearest entry in codebook 
+%           \item Video represented as a histogram with codebook as bins
+%       \end{itemize}
+%\end{itemize}
+%\end{columns}
+%\end{frame}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{3-D CNN Based Features}
+%    \begin{itemize}
+%        \item Attempts to extend success of CNNs to videos~\cite{3dCNN_ji2013, KarpathyCVPR14, DBLP:C3D} 
+%        \item Change 2D filters in lower layers to 3D filters 
+%        \item \textbf{\emph{C3D}}~\cite{DBLP:C3D} is a popular architecture
+%        \item We use version pre-trained on Sports-1M dataset 
+%        \item Only process one segment at a time (16-frames)
+%            \begin{itemize}
+%                \item Hence limited context
+%            \end{itemize}
+%    \item Extract features from the \emph{fc7} layer 
+%    \end{itemize}
+%\end{frame}
+%%%=============================================================================
+\section{Enhancing Language Model}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Up Next.....}
+\tableofcontents[currentsection] 
+\end{frame}
+\subsection{Extending the LSTM language model}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Additional Input Channel}
+    \begin{itemize}
+        \item Multiple image features are available 
+        \item Only \emph{init} channel available 
+            \begin{itemize}
+                \item Shares weight with word vector
+            \end{itemize}
+        \item Add a new channel of input to present features all the time
+        \item Refer to as \emph{persist}
+        \item No weight sharing 
+            \begin{itemize}
+                \item Different embedding spaces for word vector and \emph{persist} feature 
+            \end{itemize}
+        \item Two different feature can be input now 
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Residual Connections}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.4\textwidth]{images/MultilayerResidualLSTM.pdf}
+    \end{figure}
+    \begin{itemize}
+        \item Use multiple layers of LSTM 
+        \item Add a residual connection between layers~\cite{He2015} 
+        \item Higher layer only needs to learn a residual function 
+    \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Hierarchical Decoder}
+%\begin{itemize}
+%    \item Every word prediction is a difficult $Z$-way classification
+%       \begin{itemize}
+%           \item $Z$ is vocabulary size, $Z=8792$ in COCO
+%           \item Errors add up quickly 
+%           \item All output words are treated independently 
+%       \end{itemize}
+%    \item Instead split it into two-step hierarchical classification
+%       \begin{itemize}
+%            \item Semantically group words into classes 
+%            \item First predict the class of the word 
+%            \item Next predict the word within the class
+%       \end{itemize}
+%    \item Words can be grouped by two methods 
+%       \begin{itemize}
+%           \item Brown Clustering -- hierarchical clustering
+%           \item K-means clustering of word vectors 
+%       \end{itemize}
+%\end{itemize}
+%\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Ensembling}
+\begin{frame}{Ensembling the caption generators}
+\begin{itemize}
+    \item Ensemble generators trained with different features and parameters
+    \item Models in ensemble set produce a caption and a corresponding probability 
+    \item Pick based on the assigned probability? 
+    \item One can also use models to mutually evaluate each other 
+       \begin{itemize}
+           \item Each model rates others captions too
+           \item Combine the rating using max-max or max-mean 
+       \end{itemize}
+    \item Unsatisfactory performance. 
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Ensembling -- CNN evaluator}
+\begin{columns}       
+    \column{0.3\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\textwidth]{images/CnnEval.pdf}
+        \vfill
+    \end{figure}
+    \column{0.7\linewidth}
+    \begin{itemize}
+        \item Generative vs Discriminative 
+        \item Train evaluator to compute similarity b/w visual input and caption 
+           \begin{itemize}
+               \item A CNN to encode the sentence 
+               \item Visual feature is embedded to the same space 
+               \item Cosine similarity b/w the two vectors 
+           \end{itemize}
+        \item Trained to assign highest score to correct caption--visual pair 
+    \end{itemize}
+\end{columns}
+\end{frame}
+%%=============================================================================
+\section{Results}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Up Next.....}
+\tableofcontents[currentsection] 
+\end{frame}
+\subsection{Image Captioning Experiments}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Image Captioning Experiments}
+Experiments conducted on the COCO validation set to answer the below questions
+\begin{itemize}
+    \item How to use the two input channels: \emph{init} and \emph{persist}?
+    \item Which image features perform best ?
+    \item How does depth affect the performance ?
+    %\item Does hierarchical decoder help?
+    \item Benefits of Ensembling  
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Results of the Image Captioning Experiments-I}
+\begin{itemize}
+    \item<1-> How to use the two input channels: \emph{init} and \emph{persist}?
+       \begin{itemize}
+           \item<2-> \emph{persist} channel greatly improves performance
+           \item<3-> Letting language model access CNN features throughout is helpful 
+       \end{itemize}
+    \item<1-> Which image features perform best ?
+       \begin{itemize}
+           \item<4-> Best results when \emph{gCNN} is input in \emph{persist} 
+           \item<5-> \emph{FRC80} is much better than \emph{SVM80}
+           \item<6-> Counterintuitively, localization features don't help much 
+           \item<7-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Results of the Image Captioning Experiments-II}
+\begin{itemize}
+    \item How does depth affect the performance ?
+       \begin{itemize}
+           \item<2-> Depth of 2/3 layers increases performance as per metrics moderately, perplexity is worse!
+           \item<3-> Residual connections improve perplexity greatly 
+           \item<4-> Residual connections also improve convergence speeds 
+           \only<4>{\hspace{-10mm}\begin{figure}[h]
+                \centering
+                \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
+           \end{figure}}
+       \end{itemize}
+    %\item Does hierarchical decoder help?
+    %   \begin{itemize}
+    %    \item<6-> Performance degrades with hierarchical decoder
+    %    \item<7-> But caption diversity is greatly improved 
+    %   \end{itemize}
+    \item Benefits of Ensembling  
+       \begin{itemize}
+        \item<5-> CNN evaluator improves the performance moderately  
+        \item<6-> Caption diversity is greatly improved 
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Comparison to Published Results on COCO Dataset}
+\begin{table}[t]
+  \centering
+  \scalebox{0.6}{
+  \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+    \hline\hline
+    \multirow{2}{*}{\bf Leaderboard Name}
+                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{2-9}
+                    & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
+    AugmentCNNwithDet~(C19)& 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
+    ------ (C27) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
+    ATT\_VC~\cite{you2016image}& \bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
+    ------ (C17)  &  0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
+    OriolVinyals~\cite{Vinyals_2015_CVPR}      & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
+    MSR\_Captivator~\cite{Fang2015}  & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
+    Berkeley LRCN~\cite{donahue2015long}   & 0.306 &\bf0.585& 0.247 &0.335& 0.528 & 0.678& 0.921& 0.934\\
+    human~\cite{Chen2015}   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\
+    Montreal/Toronto~\cite{Xu2015show} & 0.277 & 0.537 & 0.241 &0.322& 0.516 & 0.654 & 0.865 & 0.893\\
+    \hline \hline
+  \end{tabular}
+  }
+  \caption{Test Set Results from COCO Leaderboard}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \scalebox{0.6}{
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline\hline
+    \bf \# &BLEU-4 &METEOR &ROUGE-L&CIDEr\\\hline
+    C27 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
+    C20 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
+    ATT\_VC~\cite{you2016image} & 0.304& 0.243& -- & -- \\
+    Berkeley LRCN~\cite{donahue2015long} & 0.300& 0.242& 0.524 & 0.896 \\
+    OriolVinyals~\cite{Vinyals_2015_CVPR} & 0.277& 0.233& -- & 0.855 \\
+    MSR\_Captivator~\cite{Fang2015} & 0.257& 0.236& -- & -- \\
+    Montreal/Toronto~\cite{Xu2015show} & 0.250& 0.230& -- & -- \\
+    \hline \hline
+  \end{tabular}
+  }
+  \caption{Best published results on COCO 2014 validation set.}
+\end{table}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\subsection{Video Captioning Experiments}
+%%-----------------------------------------------------------------------------
+\begin{frame}{LSMDC Experiments}
+\begin{itemize}
+    \item Frame-Level features were extracted only on single key-frames
+    \item Dense Trajectories were extracted for action recognition
+    \item Model with \small{\emph{init}=\emph{DT} \& \emph{persist}=\emph{SVM80}} \textbf{won} the LSMDC 2015
+\end{itemize}
+\begin{table}[tbh]
+  \centering
+  \scalebox{0.5}{
+  \begin{tabular}{||c|c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
+    Visual labels~\cite{rohrbach2015long} &\bf0.009&\bf0.071&\bf0.164&\bf0.112\\
+    S2VT~\cite{venugopalan2015sequence} & 0.007 & 0.070 & 0.161 & 0.091\\
+    \bf L6               & 0.006 & 0.061 & 0.156 & 0.090\\
+    Temporal attention~\cite{yao2015describing} & 0.003 & 0.052 & 0.134 & 0.062\\\hline
+    \hline
+  \end{tabular}
+  }
+\vspace{-2mm}
+  \caption{LSMDC submissions ranked using automatic evaluation metrics.}
+\end{table}
+\vspace{-4mm}
+\begin{table}[tbh]
+  \centering
+  \scalebox{0.5}{
+  \begin{tabular}{||c|c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs Correctness &\bs Grammar &\bs Relevance & \bs Helpful for blind\\\hline\hline
+    Reference Caption    & 1.88  & 3.13  & 1.56  & 1.57\\\hline
+    \bf L6               &\bf3.10&\bf2.70&\bf3.29&3.29\\
+    Temporal attention~\cite{yao2015describing} & 3.14  & 2.71  & 3.31  & 3.36\\
+    Visual labels~\cite{rohrbach2015long}& 3.32  & 3.37  & 3.32  &\bf3.26\\
+    S2VT~\cite{venugopalan2015sequence}& 3.55  & 3.09  & 3.53  & 3.42\\
+    \hline
+    \hline
+  \end{tabular}
+  }
+\vspace{-2mm}
+  \caption{Human judgment scores for the LSMDC challenge submissions.}
+\end{table}
+\end{frame}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Sample Validation Set Results}
+%    \textbf{The Good}\\[2mm]
+%    \includegraphics[width=0.5\textwidth]{images/230350439_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110270280_genCapEdited.png}\\[2mm]
+%    \includegraphics[width=0.5\textwidth]{images/110510033_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140760125_genCap.png}\\[2mm]
+%    \textbf{The Bad}\\[2mm]
+%    \includegraphics[width=0.5\textwidth]{images/110260059_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110260532_genCap.png}\\[2mm]
+%    \textbf{The Ugly}\\[2mm]
+%    \includegraphics[width=0.5\textwidth]{images/110510496_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140770020_genCap.png}\\
+%\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{MSR-VTT Experiments}
+\begin{itemize}
+    \item Frame-Level features were extracted from 1 frame per second 
+    \item Three action recognition features: DT, IDT and C3D
+    \item CNN ensemble \textbf{won} the MSR-VTT Challenge
+\end{itemize}
+\begin{columns}
+    \column{.5\linewidth}
+    \vspace{-5mm}
+\begin{table}[tbh]
+  \centering
+  \scalebox{0.55}{
+  \begin{tabular}{||c|c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
+    v2t\_navigator &\bf0.408 &\bf0.282 & 0.448 &\bf0.609 \\
+    \bf Aalto~(M6)     & 0.398 & 0.269 &0.457 & 0.598 \\
+    VideoLAB       & 0.391 & 0.277 & 0.441 & 0.606 \\
+    ruc-uva        & 0.387 & 0.269 &\bf0.459 & 0.587 \\
+    Fudan-ILC      & 0.387 & 0.268 & 0.419 & 0.595 \\\hline
+    \multicolumn{5}{||c|}{16 other teams with lower scores appear in the leaderboard}\\\hline
+    \hline
+  \end{tabular}}
+\vspace{-2mm}
+  \caption{Top 5 teams as per automatic evaluation metrics on test set.}
+  \label{tab:resultsTestMet}
+\end{table}
+\column{.5\linewidth}
+\begin{table}[tbh]
+  \centering
+  \scalebox{0.6}{
+  \begin{tabular}{||c|c|c|c|}
+    \hline\hline
+    \bf Team  &\bs C1 &\bs C2 &\bs C3 \\\hline\hline
+    \bf Aalto~(M6)     & \bf3.263 & 3.104 & \bf3.244\\
+    v2t\_navigator & 3.261 & 3.091 & 3.154 \\
+    VideoLAB       & 3.237 & \bf3.109 & 3.143 \\
+    Fudan-ILC      & 3.185 & 2.999 & 2.979 \\
+    ruc-uva        & 3.225 & 2.997 & 2.933 \\\hline
+    \multicolumn{4}{||c|}{\parbox[c][][c]{8cm}{\smallskip\centering 16 other teams appear in the leaderboard\smallskip}}\\\hline
+    \hline
+  \end{tabular}
+  }
+\vspace{-2mm}
+  \caption{Top 5 teams as per human evaluation.}
+  \label{tab:resultsTestHum}
+\end{table}
+\end{columns}
+\end{frame}
+%%=============================================================================
+\section{Conclusions}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Next.....}
+%\tableofcontents[currentsection] 
+%\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Conclusions}
+\begin{itemize}
+    \item The proposed object and scene detector features complement the CNN features well 
+    \item Two extensions proposed to the language model were useful. 
+       \begin{itemize}
+           \item The \emph{persist} input channel greatly improved performance
+           \item The residual connections achieve lower training cost, and convergence time
+       \end{itemize}
+    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
+    \item Good performance was achieved in all the three datasets
+    \item Our models won two video captioning challenges judged by human evaluators 
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{}
+\begin{center}
+    \Large Thank You for Listening\\[6mm]
+    \Large Any Questions? 
+\end{center}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Sample Results on COCO}
+\begin{figure}[h]
+  \begin{center}
+  \centering
+  %\tabcolsep=0.05cm
+  \scalebox{0.7}{
+  \begin{tabular}{c|c|c|c|}
+          \cline{2-4}
+    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
+     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
+  \end{tabular}
+  }
+  \end{center}
+  \caption{Captions generated for some images from the COCO validation set by two of our
+    models. The first row contains samples where the ensemble model,
+    C27, performs better, and the second row cases where C19 is
+    better.}
+  \label{fig:cococapSamps}
+\end{figure}
+
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Sample Captions Video}
+\begin{figure}[thp]
+  \begin{center}
+  \centering
+  \tabcolsep=0.10cm
+  \scalebox{0.7}{
+          \begin{tabular}{|l|l|l|}
+    \hline
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/LsmdcVid0.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/LsmdcVid1.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/LsmdcVid2.png}}
+    \\\hline
+    \textbf{\scriptsize\em L6:} \scriptsize someone runs up to the car&
+    \textbf{\scriptsize\em L6:} \scriptsize someone is dancing with her&
+    \textbf{\scriptsize\em L6:} \scriptsize someone looks up at the house\\\hline\\\hline
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/9150.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/9799.png}} &
+    \mcCell{\includegraphics[width=0.25\linewidth]{images/7997.png}} \\\hline
+    \textbf{\scriptsize\em M6:} \scriptsize a man is running in a gym &
+    \textbf{\scriptsize\em M6:} \scriptsize a person is playing with a rubix cube &
+    \textbf{\scriptsize\em M6:} \scriptsize cartoon characters are interacting\\
+    \textbf{\scriptsize\em M2:} \scriptsize a man is running&
+    \textbf{\scriptsize\em M2:} \scriptsize a man is holding a phone&
+    \textbf{\scriptsize\em M2:} \scriptsize a person is playing a video game\\
+    \textbf{\scriptsize\em M5:} \scriptsize a man is playing basketball&
+    \textbf{\scriptsize\em M5:} \scriptsize a person is playing with a rubix cube &
+    \textbf{\scriptsize\em M5:} \scriptsize a group of people are talking\\
+    \hline
+  \end{tabular}
+  }
+  \end{center}
+  \label{fig:VttcapSamps}
+\end{figure}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Qualitative Analysis}
+\vspace{-5mm}
+\begin{columns}
+  \column{.5\linewidth}
+  \begin{figure}[t]
+    \centering
+    \includegraphics[trim={2cm 0 2cm 0},clip,width=0.8\linewidth]{images/VTTCiderCateg.pdf}
+    \vspace{-5mm}
+    \caption{Performance by video category}%
+  \end{figure}
+  \column{.5\linewidth}
+  \begin{figure}[t]
+    \centering
+    \includegraphics[trim={2cm 0 2cm 0},clip, width=0.8\linewidth]{images/VTTCiderLengths.pdf}
+    \vspace{-5mm}
+    \caption{Performance by video length}
+    \label{fig:VttLenPerf}
+  \end{figure}
+\end{columns}
+\begin{itemize}
+    \item Video category has a huge impact
+       \begin{itemize}
+               \item \emph{How to}, \emph{video games} perform best 
+               \item \emph{News}, \emph{tv} perform worst 
+       \end{itemize}
+    \item Surprisingly, length doesn't seem effect much (in-conclusive) 
+\end{itemize}
+\end{frame}
+\begin{frame}[allowframebreaks]
+        \frametitle{References}
+        \bibliography{bib_thesis_used_only}
+\end{frame}
+\end{document}
