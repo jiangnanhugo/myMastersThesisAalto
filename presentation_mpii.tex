@@ -498,39 +498,56 @@
 %\end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Ensembling}
-\begin{frame}{Ensembling the caption generators}
-\begin{itemize}
-    \item Ensemble generators trained with different features and parameters
-    \item Models in ensemble set produce a caption and a corresponding probability 
-    \item Pick based on the assigned probability? 
-    \item One can also use models to mutually evaluate each other 
-       \begin{itemize}
-           \item Each model rates others captions too
-           \item Combine the rating using max-max or max-mean 
-       \end{itemize}
-    \item Unsatisfactory performance. 
-\end{itemize}
-\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Ensembling -- CNN evaluator}
 \begin{columns}       
-    \column{0.3\linewidth}
+    \column{0.4\linewidth}
     \begin{figure}[h]
-        \centering
         \includegraphics[width=1.0\textwidth]{images/CnnEval.pdf}
         \vfill
     \end{figure}
-    \column{0.7\linewidth}
+    \column{0.6\linewidth}
     \begin{itemize}
-        \item Generative vs Discriminative 
+        \item Combine generators trained with different features
+        \item Set of candidates for each visual input 
+        \item \textbf{How to pick the best candidate?} 
+                \begin{itemize}
+                    \item Log Probaility
+                    \item Evaluator Network
+                \end{itemize}
         \item Train evaluator to compute similarity b/w visual input and caption 
-           \begin{itemize}
-               \item A CNN to encode the sentence 
-               \item Visual feature is embedded to the same space 
-               \item Cosine similarity b/w the two vectors 
-           \end{itemize}
         \item Trained to assign highest score to correct caption--visual pair 
     \end{itemize}
+\end{columns}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Ensembling -- Example}
+\begin{columns}       
+    \column{0.4\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\linewidth]{images/COCO_val2014_000000530509.jpg}
+        \vfill
+    \end{figure}
+    \column{0.6\linewidth}
+    \begin{figure}[thp]
+      \begin{center}
+      \centering
+      \scalebox{0.8}{
+      \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob} &\textbf{\scriptsize\em CNN} \\\hline
+        \textbf{\scriptsize\em \#1:} \scriptsize a young boy holding a kite in a park  & -6.31 &\bf 0.80 \\\hline
+        \textbf{\scriptsize\em \#2:} \scriptsize a man and a girl are flying a kite    & -7.43 & 0.65 \\\hline
+        \textbf{\scriptsize\em \#3:} \scriptsize a young boy holding a kite in a park  & -6.64 &\bf 0.80 \\\hline
+        \textbf{\scriptsize\em \#4:} \scriptsize a young boy holding a kite in a field & -7.85 & 0.79 \\\hline
+        \textbf{\scriptsize\em \#5:} \scriptsize a woman holding a kite in a park      &\bf-6.19 & 0.74 \\\hline
+        \textbf{\scriptsize\em \#6:} \scriptsize a woman holding a kite in a park      & -6.70 & 0.74 \\\hline
+      \end{tabular}
+      }
+        \vfill
+      \end{center}
+    \end{figure}
 \end{columns}
 \end{frame}
 %%=============================================================================
@@ -557,14 +574,13 @@ Experiments conducted on the COCO validation set to answer the below questions
     \item<1-> How to use the two input channels: \emph{init} and \emph{persist}?
        \begin{itemize}
            \item<2-> \emph{persist} channel greatly improves performance
-           \item<3-> Letting language model access CNN features throughout is helpful 
+           \item<3-> Best results when \emph{gCNN} is input in \emph{persist} 
        \end{itemize}
     \item<1-> Which image features perform best ?
        \begin{itemize}
-           \item<4-> Best results when \emph{gCNN} is input in \emph{persist} 
-           \item<5-> \emph{FRC80} is much better than \emph{SVM80}
-           \item<6-> Counterintuitively, localization features don't help much 
-           \item<7-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
+           \item<4-> \emph{FRC80} is much better than \emph{SVM80}
+           \item<5-> Counterintuitively, localization features don't help much 
+           \item<6-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
        \end{itemize}
 \end{itemize}
 \end{frame}
@@ -573,10 +589,9 @@ Experiments conducted on the COCO validation set to answer the below questions
 \begin{itemize}
     \item How does depth affect the performance ?
        \begin{itemize}
-           \item<2-> Depth of 2/3 layers increases performance as per metrics moderately, perplexity is worse!
-           \item<3-> Residual connections improve perplexity greatly 
-           \item<4-> Residual connections also improve convergence speeds 
-           \only<4>{\hspace{-10mm}\begin{figure}[h]
+           \item<2-> 2/3 layers increases performance as per metrics moderately, perplexity is worse!
+           \item<3-> Residual connections improve perplexity and convergence speed greatly 
+           \only<3>{\hspace{-10mm}\begin{figure}[h]
                 \centering
                 \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
            \end{figure}}
@@ -586,7 +601,7 @@ Experiments conducted on the COCO validation set to answer the below questions
     %    \item<6-> Performance degrades with hierarchical decoder
     %    \item<7-> But caption diversity is greatly improved 
     %   \end{itemize}
-    \item Benefits of Ensembling  
+    \item Benefits of Ensembling
        \begin{itemize}
         \item<5-> CNN evaluator improves the performance moderately  
         \item<6-> Caption diversity is greatly improved 
@@ -760,6 +775,32 @@ Experiments conducted on the COCO validation set to answer the below questions
     \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
     \item Good performance was achieved in all the three datasets
     \item Our models won two video captioning challenges judged by human evaluators 
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Looking Forward}
+\begin{itemize}
+    \item Multiple Captions
+       \begin{itemize}
+           \item Complementary captions.
+           \item Paragraph summaries?
+           \item Covering entire visual information (almost!)
+       \end{itemize}
+    \item Scene graphs 
+       \begin{itemize}
+           \item Build graph representing objects, attributes and relations 
+           \item More actionable representation
+       \end{itemize}
+    \item Video features 
+       \begin{itemize}
+           \item Extract and represent long term dependencies in videos? 
+       \end{itemize}
+    \item Interpretable models
+       \begin{itemize}
+           \item Explain why a particular word is used.
+           \item Visually or gramatically ground every word used.
+       \end{itemize}
+
 \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
