@@ -170,26 +170,26 @@
 %%-----------------------------------------------------------------------------
 %%-----------------------------------------------------------------------------
 \subsection{Baseline Model}
-\begin{frame}{Captioning Techniques in Literature}
-\begin{itemize}
-  \item Two different approaches:
-      \begin{enumerate}
-        \item Retrieval-based 
-        \item Generative models (Ours)
-      \end{enumerate}
-  \item Earliest works were retrieval based
-          {\begin{itemize}
-          \item Based on common embedding on input image and textual descriptions  
-      \end{itemize}}
-  \item Early caption generation models were sentence template based
-  \item This has been replaced with generative language models 
-  %\item<5-> Retrieval Vs Generative: 
-  %    \begin{itemize}
-  %      \item Retrieval problem: Easy to evaluate, no novelty 
-  %      \item Generative problem: Novel captions, harder to evaluate
-  %    \end{itemize}
-\end{itemize} 
-\end{frame}
+%\begin{frame}{Captioning Techniques in Literature}
+%\begin{itemize}
+%  \item Two different approaches:
+%      \begin{enumerate}
+%        \item Retrieval-based 
+%        \item Generative models (Ours)
+%      \end{enumerate}
+%  \item Earliest works were retrieval based
+%          {\begin{itemize}
+%          \item Based on common embedding on input image and textual descriptions  
+%      \end{itemize}}
+%  \item Early caption generation models were sentence template based
+%  \item This has been replaced with generative language models 
+%  %\item<5-> Retrieval Vs Generative: 
+%  %    \begin{itemize}
+%  %      \item Retrieval problem: Easy to evaluate, no novelty 
+%  %      \item Generative problem: Novel captions, harder to evaluate
+%  %    \end{itemize}
+%\end{itemize} 
+%\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Baseline Model}
     \begin{figure}[h]
@@ -401,41 +401,9 @@
 %%-----------------------------------------------------------------------------
 \subsection{Video Features}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Key-Frame Video Features}
-    \begin{itemize}
-        \item Video treated as a bag of frames
-        \item Temporal information ignored 
-        \item CNN features are extracted from individual frames 
-        \item Additionally \emph{SVM80} features are extracted too 
-        \item Redundant to do this on every frame 
-           \begin{itemize}
-               \item Use a single key-frame or
-               \item One frame every second.
-           \end{itemize}
-    \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Video-Segment Features}
-\begin{itemize}
-    \item Two different features are experimented
-       \begin{itemize}
-           \item Hand engineered dense trajectory features
-           \item Deep 3-D CNN based C3D features~\cite{DBLP:C3D}
-       \end{itemize}
-    \item Dense Trajectory features~(DT~\cite{DBLP:conf/cvpr/WangKSL11}, IDT~\cite{Wang2013}) 
-       \begin{itemize}
-            \item Densely sample few interest points 
-            \item Track them and form trajectories 
-            \item Extract local descriptors around trajectories 
-            \item Two versions available  
-       \end{itemize}
-    \item C3D features
-       \begin{itemize}
-           \item 3D CNN pre-trained on Sports-1m dataset
-           \item Process 16 frames at a time
-           \item Activations from \emph{fc7} layer 
-       \end{itemize}
-\end{itemize}
+\begin{frame}{Video Features}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/VideoFeatures.pdf}
 \end{frame}
 %%%-----------------------------------------------------------------------------
 %\begin{frame}{Dense Trajectory Features}
