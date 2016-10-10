@@ -17,6 +17,8 @@
 \newcommand{\mct}[1]{\multicolumn{2}{c|}{\bf#1}}
 \newcommand{\mcCell}[1]{\multicolumn{1}{|c|}{#1}}
 \newcommand{\bs}{\small\bf}
+\newcommand{\red}[1]{\protect\begin{color}{red}#1\protect\end{color}}
+\newcommand{\green}[1]{\protect\begin{color}{green}#1\protect\end{color}}
 \begin{document}
 
 %%-----------------------------------------------------------------------------
@@ -32,45 +34,22 @@
 %%\frame{\frametitle{Table of contents}\tableofcontents} 
 
 %%-----------------------------------------------------------------------------
-\begin{frame}{Video Features}
-\begin{itemize}
-\item Still rely heavily on hand-crafted features\\
-\item Features designed to extract movement related information\\
-        \begin{itemize}
-            \item Dense trajectory features
-            \item 3-D convolutional features
-        \end{itemize}
-\item Captioning needs both static object related info and actions\\ 
-\item Need to combine two paradigms: 
-   \begin{itemize}
-     \item Frame-level features for object and attributes
-     \item Segment-level features for actions
-   \end{itemize}
-\end{itemize} 
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Recurrent Language Model}
-\begin{itemize}
-\item Recurrent networks: current output = input + hidden state
-\item Long-Short Term Memory~(LSTM) based language model.
-\item Use non-linear gates to control flow of information
-\item Can essentially store information for infinite amount of time 
-\item Good for modeling discrete sequences like words 
-\end{itemize} 
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Baseline Model}
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.4\linewidth]{images/Thesis_lstmLangGen.pdf}
-    \end{figure}
-    \begin{itemize}
-        \item Adopted from~\cite{Vinyals_2015_CVPR} 
-        \item LSTM network based language model
-        \item The sequence $(V,START,w_0, w_1, \cdots,w_{L-1})$ is the input
-        \item Words are represented as word vectors 
-        \item Visual feature is presented only in the initialization 
-    \end{itemize}
+\section{Overview}
+\begin{frame}{Our approach}
+%\begin{itemize}
+        %\item Standard Encoder--Decoder caption generation module.
+        %\item Video featueres from two-different paradigms.
+        %   \begin{itemize}
+        %     \item Frame-level features for object and attributes
+        %     \item Segment-level features for actions
+        %   \end{itemize}
+        %\item Train multiple caption generators with different feature combinations.
+        %\item Ensemble using an evaluator network 
+%\end{itemize} 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/MMGC_Overview.pdf}
+\end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Training and Generation}
@@ -87,161 +66,67 @@
 %\end{frame}
 %%-----------------------------------------------------------------------------
 %%=============================================================================
-\section{Enhancing Visual Features}
+\section{Visual Features}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Up Next.....}
-\tableofcontents[currentsection] 
+\begin{frame}{Video Features}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/VideoFeatures.pdf}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\subsection{Video Features}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Key-Frame Video Features}
-    \begin{itemize}
-        \item Video treated as a bag of frames
-        \item Temporal information ignored 
-        \item CNN features are extracted from individual frames 
-        \item Additionally \emph{SVM80} features are extracted too 
-        \item Redundant to do this on every frame 
-           \begin{itemize}
-               \item Use a single key-frame or
-               \item One frame every second.
-           \end{itemize}
-    \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Video-Segment Features}
-\begin{itemize}
-    \item Two different features are experimented
-       \begin{itemize}
-           \item Hand engineered dense trajectory features
-           \item Deep 3-D CNN based C3D features~\cite{DBLP:C3D}
-       \end{itemize}
-    \item Dense Trajectory features~(DT~\cite{DBLP:conf/cvpr/WangKSL11}, IDT~\cite{Wang2013}) 
-       \begin{itemize}
-            \item Densely sample few interest points 
-            \item Track them and form trajectories 
-            \item Extract local descriptors around trajectories 
-            \item Two versions available  
-       \end{itemize}
-    \item C3D features
-       \begin{itemize}
-           \item 3D CNN pre-trained on Sports-1m dataset
-           \item Process 16 frames at a time
-           \item Activations from \emph{fc7} layer 
-       \end{itemize}
-\end{itemize}
-\end{frame}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{Dense Trajectory Features}
-%\begin{columns}
-%\column{0.65\linewidth}
-%\begin{itemize}
-%        \item Based on tracking interest points
-%        \begin{itemize}
-%            \item Densely sample few interest points 
-%            \item Track them and form trajectories 
-%            \item Extract local descriptors around trajectories 
-%        \end{itemize}
-%    \end{itemize}
-%    \column{.35\linewidth}
-%    \begin{figure}[h] 
-%      \includegraphics[width=1.0\textwidth]{./images/IDenseTrajVis.png}\hfill 
-%    \end{figure}
-%\end{columns}
-%\begin{columns}
-%\hspace{-8mm}\column{1.0\linewidth}
-%\begin{itemize}
-%   \item Trajectory type can be identified by the local descriptors 
-%       \begin{itemize}
-%           \item Different actions produce different trajectory types
-%           \item Actions can be identified by trajectory types 
-%       \end{itemize}
-%   \item Video can contain arbitrary no of trajectories 
-%       \begin{itemize}
-%           \item Language model expects fixed sized vector
-%       \end{itemize}
-%   \item Encode into fixed size using bag-of-words
-%       \begin{itemize}
-%           \item Create a codebook using K-means
-%           \item Assign each trajectory to nearest entry in codebook 
-%           \item Video represented as a histogram with codebook as bins
-%       \end{itemize}
-%\end{itemize}
-%\end{columns}
-%\end{frame}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{3-D CNN Based Features}
-%    \begin{itemize}
-%        \item Attempts to extend success of CNNs to videos~\cite{3dCNN_ji2013, KarpathyCVPR14, DBLP:C3D} 
-%        \item Change 2D filters in lower layers to 3D filters 
-%        \item \textbf{\emph{C3D}}~\cite{DBLP:C3D} is a popular architecture
-%        \item We use version pre-trained on Sports-1M dataset 
-%        \item Only process one segment at a time (16-frames)
-%            \begin{itemize}
-%                \item Hence limited context
-%            \end{itemize}
-%    \item Extract features from the \emph{fc7} layer 
-%    \end{itemize}
-%\end{frame}
-%%%=============================================================================
-\begin{frame}{Residual Connections}
+\begin{frame}{Language Model}
     \begin{figure}[h]
         \centering
-        \includegraphics[width=0.4\textwidth]{images/MultilayerResidualLSTM.pdf}
+        \includegraphics[width=0.5\textwidth]{images/MultilayerResidualLSTM.pdf}
     \end{figure}
     \begin{itemize}
-        \item Use multiple layers of LSTM 
-        \item Add a residual connection between layers~\cite{He2015} 
-        \item Higher layer only needs to learn a residual function 
+        \item Use multiple layers of LSTM with \textbf{Residual} connections~\cite{He2015} 
+        \item Two input channels -- \emph{init} and \emph{persist} 
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-%\begin{frame}{Hierarchical Decoder}
-%\begin{itemize}
-%    \item Every word prediction is a difficult $Z$-way classification
-%       \begin{itemize}
-%           \item $Z$ is vocabulary size, $Z=8792$ in COCO
-%           \item Errors add up quickly 
-%           \item All output words are treated independently 
-%       \end{itemize}
-%    \item Instead split it into two-step hierarchical classification
-%       \begin{itemize}
-%            \item Semantically group words into classes 
-%            \item First predict the class of the word 
-%            \item Next predict the word within the class
-%       \end{itemize}
-%    \item Words can be grouped by two methods 
-%       \begin{itemize}
-%           \item Brown Clustering -- hierarchical clustering
-%           \item K-means clustering of word vectors 
-%       \end{itemize}
-%\end{itemize}
-%\end{frame}
-%%-----------------------------------------------------------------------------
-\subsection{Ensembling}
-\begin{frame}{Ensembling the caption generators}
+\section{Ensembling}
+\begin{frame}{Why Ensembling?}
 \begin{itemize}
-    \item Ensemble generators trained with different features and parameters
-    \item Models in ensemble set produce a caption and a corresponding probability 
-    \item Pick based on the assigned probability? 
-    \item One can also use models to mutually evaluate each other 
-       \begin{itemize}
-           \item Each model rates others captions too
-           \item Combine the rating using max-max or max-mean 
-       \end{itemize}
-    \item Unsatisfactory performance. 
+        \item Dataset -- Various types of videos
+        \item Features -- No single best feature
+        \item Models -- Self-Evaluation can't be trusted
 \end{itemize}
+\underline{Example}
+\begin{columns}       
+    \column{0.4\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\linewidth]{images/6774.png}
+        \vfill
+    \end{figure}
+    \column{0.6\linewidth}
+    \begin{figure}[thp]
+      \begin{center}
+      \centering
+      \scalebox{0.9}{
+      \begin{tabular}{|l|c|}
+        \hline
+        \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob}\\\hline
+\textbf{\scriptsize\em \#1:} \scriptsize \red{a man is cooking}& \textbf{-3.89}  \\\hline
+        \textbf{\scriptsize\em \#2:} \scriptsize \green{a man is eating food}& -5.20 \\\hline
+        \textbf{\scriptsize\em \#3:} \scriptsize a man is cooking food & -6.64 \\\hline
+      \end{tabular}
+      }
+        \vfill
+      \end{center}
+    \end{figure}
+\end{columns}
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Ensembling -- CNN evaluator}
 \begin{columns}       
-    \column{0.3\linewidth}
+    \column{0.4\linewidth}
     \begin{figure}[h]
         \centering
         \includegraphics[width=1.0\textwidth]{images/CnnEval.pdf}
         \vfill
     \end{figure}
-    \column{0.7\linewidth}
+    \column{0.6\linewidth}
     \begin{itemize}
         \item Generative vs Discriminative 
         \item Train evaluator to compute similarity b/w visual input and caption 
@@ -254,14 +139,50 @@
     \end{itemize}
 \end{columns}
 \end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Does it work?}
+\begin{columns}       
+    \column{0.4\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\linewidth]{images//6774.png}
+        \vfill
+    \end{figure}
+    \column{0.6\linewidth}
+    \begin{figure}[thp]
+      \begin{center}
+      \centering
+      \scalebox{0.8}{
+      \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob} &\textbf{\scriptsize\em CNN Score} \\\hline
+\textbf{\scriptsize\em \#1:} \scriptsize a man is cooking& -3.89 & 0.86 \\\hline
+        \textbf{\scriptsize\em \#2:} \scriptsize \green{a man is eating food}& -5.20 &\bf 0.89 \\\hline
+        \textbf{\scriptsize\em \#3:} \scriptsize a man is cooking food & -6.64 & 0.87 \\\hline
+      \end{tabular}
+      }
+        \vfill
+      \end{center}
+    \end{figure}
+\end{columns}
+\begin{table}[tbh]
+  \centering
+  \caption{Ensemble v/s single model on val set.}
+  \scalebox{0.9}{
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    Model &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
+    \small Best Single Model  & 0.409 & 0.268 & 0.433 & 0.598 \\
+    \small CNN ensemble of 4 models & \bf0.411 & \bf0.277 & \bf0.464 & \bf0.596 \\\hline
+  \end{tabular}
+  }
+  \label{tab:resVttFeat}
+\end{table}
+\end{frame}
+%%-----------------------------------------------------------------------------
 %%=============================================================================
 \section{Results}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Up Next.....}
-\tableofcontents[currentsection] 
-\end{frame}
-%%-----------------------------------------------------------------------------
-\subsection{Video Captioning Experiments}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Sample Validation Set Results}
 %    \textbf{The Good}\\[2mm]
