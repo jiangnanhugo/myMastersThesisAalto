@@ -311,11 +311,6 @@
 \begin{frame}{Proposed Image Features}
     \begin{itemize}
             \item Primary features are extracted from GoogLeNet~(\textbf{\emph{gCNN}})
-        \begin{itemize}
-            \item Won ILSVRC 2014 
-            \item 22 Layer deep
-            \item Extracted from the 5th inception layer 
-        \end{itemize}
         \item CNN features: Not clear if multiple objects are encoded 
         \item Localization information is lost by design! 
         \item What about the background!? 
@@ -328,13 +323,8 @@
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Explicit Object Detector}
-    \begin{itemize}
-        \item Train object detectors for each object category 
-        \item Use CNN features~(ImageNet trained) and train SVM object detectors 
-        \item One for each category of COCO (80 objects) 
-        \item Referred to as~(\textbf{\emph{SVM80}})  
-    \end{itemize}
+\begin{frame}{Explicit Detector Features}
+        \underline{Explicit Object Detector}
   \begin{figure}[h]
     \begin{columns}
     \column{.5\linewidth}
@@ -346,15 +336,7 @@
     \includegraphics[width=1.0\textwidth]{images/450728.pdf}
     \end{columns}
   \end{figure}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Explicit Scene Detector}
-    \begin{itemize}
-        \item Utilize SUN dataset with 108,756 images with 397 scene types 
-        \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
-        \item One for each category in SUN (397 objects) 
-        \item Referred to as~(\textbf{\emph{SUN397}})  
-    \end{itemize}
+  \underline{Explicit Scene Detector}
   \begin{figure}[h]
     \begin{columns}
     \column{.5\linewidth}
@@ -372,32 +354,31 @@
     \begin{itemize}
         \item Faster R-CNN networks output bounding boxes 
         \item Trained on COCO dataset using the box annotations 
-        \item Boxes are mapped to grids corresponding to each object category 
-           \begin{itemize}
-               \item Use intersection over union~(IoU) scores
-               \item Use smooth Gaussian and integrate 
-           \end{itemize}
-        \item Grids can be non-overlapping $m\times n$ or overlapping $m+n$
-        \item Feature size is $(80\times m\times n)$ or  $(80\times (m+n))$
-        \item Can be collapsed (i.e.\@ $m=n=1$) to get object detector vector~(\textbf{\emph{FRC80}}) 
+        \item Boxes are mapped to a regular grid, one for each category 
+        \item Can be collapsed to get object detector vector~(\textbf{\emph{FRC80}}) 
+        \begin{figure}[h]
+          %\hspace{-8mm}%
+          \includegraphics[width=0.9\textwidth]{images/FrcnnFeats.pdf}
+        \end{figure}
+
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{More Examples}
-  \begin{figure}[h]
-    \begin{columns}
-    \column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/241668.png}
-    \hspace{-5mm}\column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/533506.png}
-    \hspace{-5mm}\column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/69223.png}
-    \end{columns}
-  \end{figure}
-\end{frame}
+%\begin{frame}{More Examples}
+%  \begin{figure}[h]
+%    \begin{columns}
+%    \column{.33\linewidth}
+%    \centering
+%    \includegraphics[width=1.2\textwidth]{images/241668.png}
+%    \hspace{-5mm}\column{.33\linewidth}
+%    \centering
+%    \includegraphics[width=1.2\textwidth]{images/533506.png}
+%    \hspace{-5mm}\column{.33\linewidth}
+%    \centering
+%    \includegraphics[width=1.2\textwidth]{images/69223.png}
+%    \end{columns}
+%  \end{figure}
+%\end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Video Features}
 %%-----------------------------------------------------------------------------
