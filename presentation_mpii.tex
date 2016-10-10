@@ -112,47 +112,47 @@
 \end{frame}
 \subsection{Visual Features}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Image Features}
-\begin{itemize}
-\item Deep convolutional neural networks for image classification 
-    \begin{itemize}
-        \item Lower layers contain convolutional filters 
-        \item Followed by fully connected layers
-    \end{itemize}
-\item Learn hierarchical features
-\item Higher layers are good out-of-the-box features  
-    \begin{itemize}    
-        \item Activations from fully connected layers before softmax 
-    \end{itemize}
-\item Widely used in recent image captioning literature~\cite{Vinyals_2015_CVPR,Fang2015} 
-\end{itemize} 
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Video Features}
-\begin{itemize}
-\item Still rely heavily on hand-crafted features\\
-\item Features designed to extract movement related information\\
-        \begin{itemize}
-            \item Dense trajectory features
-            \item 3-D convolutional features
-        \end{itemize}
-\item Captioning needs both static object related info and actions\\ 
-\item Need to combine two paradigms: 
-   \begin{itemize}
-     \item Frame-level features for object and attributes
-     \item Segment-level features for actions
-   \end{itemize}
-\end{itemize} 
-\end{frame}
-\subsection{Language Model}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Recurrent Language Model}
-\begin{itemize}
-\item Recurrent networks: current output = input + hidden state
-\item Long-Short Term Memory~(LSTM) based language model.
-\item Use non-linear gates to control flow of information
-\item Can essentially store information for infinite amount of time 
-\item Good for modeling discrete sequences like words 
+%\begin{frame}{Image Features}
+%\begin{itemize}
+%\item Deep convolutional neural networks for image classification 
+%    \begin{itemize}
+%        \item Lower layers contain convolutional filters 
+%        \item Followed by fully connected layers
+%    \end{itemize}
+%\item Learn hierarchical features
+%\item Higher layers are good out-of-the-box features  
+%    \begin{itemize}    
+%        \item Activations from fully connected layers before softmax 
+%    \end{itemize}
+%\item Widely used in recent image captioning literature~\cite{Vinyals_2015_CVPR,Fang2015} 
+%\end{itemize} 
+%\end{frame}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{Video Features}
+%\begin{itemize}
+%\item Still rely heavily on hand-crafted features\\
+%\item Features designed to extract movement related information\\
+%        \begin{itemize}
+%            \item Dense trajectory features
+%            \item 3-D convolutional features
+%        \end{itemize}
+%\item Captioning needs both static object related info and actions\\ 
+%\item Need to combine two paradigms: 
+%   \begin{itemize}
+%     \item Frame-level features for object and attributes
+%     \item Segment-level features for actions
+%   \end{itemize}
+%\end{itemize} 
+%\end{frame}
+%\subsection{Language Model}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{Recurrent Language Model}
+%\begin{itemize}
+%\item Recurrent networks: current output = input + hidden state
+%\item Long-Short Term Memory~(LSTM) based language model.
+%\item Use non-linear gates to control flow of information
+%\item Can essentially store information for infinite amount of time 
+%\item Good for modeling discrete sequences like words 
 %%-----------------------------------------------------------------------------
 %\begin{frame}{LSTM Cell}
 %    \begin{figure}[h]
@@ -165,8 +165,8 @@
 %        \item Good for modeling discrete sequences like words 
 %    \end{itemize}
 %\end{frame}
-\end{itemize} 
-\end{frame}
+%\end{itemize} 
+%\end{frame}
 %%-----------------------------------------------------------------------------
 %%-----------------------------------------------------------------------------
 \subsection{Baseline Model}
