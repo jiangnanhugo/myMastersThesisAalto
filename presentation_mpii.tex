@@ -17,6 +17,8 @@
 \newcommand{\mct}[1]{\multicolumn{2}{c|}{\bf#1}}
 \newcommand{\mcCell}[1]{\multicolumn{1}{|c|}{#1}}
 \newcommand{\bs}{\small\bf}
+\newcommand{\red}[1]{\protect\begin{color}{red}#1\protect\end{color}}
+\newcommand{\green}[1]{\protect\begin{color}{green}#1\protect\end{color}}
 \begin{document}
 
 %%-----------------------------------------------------------------------------
@@ -316,27 +318,20 @@
         \item What about the background!? 
         \item Hence three additional features 
            \begin{itemize}
-               \item Explicit object detector features
                \item Explicit scene detector features 
+               \item Explicit object detector features
                \item Object location features 
            \end{itemize}
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Explicit Detector Features}
-        \underline{Explicit Object Detector}
-  \begin{figure}[h]
-    \begin{columns}
-    \column{.5\linewidth}
-    %\hspace{-8mm}%
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/16285.pdf}
-    \hspace{-5mm}\column{.5\linewidth}
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/450728.pdf}
-    \end{columns}
-  \end{figure}
-  \underline{Explicit Scene Detector}
+\begin{frame}{Explicit Scene Detector}
+    \begin{itemize}
+        \item Utilize SUN dataset with 108,756 images with 397 scene types 
+        \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
+        \item One for each category in SUN (397 objects) 
+        \item Referred to as~(\textbf{\emph{SUN397}})  
+    \end{itemize}
   \begin{figure}[h]
     \begin{columns}
     \column{.5\linewidth}
@@ -350,7 +345,7 @@
   \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Object Localization Features}
+\begin{frame}{Object Detection and Localization Features}
     \begin{itemize}
         \item Faster R-CNN networks output bounding boxes 
         \item Trained on COCO dataset using the box annotations 
@@ -453,7 +448,7 @@
             \begin{itemize}
                 \item Shares weight with word vector
             \end{itemize}
-        \item Add a new channel of input to present features all the time
+        \item New input channel to present features at all times
         \item Refer to as \emph{persist}
         \item No weight sharing 
             \begin{itemize}
@@ -537,11 +532,11 @@
       \begin{tabular}{|l|c|c|}
         \hline
         \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob} &\textbf{\scriptsize\em CNN} \\\hline
-        \textbf{\scriptsize\em \#1:} \scriptsize a young boy holding a kite in a park  & -6.31 &\bf 0.80 \\\hline
+        \textbf{\scriptsize\em \#1:} \scriptsize \green{a young boy holding a kite in a park} & -6.31 &\bf 0.80 \\\hline
         \textbf{\scriptsize\em \#2:} \scriptsize a man and a girl are flying a kite    & -7.43 & 0.65 \\\hline
         \textbf{\scriptsize\em \#3:} \scriptsize a young boy holding a kite in a park  & -6.64 &\bf 0.80 \\\hline
         \textbf{\scriptsize\em \#4:} \scriptsize a young boy holding a kite in a field & -7.85 & 0.79 \\\hline
-        \textbf{\scriptsize\em \#5:} \scriptsize a woman holding a kite in a park      &\bf-6.19 & 0.74 \\\hline
+        \textbf{\scriptsize\em \#5:} \scriptsize \red{a woman holding a kite in a park}&\bf-6.19 & 0.74 \\\hline
         \textbf{\scriptsize\em \#6:} \scriptsize a woman holding a kite in a park      & -6.70 & 0.74 \\\hline
       \end{tabular}
       }

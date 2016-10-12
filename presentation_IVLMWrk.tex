@@ -17,6 +17,11 @@
 \newcommand{\mct}[1]{\multicolumn{2}{c|}{\bf#1}}
 \newcommand{\mcCell}[1]{\multicolumn{1}{|c|}{#1}}
 \newcommand{\bs}{\small\bf}
+\newcommand{\red}[1]{\protect\begin{color}{red}#1\protect\end{color}}
+\newcommand{\green}[1]{\protect\begin{color}{green}#1\protect\end{color}}
+\newcommand{\mlhead}[2]{%
+    \parbox[c][][c]{#1}{\smallskip\centering #2 \smallskip}
+    }
 \begin{document}
 
 %%-----------------------------------------------------------------------------
@@ -42,14 +47,14 @@
     \hfill\includegraphics[width=0.6\textwidth]{images/COCO_train2014_000000544856.jpg}
     \hspace{-5mm}\column{.5\linewidth}
     \centering
-    \caption{\only<5->{a giraffe walking through a patch of high dried out grass.}}
+    \caption{\only<4->{a giraffe walking through a patch of high dried out grass.}}
     \end{columns}
   \end{figure}
-  \item<2->Videos = \{Images + temporal relations\}\\[4mm]
-  \item<3->\only<3>{\Large Simple labels do not capture enough }
-           \only<4>{\Large How do we summarize this information?}
-           \only<5>{\Large Humans rely on natural language descriptions}
-           \only<6>{\Large Can computers generate captions too?}
+  %\item<2->Videos = \{Images + temporal relations\}\\[4mm]
+  \item<2->\only<2>{\Large Simple labels do not capture enough }
+           \only<3>{\Large How do we summarize this information?}
+           \only<4>{\Large Humans rely on natural language descriptions}
+           \only<5>{\Large Can computers generate captions too?}
   \end{itemize}
 \end{frame}
 
@@ -78,7 +83,7 @@
 %%-----------------------------------------------------------------------------
 
 %%=============================================================================
-\section{Elements of Visual Captioning}
+\section{Background and Related Work}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Up Next.....}
 \tableofcontents[currentsection] 
@@ -87,7 +92,7 @@
 \subsection{Problem Statement}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Basic Framework}
-\textbf{Given an input image or video, $V$, output a caption, $S$}
+\textbf{Given an input image, $V$, output a caption, $S$}
 \begin{itemize}
 \item $S$ is not unique
 \item Learn a probabilistic model, $P(S|V)$
@@ -95,62 +100,31 @@
 \begin{equation}
 \label{eq:langB1} P(S|V) = P(w_0, w_1, \cdots, w_{L-1}|V)
 \end{equation}
-\item Two-staged approach
-    %\only<5>{\begin{itemize}
-    %    \item Visual feature extraction: $V_f = f(V)$
-    %    \item Language modeling: $P(S|V) ~= P(S|V_f)$ 
-    %\end{itemize}
-    %}
-    {
-        \begin{figure}[h]
-            \centering
-            \includegraphics[width=0.8\textwidth]{images/Thesis_generalBaseline.pdf}
-        \end{figure}
-     }
 \end{itemize} 
 \end{frame}
 \subsection{Visual Features}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Image Features}
+\begin{frame}{Encoder--Decoder Recipe}
 \begin{itemize}
-\item Deep convolutional neural networks for image classification 
+\item Two-staged approach
+    {
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/EncDec.pdf}
+        \end{figure}
+     }
+\item Deep convolutional neural networks act as encoder
     \begin{itemize}
-        \item Lower layers contain convolutional filters 
-        \item Followed by fully connected layers
+        \item Pre-trained on ImageNet for classification 
+        \item Activations from fully connected layers
     \end{itemize}
-\item Learn hierarchical features
-\item Higher layers are good out-of-the-box features  
+\item Recurrent language models act as the decoder 
     \begin{itemize}    
-        \item Activations from fully connected layers before softmax 
+        \item LSTM networks are used
+        \item Softmax output to define probability over words 
     \end{itemize}
-\item Widely used in recent image captioning literature~\cite{Vinyals_2015_CVPR,Fang2015} 
 \end{itemize} 
 \end{frame}
-%%-----------------------------------------------------------------------------
-\subsection{Language Model}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Recurrent Language Model}
-\begin{itemize}
-\item Recurrent networks: current output = input + hidden state
-\item Long-Short Term Memory~(LSTM) based language model.
-\item Use non-linear gates to control flow of information
-\item Can essentially store information for infinite amount of time 
-\item Good for modeling discrete sequences like words 
-%%-----------------------------------------------------------------------------
-%\begin{frame}{LSTM Cell}
-%    \begin{figure}[h]
-%        \centering
-%        \includegraphics[width=0.3\textwidth]{images/LstmBlockDiag.pdf}
-%    \end{figure}
-%    \begin{itemize}
-%        \item Use non-linear gates to control flow of information
-%        \item Can essentially store information in $m$ for infinite amount of time 
-%        \item Good for modeling discrete sequences like words 
-%    \end{itemize}
-%\end{frame}
-\end{itemize} 
-\end{frame}
-%%-----------------------------------------------------------------------------
 %%-----------------------------------------------------------------------------
 \subsection{Baseline Model}
 \begin{frame}{Captioning Techniques in Literature}
@@ -160,17 +134,26 @@
         \item Retrieval-based 
         \item Generative models (Ours)
       \end{enumerate}
-  \item Earliest works were retrieval based
-          {\begin{itemize}
-          \item Based on common embedding on input image and textual descriptions  
-      \end{itemize}}
-  \item Early caption generation models were sentence template based
-  \item This has been replaced with generative language models 
+  \item Best approaches from the literature
+          \begin{itemize}
+  \item NIC~\cite{Vinyals_2015_CVPR} -- our baseline 
+      \begin{itemize}
+        \item CNN+LSTM, end-to-end 
+      \end{itemize}
+  \item MSR\_Captivator~\cite{Fang2015}
+      \begin{itemize}
+        \item CNN + word detectors + exponential language model
+      \end{itemize}
+  \item ATT\_VC~\cite{you2016image}
+      \begin{itemize}
+        \item concept detector + attention + LSTM 
+      \end{itemize}
   %\item<5-> Retrieval Vs Generative: 
   %    \begin{itemize}
   %      \item Retrieval problem: Easy to evaluate, no novelty 
   %      \item Generative problem: Novel captions, harder to evaluate
   %    \end{itemize}
+\end{itemize} 
 \end{itemize} 
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -277,7 +260,6 @@
     \begin{itemize}
             \item Primary features are extracted from GoogLeNet~(\textbf{\emph{gCNN}})
         \begin{itemize}
-            \item Won ILSVRC 2014 
             \item 22 Layer deep
             \item Extracted from the 5th inception layer 
         \end{itemize}
@@ -291,26 +273,6 @@
                \item Object location features 
            \end{itemize}
     \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Explicit Object Detector}
-    \begin{itemize}
-        \item Train object detectors for each object category 
-        \item Use CNN features~(ImageNet trained) and train SVM object detectors 
-        \item One for each category of COCO (80 objects) 
-        \item Referred to as~(\textbf{\emph{SVM80}})  
-    \end{itemize}
-  \begin{figure}[h]
-    \begin{columns}
-    \column{.5\linewidth}
-    %\hspace{-8mm}%
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/16285.pdf}
-    \hspace{-5mm}\column{.5\linewidth}
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/450728.pdf}
-    \end{columns}
-  \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Explicit Scene Detector}
@@ -333,35 +295,18 @@
   \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Object Localization Features}
+\begin{frame}{Object Detection and Localization Features}
     \begin{itemize}
         \item Faster R-CNN networks output bounding boxes 
         \item Trained on COCO dataset using the box annotations 
-        \item Boxes are mapped to grids corresponding to each object category 
-           \begin{itemize}
-               \item Use intersection over union~(IoU) scores
-               \item Use smooth Gaussian and integrate 
-           \end{itemize}
-        \item Grids can be non-overlapping $m\times n$ or overlapping $m+n$
-        \item Feature size is $(80\times m\times n)$ or  $(80\times (m+n))$
-        \item Can be collapsed (i.e.\@ $m=n=1$) to get object detector vector~(\textbf{\emph{FRC80}}) 
+        \item Boxes are mapped to a regular grid, one for each category 
+        \item Can be collapsed to get object detector vector~(\textbf{\emph{FRC80}}) 
+        \begin{figure}[h]
+          %\hspace{-8mm}%
+          \includegraphics[width=0.9\textwidth]{images/FrcnnFeats.pdf}
+        \end{figure}
+
     \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{More Examples}
-  \begin{figure}[h]
-    \begin{columns}
-    \column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/241668.png}
-    \hspace{-5mm}\column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/533506.png}
-    \hspace{-5mm}\column{.33\linewidth}
-    \centering
-    \includegraphics[width=1.2\textwidth]{images/69223.png}
-    \end{columns}
-  \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Dense Trajectory Features}
@@ -430,13 +375,13 @@
             \begin{itemize}
                 \item Shares weight with word vector
             \end{itemize}
-        \item Add a new channel of input to present features all the time
+        \item New input channel to present features at all times
         \item Refer to as \emph{persist}
+        \item Context features in \emph{init} and Visual feature in \emph{persist} 
         \item No weight sharing 
             \begin{itemize}
-                \item Different embedding spaces for word vector and \emph{persist} feature 
+                \item Different embedding spaces for word vector and Visual feature 
             \end{itemize}
-        \item Two different feature can be input now 
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -510,7 +455,37 @@
     \end{itemize}
 \end{columns}
 \end{frame}
-%%=============================================================================
+%%-----------------------------------------------------------------------------
+\begin{frame}{Ensembling -- Example}
+\begin{columns}       
+    \column{0.4\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\linewidth]{images/COCO_val2014_000000530509.jpg}
+        \vfill
+    \end{figure}
+    \column{0.6\linewidth}
+    \begin{figure}[thp]
+      \begin{center}
+      \centering
+      \scalebox{0.8}{
+      \begin{tabular}{|l|c|c|}
+        \hline
+        \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob} &\textbf{\scriptsize\em CNN} \\\hline
+        \textbf{\scriptsize\em \#1:} \scriptsize \green{a young boy holding a kite in a park} & -6.31 &\bf 0.80 \\\hline
+        \textbf{\scriptsize\em \#2:} \scriptsize a man and a girl are flying a kite    & -7.43 & 0.65 \\\hline
+        \textbf{\scriptsize\em \#3:} \scriptsize a young boy holding a kite in a park  & -6.64 &\bf 0.80 \\\hline
+        \textbf{\scriptsize\em \#4:} \scriptsize a young boy holding a kite in a field & -7.85 & 0.79 \\\hline
+        \textbf{\scriptsize\em \#5:} \scriptsize \red{a woman holding a kite in a park}&\bf-6.19 & 0.74 \\\hline
+        \textbf{\scriptsize\em \#6:} \scriptsize a woman holding a kite in a park      & -6.70 & 0.74 \\\hline
+      \end{tabular}
+      }
+        \vfill
+      \end{center}
+    \end{figure}
+\end{columns}
+\end{frame}
+%%-----------------------------------------------------------------------------
 \section{Results}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Up Next.....}
@@ -518,57 +493,117 @@
 \end{frame}
 \subsection{Image Captioning Experiments}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Image Captioning Experiments}
-Experiments conducted on the COCO validation set to answer the below questions
+\begin{frame}{Experiments with Features}
 \begin{itemize}
-    \item How to use the two input channels: \emph{init} and \emph{persist}?
-    \item Which image features perform best ?
-    \item How does depth affect the performance ?
-    %\item Does hierarchical decoder help?
-    \item Benefits of Ensembling  
-\end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Results of the Image Captioning Experiments-I}
-\begin{itemize}
-    \item<1-> How to use the two input channels: \emph{init} and \emph{persist}?
+    \item<1-> Which features work best as context features?
        \begin{itemize}
-           \item<2-> \emph{persist} channel greatly improves performance
-           \item<3-> Letting language model access CNN features throughout is helpful 
-       \end{itemize}
-    \item<1-> Which image features perform best ?
-       \begin{itemize}
-           \item<4-> Best results when \emph{gCNN} is input in \emph{persist} 
-           \item<5-> \emph{FRC80} is much better than \emph{SVM80}
-           \item<6-> Counterintuitively, localization features don't help much 
-           \item<7-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
+           \item<1-> Language model accessing CNN features throughout is helpful 
+           \item<1-> \emph{SUN397} and \emph{FRC80} improve the performance significantly.
+           \item<1-> Counterintuitively, localization features don't help much 
+           \item<1-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
        \end{itemize}
 \end{itemize}
+
+\begin{table}[th]
+  \scalebox{0.7}{
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline\hline
+       \multirow{2}{*}{\bf Model}  & \multirow{2}{*}{\bf Contextual
+       Feature} &{\bf validation} & \multicolumn{4}{c|}{\bf performance metrics} \\
+        \cline{4-7}
+    & &\bf perplexity  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
+    M1 &   ---           & 10.82  & 0.259 & 0.222 & 0.490 & 0.750 \\ \hline
+    M2 & FRC80           & 10.15  &0.316 & 0.249 & 0.534 & 0.952 \\
+    M3 & SUN397+FRC80    &10.05  & 0.315 & \bf0.250 &0.532 & 0.954 \\
+    M4 & 4$\times$4Gauss & 10.15  & 0.308 & 0.246 & 0.527 & 0.921 \\
+    M5 & 3+3Gauss        & 10.08  & 0.308 & 0.247 & 0.527 & 0.928 \\
+    -- &\parbox[c][][c]{4cm}{\smallskip\centering 3+3Gauss$\oplus$SUN397\\$\oplus$FRC80\smallskip} 
+                             &\bf9.93&\bf0.318&\bf0.250&\bf0.533 &\bf0.957\\\hline
+    \hline
+  \end{tabular}
+  }
+\end{table}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Results of the Image Captioning Experiments-II}
+\begin{frame}{Experiments with Depth}
 \begin{itemize}
     \item How does depth affect the performance ?
        \begin{itemize}
-           \item<2-> Depth of 2/3 layers increases performance as per metrics moderately, perplexity is worse!
-           \item<3-> Residual connections improve perplexity greatly 
-           \item<4-> Residual connections also improve convergence speeds 
-           \only<4>{\hspace{-10mm}\begin{figure}[h]
+           \item<1-> Depth of 2/3 layers increases performance as per metrics moderately, perplexity is worse!
+           \item<1-> Residual connections improve perplexity greatly 
+           \item<1-> Residual connections also improve convergence speeds 
+           \only<2>{\hspace{-10mm}
+           \begin{figure}[h]
                 \centering
-                \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
+                \includegraphics[width=0.65\textwidth]{images/ResidualVsRegPerplex.pdf}
            \end{figure}}
        \end{itemize}
-    %\item Does hierarchical decoder help?
-    %   \begin{itemize}
-    %    \item<6-> Performance degrades with hierarchical decoder
-    %    \item<7-> But caption diversity is greatly improved 
-    %   \end{itemize}
+\end{itemize}
+\begin{table}[th]
+  \centering
+  \scalebox{0.7}{
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline\hline
+       \multirow{2}{*}{\bf Model} & \multicolumn{2}{c|}{\bf parameters }   &{\bf
+       validation} & \multicolumn{4}{c|}{\bf performance metrics} \\
+        \cline{2-3}\cline{5-8}
+    &\bf depth &\bf r &\bf perplexity  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
+    M1 & 1 & --- & 10.82   & 0.259 & 0.222 & 0.490 & 0.750 \\ \hline
+    M3 & 1 & --- & 10.05  & 0.315 & 0.250 & 0.532 & 0.954 \\
+    M6 & 2 & no & 10.14  & 0.318 & 0.252 & 0.535 & 0.967 \\
+    M7 & 3 & no & 10.34  & 0.316 & 0.253 & 0.533 & 0.964 \\
+    M8 & 2 & yes & 9.92  &\bf0.320& 0.253 &\bf0.536& 0.966 \\
+    M9 & 3 & yes &\bf 9.69  & 0.316 &\bf0.254& 0.532& 0.962 \\\hline
+    \hline
+  \end{tabular}
+  }
+\end{table}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Experiments with Ensembling}
+\begin{itemize}
     \item Benefits of Ensembling  
        \begin{itemize}
-        \item<5-> CNN evaluator improves the performance moderately  
-        \item<6-> Caption diversity is greatly improved 
+        \item<1-> CNN evaluator improves the performance moderately
+        \item<1-> Evaluator better than self-evaluation
+        \item<1-> Caption diversity is greatly improved 
        \end{itemize}
 \end{itemize}
+\begin{table}[ht]
+  \centering
+  \scalebox{0.80}{
+  \begin{tabular}{|c|c|c|}
+    \hline\hline
+    \multirow{2}{*}{\bf Model} & \multicolumn{2}{c|}{\bf performance metrics} \\
+	\cline{2-3}
+    & \bf METEOR &\bf CIDEr \\\hline\hline
+    Baseline         & 0.222 & 0.750 \\
+    Single Best      & 0.252 & 0.970 \\
+    Ensemble -- Self & 0.253 &\bf0.966 \\
+    Ensemble -- CNN  & \bf0.254 &\bf0.978 \\\hline
+    \hline
+  \end{tabular}
+  }
+\end{table}
+\begin{table}[tbh]
+  \centering
+  \scalebox{0.80}{
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \bf Model 
+    &\mlhead{1.6cm}{\bf Mean Length}
+    &\mlhead{2.1cm}{\bf Vocabulary\\ Size} 
+    &\mlhead{2.1cm}{\bf\% Unique Captions} 
+    &\mlhead{2cm}{\bf\% New Captions} \\\hline
+    Baseline      &\bf9.27 &  513 & 16.10 & 11.76\\
+    Single Best & 9.01 & 1112 & 28.43 & 22.04 \\
+    Ensemble -- Self Eval & 9.06 &  993 & 21.34 & 15.36   \\
+    Ensemble -- CNN Eval  & 9.13 &\bf 1303 &\bf 40.35 &\bf 32.33 \\\hline
+  \end{tabular}
+  }
+  \caption{Language diversity statistics of a few selected models.}
+  \label{tab:resCocQual}
+\end{table}
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Comparison to Published Results on COCO Dataset}
@@ -615,6 +650,43 @@ Experiments conducted on the COCO validation set to answer the below questions
 \end{table}
 \end{frame}
 %%-----------------------------------------------------------------------------
+\begin{frame}{Sample Results on COCO}
+\begin{figure}[h]
+  \begin{center}
+  \centering
+  %\tabcolsep=0.05cm
+  \scalebox{0.7}{
+  \begin{tabular}{c|c|c|c|}
+          \cline{2-4}
+    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize CNN:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize SB:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
+     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
+    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
+    \mcCell{\textbf{\em\scriptsize CNN:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
+     \mcCell{\textbf{\em\scriptsize SB:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
+     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
+  \end{tabular}
+  }
+  \end{center}
+  \caption{Captions generated for some images from the COCO validation set by two of our
+    models. The first row contains samples where the ensemble model,
+    M11, performs better, and the second row cases where M10 is
+    better.}
+  \label{fig:cococapSamps}
+\end{figure}
+
+\end{frame}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Sample Validation Set Results}
 %    \textbf{The Good}\\[2mm]
@@ -635,53 +707,15 @@ Experiments conducted on the COCO validation set to answer the below questions
 %%-----------------------------------------------------------------------------
 \begin{frame}{Conclusions}
 \begin{itemize}
-    \item The proposed object and scene detector features complement the CNN features well 
+        \item The proposed context features (i.e.\@ object and scene detectors) complement the CNN features well 
     \item Two extensions proposed to the language model were useful. 
        \begin{itemize}
            \item The \emph{persist} input channel greatly improved performance
            \item The residual connections achieve lower training cost, and convergence time
        \end{itemize}
-    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
-    \item Good performance was achieved in all the three datasets
-    \item Our models won two video captioning challenges judged by human evaluators 
+    \item Evaluator based ensembling improved performance and caption diversity
+    \item It achieves state-of-the art performance compared to other published work
 \end{itemize}
-\end{frame}
-\begin{frame}{Sample Results on COCO}
-\begin{figure}[h]
-  \begin{center}
-  \centering
-  %\tabcolsep=0.05cm
-  \scalebox{0.7}{
-  \begin{tabular}{c|c|c|c|}
-          \cline{2-4}
-    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
-    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
-     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
-     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
-    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
-    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
-     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
-     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
-  \end{tabular}
-  }
-  \end{center}
-  \caption{Captions generated for some images from the COCO validation set by two of our
-    models. The first row contains samples where the ensemble model,
-    C27, performs better, and the second row cases where C19 is
-    better.}
-  \label{fig:cococapSamps}
-\end{figure}
-
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{}
