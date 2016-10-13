@@ -49,6 +49,11 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=1.0\textwidth]{images/MMGC_Overview.pdf}
+\begin{itemize}
+    \item Popular encoder--decoder apporach.
+    \item An evaluator is used to ensemble multiple encoder-decoder caption generators 
+    \item Trained only on MSR-VTT dataset. Does it generalize? 
+\end{itemize}
 \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -76,11 +81,11 @@
 \begin{frame}{Language Model}
     \begin{figure}[h]
         \centering
-        \includegraphics[width=0.5\textwidth]{images/MultilayerResidualLSTM.pdf}
+        \includegraphics[width=0.49\textwidth]{images/MultilayerResidualLSTM.pdf}
     \end{figure}
     \begin{itemize}
-        \item Use multiple layers of LSTM with \textbf{Residual} connections~\cite{He2015} 
-        \item Two input channels -- \emph{init} and \emph{persist} 
+        \item Use multiple layers of LSTM with \textbf{Residual} connections
+        \item Two input channels -- \emph{init} and \emph{persist} -- provide access to different types of features
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -128,14 +133,13 @@
     \end{figure}
     \column{0.6\linewidth}
     \begin{itemize}
-        \item Generative vs Discriminative 
-        \item Train evaluator to compute similarity b/w visual input and caption 
+        \item Evaluator trained discriminatively to compute similarity b/w visual input and caption. It consists of: 
            \begin{itemize}
                \item A CNN to encode the sentence 
-               \item Visual feature is embedded to the same space 
+               \item Visual feature embedding.
                \item Cosine similarity b/w the two vectors 
            \end{itemize}
-        \item Trained to assign highest score to correct caption--visual pair 
+        \item Maximize the score assigned to correct caption--visual pair as opposed to negative pairs 
     \end{itemize}
 \end{columns}
 \end{frame}
@@ -181,67 +185,18 @@
 \end{frame}
 %%-----------------------------------------------------------------------------
 %%=============================================================================
-\section{Results}
 %%-----------------------------------------------------------------------------
-%%-----------------------------------------------------------------------------
-%\begin{frame}{Sample Validation Set Results}
-%    \textbf{The Good}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/230350439_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110270280_genCapEdited.png}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110510033_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140760125_genCap.png}\\[2mm]
-%    \textbf{The Bad}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110260059_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110260532_genCap.png}\\[2mm]
-%    \textbf{The Ugly}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110510496_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140770020_genCap.png}\\
-%\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{MSR-VTT Experiments}
-\begin{itemize}
-    \item Frame-Level features were extracted from 1 frame per second 
-    \item Three action recognition features: DT, IDT and C3D
-    \item CNN ensemble \textbf{won} the MSR-VTT Challenge
-\end{itemize}
-\begin{columns}
-    \column{.5\linewidth}
-    \vspace{-5mm}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.55}{
-  \begin{tabular}{||c|c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
-    v2t\_navigator &\bf0.408 &\bf0.282 & 0.448 &\bf0.609 \\
-    \bf Aalto~(M6)     & 0.398 & 0.269 &0.457 & 0.598 \\
-    VideoLAB       & 0.391 & 0.277 & 0.441 & 0.606 \\
-    ruc-uva        & 0.387 & 0.269 &\bf0.459 & 0.587 \\
-    Fudan-ILC      & 0.387 & 0.268 & 0.419 & 0.595 \\\hline
-    \multicolumn{5}{||c|}{16 other teams with lower scores appear in the leaderboard}\\\hline
-    \hline
-  \end{tabular}}
-\vspace{-2mm}
-  \caption{Top 5 teams as per automatic evaluation metrics on test set.}
-  \label{tab:resultsTestMet}
-\end{table}
-\column{.5\linewidth}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.6}{
-  \begin{tabular}{||c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs C1 &\bs C2 &\bs C3 \\\hline\hline
-    \bf Aalto~(M6)     & \bf3.263 & 3.104 & \bf3.244\\
-    v2t\_navigator & 3.261 & 3.091 & 3.154 \\
-    VideoLAB       & 3.237 & \bf3.109 & 3.143 \\
-    Fudan-ILC      & 3.185 & 2.999 & 2.979 \\
-    ruc-uva        & 3.225 & 2.997 & 2.933 \\\hline
-    \multicolumn{4}{||c|}{\parbox[c][][c]{8cm}{\smallskip\centering 16 other teams appear in the leaderboard\smallskip}}\\\hline
-    \hline
-  \end{tabular}
-  }
-\vspace{-2mm}
-  \caption{Top 5 teams as per human evaluation.}
-  \label{tab:resultsTestHum}
-\end{table}
-\end{columns}
+\begin{frame}{Adapting MSR-VTT models for LSMDC}
+    \begin{itemize}
+        \item Same frame-level features are extracted from LSMDC videos
+        \item The ground truth category information is replaced with the output of a category classifier
+        \item C3D and trajectory features are also extracted from LSMDC
+        \item Attempts to translate the output vocabulary to better match with LSMDC vocabulary were not frutiful
+           \begin{itemize}
+               \item Replacing common words like man, woman etc.\@ with SOMEONE
+               \item Slightly better metrics but loses detail
+           \end{itemize}
+    \end{itemize}
 \end{frame}
 %%=============================================================================
 \section{Conclusions}
@@ -252,20 +207,53 @@
 %%-----------------------------------------------------------------------------
 \begin{frame}{Conclusions}
 \begin{itemize}
-    \item Ensemble approach paid off! 
+    \item Finished last in the automatic metrics table 
        \begin{itemize}
-           \item Improved performance and caption diversity
-           \item Different types of video features compliment each other well 
+           \item Largely due to huge mismatch in vocabulary
+           \item Highlights drawbacks in the evaluation metrics as well
        \end{itemize}
-    \item The language model extensions were useful. 
-       \begin{itemize}
-           \item The \emph{persist} input channel greatly improved performance
-           \item The residual connections achieve lower training cost, and convergence time
-       \end{itemize}
-    \item Performance varies a lot across video categories 
-    \item Our model performed the best according to human judgments  
+    \item Produces better captions than the last-year's winning model in several examples
+    \item Fine-tuning or joint training might address these issues.
 \end{itemize}
 \end{frame}
+%%-----------------------------------------------------------------------------
+%\begin{frame}{Sample Results on COCO}
+%\begin{figure}[h]
+%  \begin{center}
+%  \centering
+%  %\tabcolsep=0.05cm
+%  \scalebox{0.7}{
+%  \begin{tabular}{c|c|c|c|}
+%          \cline{2-4}
+%    &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000502766.jpg} &
+%    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000161720.jpg} &
+%    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000385707.jpg} \\\hline
+%    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man and a dog herding sheep in a field\smallskip} &
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a sink toilet and bathtub\smallskip} &
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bottle of wine and a glass of wine\smallskip}\\\hline
+%     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a man standing next to a herd of sheep\smallskip}&
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a bathroom with a toilet and a sink\smallskip}&
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize two bottles of wine sitting on a table\smallskip}\\\hline
+%     &\includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000251330.jpg} &
+%    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000218404.jpg} &
+%    \includegraphics[width=0.25\linewidth,height=2.5cm]{images/COCO_val2014_000000119516.jpg} \\\hline
+%    \mcCell{\textbf{\em\scriptsize C27:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a view of a bridge in the snow\smallskip} &
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table with plates of food on it\smallskip}&
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a person riding a bike down a city street\smallskip}\\\hline
+%     \mcCell{\textbf{\em\scriptsize C19:}}& \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a train crossing a bridge over a river\smallskip} &
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a table topped with plates of food and drinks\smallskip}&
+%     \parbox[c][][c]{0.25\linewidth}{\smallskip \scriptsize a city street filled with lots of traffic\smallskip}\\\hline
+%  \end{tabular}
+%  }
+%  \end{center}
+%  \caption{Captions generated for some images from the COCO validation set by two of our
+%    models. The first row contains samples where the ensemble model,
+%    C27, performs better, and the second row cases where C19 is
+%    better.}
+%  \label{fig:cococapSamps}
+%\end{figure}
+%
+%\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Sample Captions Video}
 \begin{figure}[thp]

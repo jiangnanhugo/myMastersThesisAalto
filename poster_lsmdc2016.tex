@@ -1,0 +1,81 @@
+\documentclass[final]{beamer}
+\usetheme{Frankfurt}
+\def\cvs{${[}$Id: poster_lsmdc2015.tex,v 1.3 2015/12/09 09:51:42 jorma Exp ${]}$}
+
+\usepackage[finnish,english]{babel}
+\usepackage[SchoolofScience]{aaltologo}
+
+% \documentclass[final,hyperref={pdfpagelabels=false}]{beamer} % beamer 3.07: get rid of beamer warnings
+\mode<presentation> {  %% check http://www-i6.informatik.rwth-aachen.de/~dreuw/latexbeamerposter.php for examples
+}
+%\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath,amsthm, amssymb, latexsym}
+\usepackage{pdfpages}
+% \usepackage{times}\usefonttheme{professionalfonts}  % times is obsolete
+\usefonttheme[onlymath]{serif}
+\boldmath
+\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}                       % e.g. for DIN-A0 poster
+% \usepackage[orientation=portrait,size=a1,scale=1.4,grid,debug]{beamerposter}                  % e.g. for DIN-A1 poster, with optional grid and debug output
+% \usepackage[size=custom,width=200,height=120,scale=2,debug]{beamerposter}                     % e.g. for custom size poster
+% \usepackage[orientation=portrait,size=a0,scale=1.0,printer=rwth-glossy-uv.df]{beamerposter}   % e.g. for DIN-A0 poster with rwth-glossy-uv printer check
+% ...
+% 
+\title[]{}
+\author[]{}
+\institute[]{}
+\date{}
+
+%\newcommand{\bigtitle}{\VeryHuge Recent Works with PicSOM CBIR System}
+%\newcommand{\bigtitle}{\VeryHuge  
+%  \hspace*{18mm}Movie recommendation based on viewer\\
+%  \hspace*{50mm} rating and affective content similarities}
+%\newcommand{\bigtitle}{\VeryHuge  
+%  \hspace*{18mm}Computer vision methods for\\
+%  \hspace*{50mm}sign language video analysis}
+%\newcommand{\bigtitle}{\VeryHuge Image and Video Content Analysis}
+%\newcommand{\bigtitle}{\VeryHuge Computer vision for sign language analysis}
+
+\newcommand{\bigtitle}{\parbox{300mm}{\centering Frame- and Segment-Level Features and Candidate Pool Evaluation for Video Caption Generation
+  }}
+
+\newcommand{\slide}[1]{\scalebox{2.8}{\includegraphics[page=#1]{posterSlides_lsmdc2016}}}
+
+\begin{document}
+\begin{frame}{}
+   \vspace*{5mm}
+   \hspace*{-7mm}
+   \includegraphics[height=200pt]{images/coinbanner-edit}\hspace{\fill}%
+   \raisebox{5mm}{\scalebox{4}{\AaltoLogoSmall{1}{!}{aaltoBlue}}}
+   \vspace{5mm}
+   \begin{block}{
+       \vspace*{10mm}
+       \hspace*{50pt}\scalebox{2.62}{\bigtitle}\\[15mm]}
+     \vspace{18mm}
+     \begin{center}
+       \scalebox{2.0}{Rakshith Shetty and Jorma Laaksonen}
+       \vspace{6mm}
+
+       \scalebox{1.5}{Department of Computer Science}
+       \vspace{4mm}
+
+       \scalebox{1.5}{Aalto University School of Science, Espoo, Finland}
+       \vspace{4mm}
+
+       \scalebox{1.5}{
+         \emph{rakshith.shetty@aalto.fi},
+         \emph{jorma.laaksonen@aalto.fi}}
+     \end{center}
+     \vspace{14mm}
+     \begin{center}
+       \setlength{\tabcolsep}{30pt}
+       \begin{tabular}{cc}
+         \slide{2}  & \slide{3}  \\[60pt]
+         \slide{4} & \slide{6} \\[60pt]
+         \slide{8} & \slide{9}
+       \end{tabular}
+     \end{center}
+   \end{block}
+   \vspace{580mm}
+ \end{frame}
+\end{document}
