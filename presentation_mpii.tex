@@ -31,8 +31,6 @@
 
 \frame{\titlepage} 
 
-%%\frame{\frametitle{Table of contents}\tableofcontents} 
-
 %%-----------------------------------------------------------------------------
 
 \begin{frame}{Understanding Visual Media}
@@ -67,18 +65,6 @@
 \item Enable computers to connect textual and visual data. 
 \end{itemize}
 \end{frame}
-%%-----------------------------------------------------------------------------
-%\begin{frame}{Table of Contents}
-%\begin{itemize}
-%\item Background 
-%\item Baseline model
-%\item How do we evaluate captions?
-%\item Enhancing visual features and language model 
-%\item Results
-%\item Conclusions 
-%\end{itemize} 
-%\end{frame}
-%%-----------------------------------------------------------------------------
 
 %%=============================================================================
 \section{Elements of Visual Captioning}
@@ -114,84 +100,8 @@
 \end{frame}
 \subsection{Visual Features}
 %%-----------------------------------------------------------------------------
-%\begin{frame}{Image Features}
-%\begin{itemize}
-%\item Deep convolutional neural networks for image classification 
-%    \begin{itemize}
-%        \item Lower layers contain convolutional filters 
-%        \item Followed by fully connected layers
-%    \end{itemize}
-%\item Learn hierarchical features
-%\item Higher layers are good out-of-the-box features  
-%    \begin{itemize}    
-%        \item Activations from fully connected layers before softmax 
-%    \end{itemize}
-%\item Widely used in recent image captioning literature~\cite{Vinyals_2015_CVPR,Fang2015} 
-%\end{itemize} 
-%\end{frame}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{Video Features}
-%\begin{itemize}
-%\item Still rely heavily on hand-crafted features\\
-%\item Features designed to extract movement related information\\
-%        \begin{itemize}
-%            \item Dense trajectory features
-%            \item 3-D convolutional features
-%        \end{itemize}
-%\item Captioning needs both static object related info and actions\\ 
-%\item Need to combine two paradigms: 
-%   \begin{itemize}
-%     \item Frame-level features for object and attributes
-%     \item Segment-level features for actions
-%   \end{itemize}
-%\end{itemize} 
-%\end{frame}
-%\subsection{Language Model}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{Recurrent Language Model}
-%\begin{itemize}
-%\item Recurrent networks: current output = input + hidden state
-%\item Long-Short Term Memory~(LSTM) based language model.
-%\item Use non-linear gates to control flow of information
-%\item Can essentially store information for infinite amount of time 
-%\item Good for modeling discrete sequences like words 
-%%-----------------------------------------------------------------------------
-%\begin{frame}{LSTM Cell}
-%    \begin{figure}[h]
-%        \centering
-%        \includegraphics[width=0.3\textwidth]{images/LstmBlockDiag.pdf}
-%    \end{figure}
-%    \begin{itemize}
-%        \item Use non-linear gates to control flow of information
-%        \item Can essentially store information in $m$ for infinite amount of time 
-%        \item Good for modeling discrete sequences like words 
-%    \end{itemize}
-%\end{frame}
-%\end{itemize} 
-%\end{frame}
-%%-----------------------------------------------------------------------------
 %%-----------------------------------------------------------------------------
 \subsection{Baseline Model}
-%\begin{frame}{Captioning Techniques in Literature}
-%\begin{itemize}
-%  \item Two different approaches:
-%      \begin{enumerate}
-%        \item Retrieval-based 
-%        \item Generative models (Ours)
-%      \end{enumerate}
-%  \item Earliest works were retrieval based
-%          {\begin{itemize}
-%          \item Based on common embedding on input image and textual descriptions  
-%      \end{itemize}}
-%  \item Early caption generation models were sentence template based
-%  \item This has been replaced with generative language models 
-%  %\item<5-> Retrieval Vs Generative: 
-%  %    \begin{itemize}
-%  %      \item Retrieval problem: Easy to evaluate, no novelty 
-%  %      \item Generative problem: Novel captions, harder to evaluate
-%  %    \end{itemize}
-%\end{itemize} 
-%\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Baseline Model}
     \begin{figure}[h]
@@ -206,19 +116,6 @@
         \item Visual feature is presented only in the initialization 
     \end{itemize}
 \end{frame}
-%%-----------------------------------------------------------------------------
-%\begin{frame}{Training and Generation}
-%    \begin{itemize}
-%        \item Pick a caption--image pair and maximize the probability assigned to caption 
-%        \item Minimize the negative log likelihood 
-%            \begin{align*}
-%              \mathcal{NL}(w_0,\cdots, w_{L-1} | V) = -\sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},V))
-%            \end{align*}
-%        \item Stochastic gradient descent using RMSProp 
-%        \item Training limited to language model parameters 
-%        \item Beamsearch is used in test mode to generate captions 
-%    \end{itemize}
-%\end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Evaluation Methods}
 %%-----------------------------------------------------------------------------
@@ -265,14 +162,17 @@
 %%-----------------------------------------------------------------------------
 \subsection{Datasets}
 %%-----------------------------------------------------------------------------
-\begin{frame}{MS-COCO dataset}
+\begin{frame}{Captioning datasets}
 \begin{itemize}
-    \item Microsoft Common Objects in Context (MS COCO)
+    \item Image captioning
        \begin{itemize}
-            \item $\sim164$k images: $\sim80$k train, $\sim40$k val \& $\sim40$k test 
-            \item 5 Human Annotated captions per image.
-            \item 80 commonly occurring object categories and bounding box annotation
-            \item Evaluation server implementing the four metrics 
+            \item Microsoft Common Objects in Context (MS COCO)
+            \item Largest dataset (~440k image--caption pairs for training)
+       \end{itemize}
+       \item Video captioning
+       \begin{itemize}
+            \item Large-Scale Movie Description Challenge dataset~(LSMDC)
+            \item Microsoft Video to Text dataset (MSR-VTT) 
        \end{itemize}
 \end{itemize}\vspace{-3mm}
     \begin{figure}[h]
@@ -281,26 +181,6 @@
         \vfill
     \end{figure}
 \end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Video Datasets}
-\begin{itemize}
-    \item Large-Scale Movie Description Challenge dataset~(LSMDC)
-       \begin{itemize}
-           \item $\sim100$k clips extracted from movie DVDs
-           \item Short clips, avg.\@ 4.8 seconds long
-           \item Only one caption per movie clip 
-           \item Captions based on script or transcription of audio description \\[10mm]
-   \end{itemize}
-    \item Microsoft Video to Text dataset (MSR-VTT) 
-       \begin{itemize}
-           \item $10$k clips obtained from web videos 
-           \item Longer clips, 10-30 seconds long
-           \item 20 captions per clip collected from human annotators
-       \end{itemize}
-\end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-%%=============================================================================
 %%=============================================================================
 \section{Enhancing Visual Features}
 %%-----------------------------------------------------------------------------
@@ -330,7 +210,6 @@
         \item Utilize SUN dataset with 108,756 images with 397 scene types 
         \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
         \item One for each category in SUN (397 objects) 
-        \item Referred to as~(\textbf{\emph{SUN397}})  
     \end{itemize}
   \begin{figure}[h]
     \begin{columns}
@@ -359,80 +238,12 @@
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-%\begin{frame}{More Examples}
-%  \begin{figure}[h]
-%    \begin{columns}
-%    \column{.33\linewidth}
-%    \centering
-%    \includegraphics[width=1.2\textwidth]{images/241668.png}
-%    \hspace{-5mm}\column{.33\linewidth}
-%    \centering
-%    \includegraphics[width=1.2\textwidth]{images/533506.png}
-%    \hspace{-5mm}\column{.33\linewidth}
-%    \centering
-%    \includegraphics[width=1.2\textwidth]{images/69223.png}
-%    \end{columns}
-%  \end{figure}
-%\end{frame}
-%%-----------------------------------------------------------------------------
 \subsection{Video Features}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Video Features}
     \centering
     \includegraphics[width=1.0\textwidth]{images/VideoFeatures.pdf}
 \end{frame}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{Dense Trajectory Features}
-%\begin{columns}
-%\column{0.65\linewidth}
-%\begin{itemize}
-%        \item Based on tracking interest points
-%        \begin{itemize}
-%            \item Densely sample few interest points 
-%            \item Track them and form trajectories 
-%            \item Extract local descriptors around trajectories 
-%        \end{itemize}
-%    \end{itemize}
-%    \column{.35\linewidth}
-%    \begin{figure}[h] 
-%      \includegraphics[width=1.0\textwidth]{./images/IDenseTrajVis.png}\hfill 
-%    \end{figure}
-%\end{columns}
-%\begin{columns}
-%\hspace{-8mm}\column{1.0\linewidth}
-%\begin{itemize}
-%   \item Trajectory type can be identified by the local descriptors 
-%       \begin{itemize}
-%           \item Different actions produce different trajectory types
-%           \item Actions can be identified by trajectory types 
-%       \end{itemize}
-%   \item Video can contain arbitrary no of trajectories 
-%       \begin{itemize}
-%           \item Language model expects fixed sized vector
-%       \end{itemize}
-%   \item Encode into fixed size using bag-of-words
-%       \begin{itemize}
-%           \item Create a codebook using K-means
-%           \item Assign each trajectory to nearest entry in codebook 
-%           \item Video represented as a histogram with codebook as bins
-%       \end{itemize}
-%\end{itemize}
-%\end{columns}
-%\end{frame}
-%%%-----------------------------------------------------------------------------
-%\begin{frame}{3-D CNN Based Features}
-%    \begin{itemize}
-%        \item Attempts to extend success of CNNs to videos~\cite{3dCNN_ji2013, KarpathyCVPR14, DBLP:C3D} 
-%        \item Change 2D filters in lower layers to 3D filters 
-%        \item \textbf{\emph{C3D}}~\cite{DBLP:C3D} is a popular architecture
-%        \item We use version pre-trained on Sports-1M dataset 
-%        \item Only process one segment at a time (16-frames)
-%            \begin{itemize}
-%                \item Hence limited context
-%            \end{itemize}
-%    \item Extract features from the \emph{fc7} layer 
-%    \end{itemize}
-%\end{frame}
 %%%=============================================================================
 \section{Enhancing Language Model}
 %%-----------------------------------------------------------------------------
@@ -441,56 +252,16 @@
 \end{frame}
 \subsection{Extending the LSTM language model}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Additional Input Channel}
-    \begin{itemize}
-        \item Multiple image features are available 
-        \item Only \emph{init} channel available 
-            \begin{itemize}
-                \item Shares weight with word vector
-            \end{itemize}
-        \item New input channel to present features at all times
-        \item Refer to as \emph{persist}
-        \item No weight sharing 
-            \begin{itemize}
-                \item Different embedding spaces for word vector and \emph{persist} feature 
-            \end{itemize}
-        \item Two different feature can be input now 
-    \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Residual Connections}
+\begin{frame}{Language Model}
     \begin{figure}[h]
         \centering
         \includegraphics[width=0.4\textwidth]{images/MultilayerResidualLSTM.pdf}
     \end{figure}
     \begin{itemize}
-        \item Use multiple layers of LSTM 
-        \item Add a residual connection between layers~\cite{He2015} 
+        \item Use multiple layers of LSTM with residual connections~\cite{He2015} 
         \item Higher layer only needs to learn a residual function 
     \end{itemize}
 \end{frame}
-%%-----------------------------------------------------------------------------
-%\begin{frame}{Hierarchical Decoder}
-%\begin{itemize}
-%    \item Every word prediction is a difficult $Z$-way classification
-%       \begin{itemize}
-%           \item $Z$ is vocabulary size, $Z=8792$ in COCO
-%           \item Errors add up quickly 
-%           \item All output words are treated independently 
-%       \end{itemize}
-%    \item Instead split it into two-step hierarchical classification
-%       \begin{itemize}
-%            \item Semantically group words into classes 
-%            \item First predict the class of the word 
-%            \item Next predict the word within the class
-%       \end{itemize}
-%    \item Words can be grouped by two methods 
-%       \begin{itemize}
-%           \item Brown Clustering -- hierarchical clustering
-%           \item K-means clustering of word vectors 
-%       \end{itemize}
-%\end{itemize}
-%\end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Ensembling}
 %%-----------------------------------------------------------------------------
@@ -693,16 +464,6 @@ Experiments conducted on the COCO validation set to answer the below questions
 \end{table}
 \end{frame}
 %%-----------------------------------------------------------------------------
-%\begin{frame}{Sample Validation Set Results}
-%    \textbf{The Good}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/230350439_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110270280_genCapEdited.png}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110510033_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140760125_genCap.png}\\[2mm]
-%    \textbf{The Bad}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110260059_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/110260532_genCap.png}\\[2mm]
-%    \textbf{The Ugly}\\[2mm]
-%    \includegraphics[width=0.5\textwidth]{images/110510496_genCap.png}\hspace*{0.01\textwidth} \includegraphics[width=0.5\textwidth]{images/140770020_genCap.png}\\
-%\end{frame}
-%%-----------------------------------------------------------------------------
 \begin{frame}{MSR-VTT Experiments}
 \begin{itemize}
     \item Frame-Level features were extracted from 1 frame per second 
@@ -754,10 +515,6 @@ Experiments conducted on the COCO validation set to answer the below questions
 \end{frame}
 %%=============================================================================
 \section{Conclusions}
-%%-----------------------------------------------------------------------------
-%\begin{frame}{Next.....}
-%\tableofcontents[currentsection] 
-%\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Conclusions}
 \begin{itemize}
