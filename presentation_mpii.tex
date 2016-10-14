@@ -328,14 +328,32 @@
 %%-----------------------------------------------------------------------------
 \begin{frame}{Image Captioning Experiments -- Summary}
 Experiments conducted on the COCO validation set yielded following conclusions 
-\begin{itemize}
-    \item Additional input channel \textbf{greatly imporves} performance 
-    \item Scene and object detector features complement the CNN features. 
-    \item Location feature don't contribute much 
-    \item Depth, esp.\@ with residual connections improve vocbulary size and performance
-    %\item Does hierarchical decoder help?
-    \item Evaluator based ensemble greatly improves caption diversity and moderately improves the performance
-\end{itemize}
+\begin{table}[t]
+  \centering
+  \scalebox{0.9}{
+  \begin{tabular}{|l|c|c|c|}
+    \hline\hline
+   Extension & Impact on CIDEr & Preplexity & Novelty\\\hline\hline
+   Baseline & -- & -- & --\\\hline 
+   Addtional Input Channel  & \green{+4.3\%} & \green{-1.7\%} & \green{+5.1\%} \\\hline 
+   Object and Scene Dection & \green{+6.4\%} & \green{-2.0\%} & \green{+1.4\%}\\\hline 
+   Location Dection         & \green{+0.3\%} & \green{-1.2\%} & \red{-0.1\%} \\\hline 
+   Depth (3 layers)         & \green{+0.73\%}& \red{+4.1\%}   & \green{+5.76\%}\\\hline 
+   Depth + Residual         & \green{+1.6\%} & \green{-2.2\%} & \green{+3.8\%}\\\hline 
+   Evaluator & \green{+0.6\%}& -- & \green{+10.29\%}\\\hline\hline
+    Total    &  \green{13.7\%}& --& \green{20.57\%} \\\hline 
+  \end{tabular}
+  }
+\end{table}
+
+%\begin{itemize}
+%    \item Additional input channel \textbf{greatly imporves} performance 
+%    \item Scene and object detector features complement the CNN features. 
+%    \item Location feature don't contribute much 
+%    \item Depth, esp.\@ with residual connections improve vocbulary size and performance
+%    %\item Does hierarchical decoder help?
+%    \item Evaluator based ensemble greatly improves caption diversity and moderately improves the performance
+%\end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Comparison to Published Results on COCO Dataset}
