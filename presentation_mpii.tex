@@ -106,11 +106,11 @@
         \includegraphics[width=0.4\linewidth]{images/Thesis_lstmLangGen.pdf}
     \end{figure}
     \begin{itemize}
-        \item Adopted from "Show and Tell" paper~\cite{Vinyals_2015_CVPR} 
+        \item Adopted from the "Show and Tell" paper~\cite{Vinyals_2015_CVPR} 
         \item LSTM network based language model
-        \item The sequence $(V,START,w_0, w_1, \cdots,w_{L-1})$ is the input
-        \item Words are represented as word vectors 
         \item Visual feature is presented only in the initialization 
+        \item Take word sequence as input and predict the next word
+        \item Words are represented as word vectors 
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -325,7 +325,6 @@
 \begin{frame}{Up Next.....}
 \tableofcontents[currentsection] 
 \end{frame}
-\subsection{Image Captioning Experiments}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Image Captioning Experiments -- Summary}
 Experiments conducted on the COCO validation set yielded following conclusions 
@@ -357,168 +356,193 @@ Experiments conducted on the COCO validation set yielded following conclusions
 %\end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Comparison to Published Results on COCO Dataset}
-\begin{table}[t]
-  \centering
-  \scalebox{0.6}{
-  \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
-    \hline\hline
-    \multirow{2}{*}{\bf Leaderboard Name}
-                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{2-9}
-                    & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
-    AugmentCNNwithDet~(C19)& 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
-    ------ (C27) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
-    ATT\_VC~\cite{you2016image}& \bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
-    ------ (C17)  &  0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
-    OriolVinyals~\cite{Vinyals_2015_CVPR}      & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
-    MSR\_Captivator~\cite{Fang2015}  & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
-    Berkeley LRCN~\cite{donahue2015long}   & 0.306 &\bf0.585& 0.247 &0.335& 0.528 & 0.678& 0.921& 0.934\\
-    human~\cite{Chen2015}   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\
-    Montreal/Toronto~\cite{Xu2015show} & 0.277 & 0.537 & 0.241 &0.322& 0.516 & 0.654 & 0.865 & 0.893\\
-    \hline \hline
-  \end{tabular}
-  }
-  \caption{Test Set Results from COCO Leaderboard}
-\end{table}
+\begin{frame}{How Do We Fare Against Related Work?}
+\underline{Image Captioning}
+\begin{itemize}
+	\item Performs very well on MS-COCO leaderboard (top 3)
+	\item State-of-the-art performance compared to published work.
+	\item Best performance with single model 
+\end{itemize}
+\underline{Video Captioning}
+\begin{itemize}
+	\item Large Scale Movie Description Challenge 2015
+		\begin{itemize}
+			\item {Won the challenge} as evaluated by human judges (4 teams)
+			\item Again single model worked best here.
+		\end{itemize}
+	\item MSR-Video To Text Challenge 2016
+		\begin{itemize}
+			\item {Won the challenge} as evaluated by human judges (21 teams)
+			\item Second as per evaluation metrics
+			\item Ensemble performed best here due to the variety in the dataset
+		\end{itemize}
 
-\begin{table}[h]
-  \centering
-  \scalebox{0.6}{
-  \begin{tabular}{|l|c|c|c|c|c|}
-    \hline\hline
-    \bf \# &BLEU-4 &METEOR &ROUGE-L&CIDEr\\\hline
-    C27 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
-    C20 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
-    ATT\_VC~\cite{you2016image} & 0.304& 0.243& -- & -- \\
-    Berkeley LRCN~\cite{donahue2015long} & 0.300& 0.242& 0.524 & 0.896 \\
-    OriolVinyals~\cite{Vinyals_2015_CVPR} & 0.277& 0.233& -- & 0.855 \\
-    MSR\_Captivator~\cite{Fang2015} & 0.257& 0.236& -- & -- \\
-    Montreal/Toronto~\cite{Xu2015show} & 0.250& 0.230& -- & -- \\
-    \hline \hline
-  \end{tabular}
-  }
-  \caption{Best published results on COCO 2014 validation set.}
-\end{table}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\subsection{Video Captioning Experiments}
-%%-----------------------------------------------------------------------------
-\begin{frame}{LSMDC Experiments}
-\begin{itemize}
-    \item Frame-Level features were extracted only on single key-frames
-    \item Dense Trajectories were extracted for action recognition
-    \item Model with \small{\emph{init}=\emph{DT} \& \emph{persist}=\emph{SVM80}} \textbf{won} the LSMDC 2015
 \end{itemize}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.5}{
-  \begin{tabular}{||c|c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
-    Visual labels~\cite{rohrbach2015long} &\bf0.009&\bf0.071&\bf0.164&\bf0.112\\
-    S2VT~\cite{venugopalan2015sequence} & 0.007 & 0.070 & 0.161 & 0.091\\
-    \bf L6               & 0.006 & 0.061 & 0.156 & 0.090\\
-    Temporal attention~\cite{yao2015describing} & 0.003 & 0.052 & 0.134 & 0.062\\\hline
-    \hline
-  \end{tabular}
-  }
-\vspace{-2mm}
-  \caption{LSMDC submissions ranked using automatic evaluation metrics.}
-\end{table}
-\vspace{-4mm}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.5}{
-  \begin{tabular}{||c|c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs Correctness &\bs Grammar &\bs Relevance & \bs Helpful for blind\\\hline\hline
-    Reference Caption    & 1.88  & 3.13  & 1.56  & 1.57\\\hline
-    \bf L6               &\bf3.10&\bf2.70&\bf3.29&3.29\\
-    Temporal attention~\cite{yao2015describing} & 3.14  & 2.71  & 3.31  & 3.36\\
-    Visual labels~\cite{rohrbach2015long}& 3.32  & 3.37  & 3.32  &\bf3.26\\
-    S2VT~\cite{venugopalan2015sequence}& 3.55  & 3.09  & 3.53  & 3.42\\
-    \hline
-    \hline
-  \end{tabular}
-  }
-\vspace{-2mm}
-  \caption{Human judgment scores for the LSMDC challenge submissions.}
-\end{table}
+
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{MSR-VTT Experiments}
-\begin{itemize}
-    \item Frame-Level features were extracted from 1 frame per second 
-    \item Three action recognition features: DT, IDT and C3D
-    \item CNN ensemble \textbf{won} the MSR-VTT Challenge
-\end{itemize}
-\begin{columns}
-    \column{.5\linewidth}
-    \vspace{-5mm}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.55}{
-  \begin{tabular}{||c|c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
-    v2t\_navigator &\bf0.408 &\bf0.282 & 0.448 &\bf0.609 \\
-    \bf Aalto~(M6)     & 0.398 & 0.269 &0.457 & 0.598 \\
-    VideoLAB       & 0.391 & 0.277 & 0.441 & 0.606 \\
-    ruc-uva        & 0.387 & 0.269 &\bf0.459 & 0.587 \\
-    Fudan-ILC      & 0.387 & 0.268 & 0.419 & 0.595 \\\hline
-    \multicolumn{5}{||c|}{16 other teams with lower scores appear in the leaderboard}\\\hline
-    \hline
-  \end{tabular}}
-\vspace{-2mm}
-  \caption{Top 5 teams as per automatic evaluation metrics on test set.}
-  \label{tab:resultsTestMet}
-\end{table}
-\column{.5\linewidth}
-\begin{table}[tbh]
-  \centering
-  \scalebox{0.6}{
-  \begin{tabular}{||c|c|c|c|}
-    \hline\hline
-    \bf Team  &\bs C1 &\bs C2 &\bs C3 \\\hline\hline
-    \bf Aalto~(M6)     & \bf3.263 & 3.104 & \bf3.244\\
-    v2t\_navigator & 3.261 & 3.091 & 3.154 \\
-    VideoLAB       & 3.237 & \bf3.109 & 3.143 \\
-    Fudan-ILC      & 3.185 & 2.999 & 2.979 \\
-    ruc-uva        & 3.225 & 2.997 & 2.933 \\\hline
-    \multicolumn{4}{||c|}{\parbox[c][][c]{8cm}{\smallskip\centering 16 other teams appear in the leaderboard\smallskip}}\\\hline
-    \hline
-  \end{tabular}
-  }
-\vspace{-2mm}
-  \caption{Top 5 teams as per human evaluation.}
-  \label{tab:resultsTestHum}
-\end{table}
-\end{columns}
-\end{frame}
+%\begin{frame}{Comparison to Published Results on COCO Dataset}
+%\begin{table}[t]
+%  \centering
+%  \scalebox{0.6}{
+%  \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+%    \hline\hline
+%    \multirow{2}{*}{\bf Leaderboard Name}
+%                       &\mct{BLEU-4} &\mct{METEOR} &\mct{ROUGE-L}&\mct{CIDEr}\\\cline{2-9}
+%                    & c5    & c40   &  c5   & c40   & c5  &  c40  &  c5  &  c40 \\\hline\hline
+%    AugmentCNNwithDet~(C19)& 0.315 & 0.597 & 0.251 &0.340& 0.531 &\bf0.683&\bf0.956&\bf0.968\\
+%    ------ (C27) & 0.310 & 0.596 & 0.250 &0.338& 0.529 & 0.681& 0.948& 0.961\\
+%    ATT\_VC~\cite{you2016image}& \bf0.316&0.599 & 0.250 &0.335&\bf0.535&0.682& 0.943& 0.958\\
+%    ------ (C17)  &  0.309 & 0.588 & 0.251 &0.342& 0.529 & 0.680& 0.943& 0.948\\
+%    OriolVinyals~\cite{Vinyals_2015_CVPR}      & 0.309 & 0.587 &\bf0.254&\bf0.346& 0.530 & 0.682& 0.943& 0.946\\
+%    MSR\_Captivator~\cite{Fang2015}  & 0.308 &\bf0.601& 0.248 &0.339& 0.526 & 0.680& 0.931& 0.937\\
+%    Berkeley LRCN~\cite{donahue2015long}   & 0.306 &\bf0.585& 0.247 &0.335& 0.528 & 0.678& 0.921& 0.934\\
+%    human~\cite{Chen2015}   & 0.217 & 0.471 & 0.252 &0.335& 0.484 & 0.626 & 0.854 & 0.910\\
+%    Montreal/Toronto~\cite{Xu2015show} & 0.277 & 0.537 & 0.241 &0.322& 0.516 & 0.654 & 0.865 & 0.893\\
+%    \hline \hline
+%  \end{tabular}
+%  }
+%  \caption{Test Set Results from COCO Leaderboard}
+%\end{table}
+%
+%\begin{table}[h]
+%  \centering
+%  \scalebox{0.6}{
+%  \begin{tabular}{|l|c|c|c|c|c|}
+%    \hline\hline
+%    \bf \# &BLEU-4 &METEOR &ROUGE-L&CIDEr\\\hline
+%    C27 & \bf0.320&\bf0.254 &\bf0.536 &\bf0.978 \\
+%    C20 & 0.319 & 0.252 & 0.535 & 0.970 \\\hline
+%    ATT\_VC~\cite{you2016image} & 0.304& 0.243& -- & -- \\
+%    Berkeley LRCN~\cite{donahue2015long} & 0.300& 0.242& 0.524 & 0.896 \\
+%    OriolVinyals~\cite{Vinyals_2015_CVPR} & 0.277& 0.233& -- & 0.855 \\
+%    MSR\_Captivator~\cite{Fang2015} & 0.257& 0.236& -- & -- \\
+%    Montreal/Toronto~\cite{Xu2015show} & 0.250& 0.230& -- & -- \\
+%    \hline \hline
+%  \end{tabular}
+%  }
+%  \caption{Best published results on COCO 2014 validation set.}
+%\end{table}
+%\end{frame}
+%%%-----------------------------------------------------------------------------
+%\subsection{Video Captioning Experiments}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{LSMDC Experiments}
+%\begin{itemize}
+%    \item Frame-Level features were extracted only on single key-frames
+%    \item Dense Trajectories were extracted for action recognition
+%    \item Model with \small{\emph{init}=\emph{DT} \& \emph{persist}=\emph{SVM80}} \textbf{won} the LSMDC 2015
+%\end{itemize}
+%\begin{table}[tbh]
+%  \centering
+%  \scalebox{0.5}{
+%  \begin{tabular}{||c|c|c|c|c|}
+%    \hline\hline
+%    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs ROUGE-L &\bs CIDEr \\\hline\hline
+%    Visual labels~\cite{rohrbach2015long} &\bf0.009&\bf0.071&\bf0.164&\bf0.112\\
+%    S2VT~\cite{venugopalan2015sequence} & 0.007 & 0.070 & 0.161 & 0.091\\
+%    \bf L6               & 0.006 & 0.061 & 0.156 & 0.090\\
+%    Temporal attention~\cite{yao2015describing} & 0.003 & 0.052 & 0.134 & 0.062\\\hline
+%    \hline
+%  \end{tabular}
+%  }
+%\vspace{-2mm}
+%  \caption{LSMDC submissions ranked using automatic evaluation metrics.}
+%\end{table}
+%\vspace{-4mm}
+%\begin{table}[tbh]
+%  \centering
+%  \scalebox{0.5}{
+%  \begin{tabular}{||c|c|c|c|c|}
+%    \hline\hline
+%    \bf Team  &\bs Correctness &\bs Grammar &\bs Relevance & \bs Helpful for blind\\\hline\hline
+%    Reference Caption    & 1.88  & 3.13  & 1.56  & 1.57\\\hline
+%    \bf L6               &\bf3.10&\bf2.70&\bf3.29&3.29\\
+%    Temporal attention~\cite{yao2015describing} & 3.14  & 2.71  & 3.31  & 3.36\\
+%    Visual labels~\cite{rohrbach2015long}& 3.32  & 3.37  & 3.32  &\bf3.26\\
+%    S2VT~\cite{venugopalan2015sequence}& 3.55  & 3.09  & 3.53  & 3.42\\
+%    \hline
+%    \hline
+%  \end{tabular}
+%  }
+%\vspace{-2mm}
+%  \caption{Human judgment scores for the LSMDC challenge submissions.}
+%\end{table}
+%\end{frame}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{MSR-VTT Experiments}
+%\begin{itemize}
+%    \item Frame-Level features were extracted from 1 frame per second 
+%    \item Three action recognition features: DT, IDT and C3D
+%    \item CNN ensemble \textbf{won} the MSR-VTT Challenge
+%\end{itemize}
+%\begin{columns}
+%    \column{.5\linewidth}
+%    \vspace{-5mm}
+%\begin{table}[tbh]
+%  \centering
+%  \scalebox{0.55}{
+%  \begin{tabular}{||c|c|c|c|c|}
+%    \hline\hline
+%    \bf Team  &\bs BLEU-4 &\bs METEOR &\bs CIDEr &\bs ROUGE-L \\\hline\hline
+%    v2t\_navigator &\bf0.408 &\bf0.282 & 0.448 &\bf0.609 \\
+%    \bf Aalto~(M6)     & 0.398 & 0.269 &0.457 & 0.598 \\
+%    VideoLAB       & 0.391 & 0.277 & 0.441 & 0.606 \\
+%    ruc-uva        & 0.387 & 0.269 &\bf0.459 & 0.587 \\
+%    Fudan-ILC      & 0.387 & 0.268 & 0.419 & 0.595 \\\hline
+%    \multicolumn{5}{||c|}{16 other teams with lower scores appear in the leaderboard}\\\hline
+%    \hline
+%  \end{tabular}}
+%\vspace{-2mm}
+%  \caption{Top 5 teams as per automatic evaluation metrics on test set.}
+%  \label{tab:resultsTestMet}
+%\end{table}
+%\column{.5\linewidth}
+%\begin{table}[tbh]
+%  \centering
+%  \scalebox{0.6}{
+%  \begin{tabular}{||c|c|c|c|}
+%    \hline\hline
+%    \bf Team  &\bs C1 &\bs C2 &\bs C3 \\\hline\hline
+%    \bf Aalto~(M6)     & \bf3.263 & 3.104 & \bf3.244\\
+%    v2t\_navigator & 3.261 & 3.091 & 3.154 \\
+%    VideoLAB       & 3.237 & \bf3.109 & 3.143 \\
+%    Fudan-ILC      & 3.185 & 2.999 & 2.979 \\
+%    ruc-uva        & 3.225 & 2.997 & 2.933 \\\hline
+%    \multicolumn{4}{||c|}{\parbox[c][][c]{8cm}{\smallskip\centering 16 other teams appear in the leaderboard\smallskip}}\\\hline
+%    \hline
+%  \end{tabular}
+%  }
+%\vspace{-2mm}
+%  \caption{Top 5 teams as per human evaluation.}
+%  \label{tab:resultsTestHum}
+%\end{table}
+%\end{columns}
+%\end{frame}
 %%=============================================================================
-\section{Conclusions}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Conclusions}
-\begin{itemize}
-    \item The proposed object and scene detector features complement the CNN features well 
-    \item Two extensions proposed to the language model were useful. 
-       \begin{itemize}
-           \item The \emph{persist} input channel greatly improved performance
-           \item The residual connections achieve lower training cost, and convergence time
-       \end{itemize}
-    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
-    \item Good performance was achieved in all the three datasets
-    \item Our models won two video captioning challenges judged by human evaluators 
-\end{itemize}
-\end{frame}
+%\section{Conclusions}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{Conclusions}
+%\begin{itemize}
+%    \item The proposed object and scene detector features complement the CNN features well 
+%    \item Two extensions proposed to the language model were useful. 
+%       \begin{itemize}
+%           \item The \emph{persist} input channel greatly improved performance
+%           \item The residual connections achieve lower training cost, and convergence time
+%       \end{itemize}
+%    \item Evaluator based ensembling improved performance and caption diversity (esp. in MSR-VTT video captioning)
+%    \item Good performance was achieved in all the three datasets
+%    \item Our models won two video captioning challenges judged by human evaluators 
+%\end{itemize}
+%\end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Looking Forward}
 \begin{itemize}
     \item Multiple Captions
        \begin{itemize}
            \item Complementary captions.
-           \item Paragraph summaries?
-           \item Covering entire visual information (almost!)
+           \item Paragraph summaries
+           \item Covering entire visual information
        \end{itemize}
     \item Scene graphs 
        \begin{itemize}
@@ -527,12 +551,12 @@ Experiments conducted on the COCO validation set yielded following conclusions
        \end{itemize}
     \item Video features 
        \begin{itemize}
-           \item Extract and represent long term dependencies in videos? 
+           \item Extract and represent long term dependencies in videos
        \end{itemize}
     \item Interpretable models
        \begin{itemize}
-           \item Explain why a particular word is used.
-           \item Visually or gramatically ground every word used.
+           \item Explain why a particular word is used
+           \item Visually or gramatically ground every word used
        \end{itemize}
 
 \end{itemize}
@@ -545,6 +569,7 @@ Experiments conducted on the COCO validation set yielded following conclusions
 \end{center}
 \end{frame}
 %%-----------------------------------------------------------------------------
+\section{Extra Material}
 \begin{frame}{Sample Results on COCO}
 \begin{figure}[h]
   \begin{center}
