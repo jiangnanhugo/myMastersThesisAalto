@@ -35,7 +35,7 @@
 
 %%-----------------------------------------------------------------------------
 \section{Overview}
-\begin{frame}{Our approach}
+\begin{frame}{Our Approach}
 %\begin{itemize}
         %\item Standard Encoder--Decoder caption generation module.
         %\item Video featueres from two-different paradigms.
@@ -50,7 +50,7 @@
     \centering
     \includegraphics[width=1.0\textwidth]{images/MMGC_Overview.pdf}
 \begin{itemize}
-    \item Popular encoder--decoder apporach.
+    \item Popular encoder--decoder apporach
     \item An evaluator is used to ensemble multiple encoder-decoder caption generators 
     \item Trained only on MSR-VTT dataset. Does it generalize? 
 \end{itemize}
@@ -123,7 +123,7 @@
 \end{columns}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Ensembling -- CNN evaluator}
+\begin{frame}{Ensembling -- CNN Evaluator}
 \begin{columns}       
     \column{0.4\linewidth}
     \begin{figure}[h]
@@ -133,11 +133,11 @@
     \end{figure}
     \column{0.6\linewidth}
     \begin{itemize}
-        \item Evaluator trained discriminatively to compute similarity b/w visual input and caption. It consists of: 
+        \item Evaluator trained discriminatively to compute similarity of visual input and caption. It consists of: 
            \begin{itemize}
                \item A CNN to encode the sentence 
-               \item Visual feature embedding.
-               \item Cosine similarity b/w the two vectors 
+               \item Visual feature embedding
+               \item Cosine similarity of the two vectors 
            \end{itemize}
         \item Maximize the score assigned to correct caption--visual pair as opposed to negative pairs 
     \end{itemize}
@@ -186,7 +186,7 @@
 %%-----------------------------------------------------------------------------
 %%=============================================================================
 %%-----------------------------------------------------------------------------
-\begin{frame}{Adapting MSR-VTT models for LSMDC}
+\begin{frame}{Adapting MSR-VTT Models for LSMDC}
     \begin{itemize}
         \item Same frame-level features are extracted from LSMDC videos
         \item The ground truth category information is replaced with the output of a category classifier
@@ -207,13 +207,14 @@
 %%-----------------------------------------------------------------------------
 \begin{frame}{Conclusions}
 \begin{itemize}
+    \item MSR-VTT training is tempting due to large number of video--caption pairs (~ 130k)
     \item Finished last in the automatic metrics table 
        \begin{itemize}
-           \item Largely due to huge mismatch in vocabulary
+           \item Largely due to huge mismatch in vocabulary and visual content
            \item Highlights drawbacks in the evaluation metrics as well
        \end{itemize}
-    \item Produces better captions than the last-year's winning model in several examples
-    \item Fine-tuning or joint training might address these issues.
+    \item Produces better captions than the last year's winning model in several examples
+    \item Fine-tuning or joint training might address these issues
 \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------

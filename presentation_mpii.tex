@@ -43,14 +43,12 @@
     \hfill\includegraphics[width=0.6\textwidth]{images/COCO_train2014_000000544856.jpg}
     \hspace{-5mm}\column{.5\linewidth}
     \centering
-    \caption{\only<5->{a giraffe walking through a patch of high dried out grass.}}
+    \caption{a giraffe walking through a patch of high dried out grass.}
     \end{columns}
   \end{figure}
-  \item<2->Videos = \{Images + temporal relations\}\\[4mm]
-  \item<3->\only<3>{\Large Simple labels do not capture enough }
-           \only<4>{\Large How do we summarize this information?}
-           \only<5>{\Large Humans rely on natural language descriptions}
-           \only<6>{\Large Can computers generate captions too?}
+  \item<1->Videos = \{Images + temporal relations\}\\[4mm]
+  \item<1->Humans rely on natural language descriptions
+  \item<1->Can computers generate captions too?
   \end{itemize}
 \end{frame}
 
@@ -60,7 +58,6 @@
 \begin{itemize}
 \item Moving beyond single label classification.
 \item Better search and indexing of visual data.
-\item Measure visual features and language generation.
 \item Enabling better accessibility to the blind.
 \item Enable computers to connect textual and visual data. 
 \end{itemize}
@@ -191,11 +188,15 @@
 \subsection{Image Features}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Proposed Image Features}
-    \begin{itemize}
-            \item Primary features are extracted from GoogLeNet~(\textbf{\emph{gCNN}})
-        \item CNN features: Not clear if multiple objects are encoded 
+    \begin{columns}
+    \column{.4\linewidth}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/ImageFeatures.pdf}
+    \column{.6\linewidth}
+    \hspace{-5mm}\begin{itemize}
+        \item Primary features are extracted from GoogLeNet
+        \item CNN features: Not clear if multiple objects and background are encoded 
         \item Localization information is lost by design! 
-        \item What about the background!? 
         \item Hence three additional features 
            \begin{itemize}
                \item Explicit scene detector features 
@@ -203,40 +204,41 @@
                \item Object location features 
            \end{itemize}
     \end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Explicit Scene Detector}
-    \begin{itemize}
-        \item Utilize SUN dataset with 108,756 images with 397 scene types 
-        \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
-        \item One for each category in SUN (397 objects) 
-    \end{itemize}
-  \begin{figure}[h]
-    \begin{columns}
-    \column{.5\linewidth}
-    %\hspace{-8mm}%
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/503790.png}
-    \hspace{-5mm}\column{.5\linewidth}
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/69356.png}
     \end{columns}
-  \end{figure}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Object Detection and Localization Features}
-    \begin{itemize}
-        \item Faster R-CNN networks output bounding boxes 
-        \item Trained on COCO dataset using the box annotations 
-        \item Boxes are mapped to a regular grid, one for each category 
-        \item Can be collapsed to get object detector vector~(\textbf{\emph{FRC80}}) 
-        \begin{figure}[h]
-          %\hspace{-8mm}%
-          \includegraphics[width=0.9\textwidth]{images/FrcnnFeats.pdf}
-        \end{figure}
-
-    \end{itemize}
-\end{frame}
+%\begin{frame}{Explicit Scene Detector}
+%    \begin{itemize}
+%        \item Utilize SUN dataset with 108,756 images with 397 scene types 
+%        \item \small{CNNs pre-trained on MIT places} $+$ \small{CNNs pre-trained on ImageNet} $\rightarrow$ train SVM detectors 
+%        \item One for each category in SUN (397 objects) 
+%    \end{itemize}
+%  \begin{figure}[h]
+%    \begin{columns}
+%    \column{.5\linewidth}
+%    %\hspace{-8mm}%
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{images/503790.png}
+%    \hspace{-5mm}\column{.5\linewidth}
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{images/69356.png}
+%    \end{columns}
+%  \end{figure}
+%\end{frame}
+%%%-----------------------------------------------------------------------------
+%\begin{frame}{Object Detection and Localization Features}
+%    \begin{itemize}
+%        \item Faster R-CNN networks output bounding boxes 
+%        \item Trained on COCO dataset using the box annotations 
+%        \item Boxes are mapped to a regular grid, one for each category 
+%        \item Can be collapsed to get object detector vector~(\textbf{\emph{FRC80}}) 
+%        \begin{figure}[h]
+%          %\hspace{-8mm}%
+%          \includegraphics[width=0.9\textwidth]{images/FrcnnFeats.pdf}
+%        \end{figure}
+%
+%    \end{itemize}
+%\end{frame}
 %%-----------------------------------------------------------------------------
 \subsection{Video Features}
 %%-----------------------------------------------------------------------------
@@ -324,54 +326,15 @@
 \end{frame}
 \subsection{Image Captioning Experiments}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Image Captioning Experiments}
-Experiments conducted on the COCO validation set to answer the below questions
+\begin{frame}{Image Captioning Experiments -- Summary}
+Experiments conducted on the COCO validation set yielded following conclusions 
 \begin{itemize}
-    \item How to use the two input channels: \emph{init} and \emph{persist}?
-    \item Which image features perform best ?
-    \item How does depth affect the performance ?
+    \item Additional input channel \textbf{greatly imporves} performance 
+    \item Scene and object detector features complement the CNN features. 
+    \item Location feature don't contribute much 
+    \item Depth, esp.\@ with residual connections improve vocbulary size and performance
     %\item Does hierarchical decoder help?
-    \item Benefits of Ensembling  
-\end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Results of the Image Captioning Experiments-I}
-\begin{itemize}
-    \item<1-> How to use the two input channels: \emph{init} and \emph{persist}?
-       \begin{itemize}
-           \item<2-> \emph{persist} channel greatly improves performance
-           \item<3-> Best results when \emph{gCNN} is input in \emph{persist} 
-       \end{itemize}
-    \item<1-> Which image features perform best ?
-       \begin{itemize}
-           \item<4-> \emph{FRC80} is much better than \emph{SVM80}
-           \item<5-> Counterintuitively, localization features don't help much 
-           \item<6-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
-       \end{itemize}
-\end{itemize}
-\end{frame}
-%%-----------------------------------------------------------------------------
-\begin{frame}{Results of the Image Captioning Experiments-II}
-\begin{itemize}
-    \item How does depth affect the performance ?
-       \begin{itemize}
-           \item<2-> 2/3 layers increases performance as per metrics moderately, perplexity is worse!
-           \item<3-> Residual connections improve perplexity and convergence speed greatly 
-           \only<3>{\hspace{-10mm}\begin{figure}[h]
-                \centering
-                \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
-           \end{figure}}
-       \end{itemize}
-    %\item Does hierarchical decoder help?
-    %   \begin{itemize}
-    %    \item<6-> Performance degrades with hierarchical decoder
-    %    \item<7-> But caption diversity is greatly improved 
-    %   \end{itemize}
-    \item Benefits of Ensembling
-       \begin{itemize}
-        \item<5-> CNN evaluator improves the performance moderately  
-        \item<6-> Caption diversity is greatly improved 
-       \end{itemize}
+    \item Evaluator based ensemble greatly improves caption diversity and moderately improves the performance
 \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -662,6 +625,46 @@ Experiments conducted on the COCO validation set to answer the below questions
                \item \emph{News}, \emph{tv} perform worst 
        \end{itemize}
     \item Surprisingly, length doesn't seem effect much (in-conclusive) 
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Results of the Image Captioning Experiments-I}
+\begin{itemize}
+    \item<1-> How to use the two input channels: \emph{init} and \emph{persist}?
+       \begin{itemize}
+           \item<1-> \emph{persist} channel greatly improves performance
+           \item<1-> Best results when \emph{gCNN} is input in \emph{persist} 
+       \end{itemize}
+    \item<1-> Which image features perform best ?
+       \begin{itemize}
+           \item<1-> \emph{FRC80} is much better than \emph{SVM80}
+           \item<1-> Counterintuitively, localization features don't help much 
+           \item<1-> Best model: \textbf{\emph{init}} = \emph{3+3Gauss$\oplus$SUN397$\oplus$FRC80}\\ \textbf{\emph{persist}} = \emph{gCNN}
+       \end{itemize}
+\end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Results of the Image Captioning Experiments-II}
+\begin{itemize}
+    \item How does depth affect the performance ?
+       \begin{itemize}
+           \item<1-> 2/3 layers increases performance as per metrics moderately, perplexity is worse!
+           \item<1-> Residual connections improve perplexity and convergence speed greatly 
+           \only<2>{\hspace{-10mm}\begin{figure}[h]
+                \centering
+                \includegraphics[width=0.5\textwidth]{images/ResidualVsRegPerplex.pdf}
+           \end{figure}}
+       \end{itemize}
+    %\item Does hierarchical decoder help?
+    %   \begin{itemize}
+    %    \item<6-> Performance degrades with hierarchical decoder
+    %    \item<7-> But caption diversity is greatly improved 
+    %   \end{itemize}
+    \item Benefits of Ensembling
+       \begin{itemize}
+        \item<3-> CNN evaluator improves the performance moderately  
+        \item<3-> Caption diversity is greatly improved 
+       \end{itemize}
 \end{itemize}
 \end{frame}
 \begin{frame}[allowframebreaks]
