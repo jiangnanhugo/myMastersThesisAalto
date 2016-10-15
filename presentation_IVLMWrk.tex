@@ -47,14 +47,13 @@
     \hfill\includegraphics[width=0.6\textwidth]{images/COCO_train2014_000000544856.jpg}
     \hspace{-5mm}\column{.5\linewidth}
     \centering
-    \caption{\only<4->{a giraffe walking through a patch of high dried out grass.}}
+    \caption{\only<3->{a giraffe walking through a patch of high dried out grass.}}
     \end{columns}
   \end{figure}
   %\item<2->Videos = \{Images + temporal relations\}\\[4mm]
-  \item<2->\only<2>{\Large Simple labels do not capture enough }
-           \only<3>{\Large How do we summarize this information?}
-           \only<4>{\Large Humans rely on natural language descriptions}
-           \only<5>{\Large Can computers generate captions too?}
+  \item<2-> \only<2>{\Large How do we summarize this information?}
+           \only<3>{\Large Humans rely on natural language descriptions}
+           \only<4>{\Large Can computers generate captions too?}
   \end{itemize}
 \end{frame}
 
@@ -64,7 +63,6 @@
 \begin{itemize}
 \item Moving beyond single label classification.
 \item Better search and indexing of visual data.
-\item Measure visual features and language generation.
 \item Enabling better accessibility to the blind.
 \item Enable computers to connect textual and visual data. 
 \end{itemize}
@@ -305,7 +303,6 @@
           %\hspace{-8mm}%
           \includegraphics[width=0.9\textwidth]{images/FrcnnFeats.pdf}
         \end{figure}
-
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
@@ -444,7 +441,6 @@
     \end{figure}
     \column{0.7\linewidth}
     \begin{itemize}
-        \item Generative vs Discriminative 
         \item Train evaluator to compute similarity b/w visual input and caption 
            \begin{itemize}
                \item A CNN to encode the sentence 
@@ -452,6 +448,7 @@
                \item Cosine similarity b/w the two vectors 
            \end{itemize}
         \item Trained to assign highest score to correct caption--visual pair 
+        \item Generative vs Discriminative 
     \end{itemize}
 \end{columns}
 \end{frame}
@@ -681,7 +678,7 @@
   \end{center}
   \caption{Captions generated for some images from the COCO validation set by two of our
     models. The first row contains samples where the ensemble model,
-    M11, performs better, and the second row cases where M10 is
+    CNN,  performs better, and the second row cases where SB is
     better.}
   \label{fig:cococapSamps}
 \end{figure}
