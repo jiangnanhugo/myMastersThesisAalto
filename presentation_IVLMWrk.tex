@@ -134,7 +134,7 @@
       \end{enumerate}
   \item Best approaches from the literature
           \begin{itemize}
-  \item NIC~\cite{Vinyals_2015_CVPR} -- our baseline 
+  \item Show and Tell~\cite{Vinyals_2015_CVPR} -- our baseline 
       \begin{itemize}
         \item CNN+LSTM, end-to-end 
       \end{itemize}
@@ -161,7 +161,7 @@
         \includegraphics[width=0.4\linewidth]{images/Thesis_lstmLangGen.pdf}
     \end{figure}
     \begin{itemize}
-        \item Adopted from~\cite{Vinyals_2015_CVPR} 
+        \item Adopted from the ``Show and Tell'' paper~\cite{Vinyals_2015_CVPR} 
         \item LSTM network based language model
         \item The sequence $(V,START,w_0, w_1, \cdots,w_{L-1})$ is the input
         \item Words are represented as word vectors 
@@ -419,16 +419,39 @@
 \subsection{Ensembling}
 \begin{frame}{Ensembling the caption generators}
 \begin{itemize}
-    \item Ensemble generators trained with different features and parameters
+    \item Ensemble generators trained with different features
     \item Models in ensemble set produce a caption and a corresponding probability 
     \item Pick based on the assigned probability? 
-    \item One can also use models to mutually evaluate each other 
-       \begin{itemize}
-           \item Each model rates others captions too
-           \item Combine the rating using max-max or max-mean 
-       \end{itemize}
-    \item Unsatisfactory performance. 
 \end{itemize}
+\begin{columns}       
+    \column{0.4\linewidth}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=1.0\linewidth]{images/COCO_val2014_000000530509.jpg}
+        \vfill
+    \end{figure}
+    \column{0.6\linewidth}
+    \begin{figure}[thp]
+      \begin{center}
+      \centering
+      \scalebox{0.8}{
+      \begin{tabular}{|l|c|}
+        \hline
+        \textbf{\scriptsize\em Caption} &\textbf{\scriptsize\em Log-Prob}  \\\hline
+        \textbf{\scriptsize\em \#1:} \scriptsize \green{a young boy holding a kite in a park} & -6.31 \\\hline
+        \textbf{\scriptsize\em \#2:} \scriptsize a man and a girl are flying a kite    & -7.43 \\\hline
+        \textbf{\scriptsize\em \#3:} \scriptsize a young boy holding a kite in a park  & -6.64 \\\hline
+        \textbf{\scriptsize\em \#4:} \scriptsize a young boy holding a kite in a field & -7.85\\\hline
+        \textbf{\scriptsize\em \#5:} \scriptsize \red{a woman holding a kite in a park}&\bf-6.19\\\hline
+        \textbf{\scriptsize\em \#6:} \scriptsize a woman holding a kite in a park      & -6.70\\\hline
+      \end{tabular}
+      }
+        \vfill
+      \end{center}
+    \end{figure}
+\end{columns}
+
+
 \end{frame}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Ensembling -- CNN evaluator}
@@ -570,15 +593,14 @@
   \centering
   \scalebox{0.80}{
   \begin{tabular}{|c|c|c|}
-    \hline\hline
+    \hline
     \multirow{2}{*}{\bf Model} & \multicolumn{2}{c|}{\bf performance metrics} \\
 	\cline{2-3}
     & \bf METEOR &\bf CIDEr \\\hline\hline
     Baseline         & 0.222 & 0.750 \\
     Single Best      & 0.252 & 0.970 \\
-    Ensemble -- Self & 0.253 &\bf0.966 \\
+    Ensemble -- Self & 0.253 &0.966 \\
     Ensemble -- CNN  & \bf0.254 &\bf0.978 \\\hline
-    \hline
   \end{tabular}
   }
 \end{table}
