@@ -64,26 +64,59 @@
 %  \item<1->Can computers generate captions too?
 %  \end{itemize}
 %\end{frame}
-
 %%-----------------------------------------------------------------------------
-\begin{frame}{Why Captioning?}
+\begin{frame}{Summary of my Thesis}
 %\includegraphics[width=1\textwidth]{images/VideoCaptionModified.png}
 \begin{itemize}
-\item Moving beyond single label classification.
-\item Better search and indexing of visual data.
-\item Enabling better accessibility to the blind.
-\item Enable computers to connect textual and visual data. 
+\item Focussed on the problem of automatic image and video captioning 
+    \begin{itemize}
+         \item Given an input image or video, $V$, output a caption, $S$
+    \end{itemize}
+\item Modeled using a combination of visual encoder + language model 
+\item Image is encoded using CNN features
+\item Video encoding is done a combination of
+    \begin{itemize}
+        \item Frame level features - CNN
+        \item Segment level features - dense trajectories, C3D 
+    \end{itemize}
+\item Language model is based on a recurrent network (LSTM) 
+\end{itemize}
+\end{frame}
+
+%%-----------------------------------------------------------------------------
+\begin{frame}{Key Results}
+%\includegraphics[width=1\textwidth]{images/VideoCaptionModified.png}
+\begin{itemize}
+\item Image encoding --> Explicit object and scene detection features boost performance
+    \begin{itemize}
+         \item Given an input image or video, $V$, output a caption, $S$
+    \end{itemize} 
+\item Language model is improved by 
+    \begin{itemize}
+        \item Adding additional input channel decoupled from word inputs
+        \item Adopting residual connections 
+    \end{itemize}
+\item Multiple language models ensembled using an evaluator network
+    \begin{itemize}
+        \item Significantly increases language diversity (vocabulary and unique sentences) 
+        \item Improves performance in video captioning, combining strengths of different video features 
+    \end{itemize}
+\item Good results in standard benchmarks
+    \begin{itemize}
+        \item Won two video captioning competetions: LSMDC-15' and MSR-VTT'16 
+        \item Top of COCO leaderboard ~ atleast for a while :-) 
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
 %%=============================================================================
-\section{Elements of Visual Captioning}
+\section{Weaknesses?}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Up Next.....}
-\tableofcontents[currentsection] 
-\end{frame}
+%\begin{frame}{Up Next.....}
+%\tableofcontents[currentsection] 
+%\end{frame}
 %%-----------------------------------------------------------------------------
-\subsection{Problem Statement}
+\subsection{}
 %%-----------------------------------------------------------------------------
 \begin{frame}{Basic Framework}
 \textbf{Given an input image or video, $V$, output a caption, $S$}
