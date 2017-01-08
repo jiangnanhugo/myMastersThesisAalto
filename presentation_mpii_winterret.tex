@@ -26,25 +26,26 @@
 
 %%-----------------------------------------------------------------------------
 
-\title{XXXXX}
-\subtitle{Winter Retreat Talk}
+\title{Adversarial Generation of Discrete Sequences for Image Captioning}
+%\subtitle{Winter Retreat Talk}
 \author[Rakshith Shetty]{Rakshith Shetty\\[4mm] {\small PhD Student}}
 \institute{Max Planck Institute of Informatics}
 \date{\today}
 
 \frame{\titlepage} 
 
+\section{My Background}
 %%-----------------------------------------------------------------------------
 
 \begin{frame}{Hello!}
   \begin{itemize}
-  \item New PhD student at MPI-INF
-  \item I did my master's at Aalto University, Helsinki, Finland
-  \item Thesis 
-  \item Electronics and Signal Processing background (Bachelors)
-  \item Also
-	- Mobile robotics 
-	- Wifi/ LTE
+    \item One week old PhD student at MPI-INF :-)
+    \item Master's in Machine Learning and Data Mining 
+        \begin{itemize}
+            \item Aalto University, Helsinki, Finland
+        \end{itemize}
+    \item Bachelor's -- Electronics and Signal Processing 
+    \item Three years work experience at Broadcom (Wifi/ LTE)
   \end{itemize}
 \end{frame}
 
@@ -68,26 +69,31 @@
 %  \end{itemize}
 %\end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Summary of my Thesis}
+\begin{frame}{Summary of My Thesis}
 %\includegraphics[width=1\textwidth]{images/VideoCaptionModified.png}
+        Title -- \textbf{Natural Language Description of Images and Videos}
 \begin{itemize}
 \item Focussed on the problem of image and video captioning 
     \begin{itemize}
          \item Given an input image or video, $V$, output a caption, $S$
     \end{itemize}
 \item Model -- visual feature encoder + language model 
-\item Image is encoded using CNN features
-\item Video encoding uses a combination of
-    \begin{itemize}
-        \item Frame level features - CNN
-        \item Segment level features - dense trajectories, C3D 
-    \end{itemize}
-\item Language model is based on a recurrent network (LSTM) 
+        \begin{figure}[h]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/EncDec.pdf}
+        \end{figure}
+%\item Image is encoded using CNN features
+%\item Video encoding uses a combination of
+%    \begin{itemize}
+%        \item Frame level features - CNN
+%        \item Segment level features - dense trajectories, C3D 
+%    \end{itemize}
+%\item Language model is based on a recurrent network (LSTM) 
 \end{itemize}
 \end{frame}
 
 %%-----------------------------------------------------------------------------
-\begin{frame}{Key Results}
+\begin{frame}{Key Results from the Thesis}
 %\includegraphics[width=1\textwidth]{images/VideoCaptionModified.png}
 \begin{itemize}
 \item Image encoding is improved by
@@ -107,19 +113,19 @@
 \item Good results in standard benchmarks
     \begin{itemize}
         \item Won two video captioning competitions: LSMDC-'15 and MSR-VTT'16 
-        \item Top of COCO leaderboard, at least for a while :-) 
+        \item Top of COCO leaderboard, at least for a while
     \end{itemize}
 \end{itemize}
 \end{frame}
 
 %%=============================================================================
-\section{What next}
+\section{What Next}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Up Next.....}
 %\tableofcontents[currentsection] 
 %\end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Some prominent problems}
+\begin{frame}{Some Prominent Problems}
 \begin{itemize}
     \item Language model can hallucinate objects
         \begin{itemize}
@@ -156,14 +162,14 @@
 \begin{frame}{Problem with Maximum Likelihood Training}
 \begin{itemize}
     \item Training objective is to maximize 
-    \begin{equation}
+    \begin{equation*}
             \label{eq:langB1}\mathcal{L}(S | V)  = \log(P(S|V)) = P(w_0, w_1, \cdots, w_{L-1}|V)  .
-    \end{equation}
+    \end{equation*}
     \item We can factorize this as :
-    \begin{align}
+    \begin{equation*}
       \label{eqCost}
       \mathcal{L}(S | V) = \sum_{t=0}^{L-1} \log(p(w_t|w_{t-1},V)) \; ,
-    \end{align}
+    \end{equation*}
     \item Training mode -- ground truth tokens are given at each step
     \item Thus the optimization on "local" transition probabilities
     \item We can't impose sequence level costs
@@ -182,10 +188,11 @@
             \end{itemize}
         \item Reinforcement learning based methods
             \begin{itemize}
-                \item Large action space depending on vocabulary size 
-                \item Might need pre-training 
+                \item Use RL methods to approximate the gradient of reward for sampled sentences
+                \item Large discrete action space depending on vocabulary size
+                \item Might need pre-training
             \end{itemize}
-            \item Successful application of RL method from IBM team~\cite{rennie2016self}
+        \item Successful application of RL method from IBM team~\cite{rennie2016self}
             \begin{itemize}
                 \item Directly optimized a captioning model on CIDEr
                 \item Currently top of COCO leaderboard
@@ -193,7 +200,7 @@
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{Adverserial Training?}
+\begin{frame}{Adversarial Training}
     \begin{itemize}
         \item Generator generates a sample $s'$ from $P(S|I)$
         \item Evaluator network scores if $s'$ comes from human 
@@ -209,7 +216,7 @@
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
-\begin{frame}{How do we overcome this?}
+\begin{frame}{Some Solutions in Literature}
     \begin{itemize}
         \item Seq-GANs~\cite{yu2016seqgan} 
             \begin{itemize}
@@ -221,16 +228,29 @@
                 \item Instead of evaluating samples evaluate hidden state
                 \item Evaluator tries to distinguish hidden states b/w training and test mode!
             \end{itemize}
-        \item Gumbel Softmax~\cite{jang2016categorical}
-            \begin{itemize}
-                \item Re-parametrization of softmax to noise + $\theta_i's$
-                \item Can approximate softmax sampling as a deterministic function
-                \item Allows back-propagations!
-            \end{itemize}
-        \item Any other ideas?
+     \end{itemize}
+\end{frame}
+%%-----------------------------------------------------------------------------
+\begin{frame}{Let's Do Backprop Anyway!}
+    Gumbel Softmax~\cite{jang2016categorical, maddison2016concrete}
+    \begin{itemize}
+        \item Use Gumbel-Max trick to re-parametrize categorical distribution
+        \begin{equation*}
+                z = \text{one\_hot}(\text{argmax}_i[\log(\theta_i)+ g_i])
+        \end{equation*}
+        \item Approximate the $\text{argmax}$ with a $\text{softmax}$ 
+        \item Allows back-propagations!
     \end{itemize}
 \end{frame}
 %%-----------------------------------------------------------------------------
+\begin{frame}{Possible Benefits of Adversarial Approach}
+    \begin{itemize}
+        \item Evaluator can impose sequence level penalties 
+        \item No discrepancy between training and testing modes 
+        \item Batch evaluation could help improve diversity 
+        \item Free caption evaluation~\cite{kannan2016}
+    \end{itemize}
+\end{frame}
 %%-----------------------------------------------------------------------------
 %\begin{frame}{Looking Forward}
 %\begin{itemize}
